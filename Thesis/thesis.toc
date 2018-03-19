@@ -1,0 +1,21 @@
+\contentsline {chapter}{\numberline {1}Introduction}{1}
+\contentsline {section}{\numberline {1.1}Motivation}{1}
+\contentsline {section}{\numberline {1.2}Organization}{1}
+\contentsline {chapter}{\numberline {2}Previous Work}{2}
+\contentsline {section}{\numberline {2.1}Motivation}{2}
+\contentsline {section}{\numberline {2.2}Organization}{2}
+\contentsline {chapter}{\numberline {3}Haptic Design}{3}
+\contentsline {section}{\numberline {3.1}Motivation}{3}
+\contentsline {section}{\numberline {3.2}Organization}{3}
+\contentsline {chapter}{\numberline {4}Method}{4}
+\contentsline {section}{\numberline {4.1}Motivation}{4}
+\contentsline {section}{\numberline {4.2}Organization}{4}
+\contentsline {chapter}{\numberline {5}Data Analysis}{5}
+\contentsline {section}{\numberline {5.1}Motivation}{5}
+\contentsline {section}{\numberline {5.2}Organization}{5}
+\contentsline {chapter}{\numberline {6}Conclusion}{6}
+\contentsline {section}{\numberline {6.1}Motivation}{6}
+\contentsline {section}{\numberline {6.2}Organization}{6}
+\contentsline {chapter}{\numberline {7}Acknowledgment}{7}
+\contentsline {section}{\numberline {7.1}Motivation}{7}
+\contentsline {section}{\numberline {7.2}Organization}{7}
