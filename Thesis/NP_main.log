@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  20 MAR 2018 14:50
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017) (preloaded format=pdflatex 2017.5.23)  20 MAR 2018 20:33
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -435,7 +435,13 @@ LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <10.95> not available
  [1{/usr/local/texlive/2017/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
 
 
-] [2
+]
+Overfull \hbox (4.70294pt too wide) in paragraph at lines 52--52
+[]\OT1/ptm/b/n/12 Keywords: \OT1/ptm/m/n/12 sen-so-ri-mo-tor syn-chro-niza-tion
+, vi-bro-tac-tile per-cep-tion, hap-tic, metronome, modal-
+ []
+
+[2
 
 ] [3
 
@@ -446,8 +452,7 @@ LaTeX Font Info:    Font shape `OMS/ptm/m/n' in size <10.95> not available
 ]
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <14.4> not available
 (Font)              Font shape `OT1/ptm/b/n' tried instead on input line 62.
- [5]
-[6
+ [5] [6
 
 
 ] [7] [8
@@ -466,14 +471,14 @@ LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <24.88> not available
 \tf@lof=\write5
 \openout5 = `NP_main.lof'.
 
- [11] [12
+ [11]
+[12
 
 ] (./NP_main.lot)
 \tf@lot=\write6
 \openout6 = `NP_main.lot'.
 
-
-[13] [14
+ [13] [14
 
 ] (./tex/introduction.tex
 Chapter 1.
@@ -535,7 +540,7 @@ exlive/2017/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/te
 xlive/2017/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2017
 /texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2017/texmf-dis
 t/fonts/type1/urw/times/utmri8a.pfb>
-Output written on NP_main.pdf (26 pages, 63186 bytes).
+Output written on NP_main.pdf (26 pages, 63245 bytes).
 PDF statistics:
  241 PDF objects out of 1000 (max. 8388607)
  206 compressed objects within 3 object streams
