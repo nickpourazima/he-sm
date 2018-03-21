@@ -1,7 +1,10 @@
-%% dkoes 5/10/2006
+% cls file for a Robotics Institue thesis.
+%
+% Author: Felix Duvallet <felixd@gmail.com>
+% Adapted from David Koe's SCS thesis template:
+% http://www.cs.cmu.edu/~dkoes/links.html
 
 \LoadClassWithOptions{book}
-
 
 %% dkoes - Here's a bunch of stuff taken from mjz-titlepage.sty that makes
 % a pretty CMU techreport acceptable title page
@@ -57,21 +60,31 @@
 \vfill
 {\large \begin{tabular}[t]{c}\@author\end{tabular}\par}
 \vfill
-{\sc \@trnumber\par}
-\smallskip
+{\large \sc \@trnumber\par}
+\vfill
 {\large \@date\par}
 \end{center}
 \vfill}
 \end{minipage}
 \end{center}
 
-\vskip 3em
+% CMU seal logo -- also links to the table of contents.
+\begin{figure}[!htb]
+  \centering
+  \scalebox{.2}{
+    \hyperlink{contents}{  % Link To TOC -- define label in main file.
+      \includegraphics{figs/cmu_seal.png}
+  }}
+\end{figure}
 
 \begin{center}
-    School of Music \\
-    Carnegie Mellon University \\
-    Pittsburgh, PA 15213
+  Music and Technology \\
+  College of Fine Arts \\
+  Carnegie Mellon University \\
+  Pittsburgh, PA
 \end{center}
+
+\vfill
 
 \begin{center}
     {\bf Thesis Committee:} \\
@@ -81,9 +94,8 @@
 \begin{center}
     \em
     Submitted in partial fulfillment of the requirements \\
-    for the degree of Master of Science in Music and Technology.
+    for the degree of Masters of Science in Music and Technology.
 \end{center}
-
 
 \vfill
 
@@ -103,28 +115,27 @@
 }
 
 \newenvironment{dedication}
-  {\cleardoublepage \thispagestyle{empty} \vspace*{\stretch{1}} \begin{center} \em}
+  {\cleardoublepage
+    \thispagestyle{fancy}
+    \vspace*{\stretch{1}} \begin{center} \em}
   {\end{center} \vspace*{\stretch{3}} \clearpage}
 
-
-\newenvironment{psuedochapter}[1]
+\newenvironment{pseudochapter}[1]
   {\cleardoublepage
-   \thispagestyle{empty}
-   \vspace*{\stretch{1}} 
+    \thispagestyle{fancy}
+   %%\vspace*{\stretch{1}}
    \begin{center} \large {\bf #1} \end{center}
-%   \addcontentsline{toc}{chapter}{\numberline{}#1} --not yet mjz 
    \begin{quotation}}
-  {\end{quotation} 
+  {\end{quotation}
    \vspace*{\stretch{3}}
-   \clearpage}
+   \clearpage
+  }
 
-\newenvironment{abstract}
-	{\begin{psuedochapter}{Abstract}}{\end{psuedochapter}}
+\newenvironment{abstract}{\begin{pseudochapter}{Abstract}}{\end{pseudochapter}}
 
-\newenvironment{acknowledgments}
-	{\begin{psuedochapter}{Acknowledgments}}{\end{psuedochapter}}
+\newenvironment{acknowledgments}{\begin{pseudochapter}{Acknowledgments}}{\end{pseudochapter}}
 
-
+\newenvironment{funding}{\begin{pseudochapter}{Funding}}{\end{pseudochapter}}
 
 
 
@@ -198,39 +209,9 @@
   \leftmargin = \leftmarginiv
   \labelwidth = \leftmarginiv
   \advance \labelwidth by -\labelsep
-  \listparindent = \parindent}
+  \listparindent = \parindent
+}
 
-
-% A simple style file to provide a draft marking in the background of
-% a file
-% Thank you to Will Uther who provided the base code that I rolled
-% into this package
-% ChangeLog
-% 1.1: shrunk and shifted the stamp so that it avoid the unprintable
-% area at the top of the page
-% 1.2 dkoes - made it big and rotated and light
-% 1.3 dkoes - made it small, and unrotated since Jonathan Aldrich complained
-% 1.4 comar - moved it below the page number to avoid problem with synctex
-\RequirePackage{graphicx}
-\RequirePackage{eso-pic}
-\RequirePackage{color}
-
-%Got this from Will (will@cs.cmu.edu)
-%usage: \draftstamp{date}{label}
-\newcommand{\draftstamp}[2]{\definecolor{DraftGrey}{gray}{0.7}
-  \ClearShipoutPicture\AddToShipoutPicture{
-    \begin{minipage}[b][0.11\paperheight][t]{\paperwidth}     
-    \centering
-    	\vspace{.4in}
-            \textcolor{DraftGrey}{\renewcommand{\baselinestretch}{1.0}\normalsize
-            \begin{tabular}{c}
-                    #1 \\
-                    #2
-             \end{tabular}            
-        }
-        
-    \end{minipage}
-}}
 
 % mainmatter is ignoring openany, fix
 \renewcommand\mainmatter{%
@@ -240,4 +221,5 @@
     \clearpage
   \fi
   \@mainmattertrue
-  \pagenumbering{arabic}}
+  \pagenumbering{arabic}
+}
