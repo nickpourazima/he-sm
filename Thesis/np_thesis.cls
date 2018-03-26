@@ -17,7 +17,7 @@
 \def\author#1{\gdef\@author{#1}}
 \def\date#1{\gdef\@date{#1}}
 \def\Year#1{\gdef\@Year{#1}}
-\def\trnumber#1{\gdef\@trnumber{#1}}
+% \def\trnumber#1{\gdef\@trnumber{#1}}
 \def\committee#1{\gdef\@committee{#1}}
 \def\permission#1{\gdef\@permission{#1}}
 \def\support#1{\gdef\@support{#1}}
@@ -60,8 +60,8 @@
 \vfill
 {\large \begin{tabular}[t]{c}\@author\end{tabular}\par}
 \vfill
-{\large \sc \@trnumber\par}
-\vfill
+% {\large \sc \@trnumber\par}
+% \vfill
 {\large \@date\par}
 \end{center}
 \vfill}
