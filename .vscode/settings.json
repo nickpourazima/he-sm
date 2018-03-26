@@ -15,5 +15,6 @@
         "soundbrenner",
         "spatiotemporal",
         "tampere"
-    ]
+    ],
+    "editor.wordWrap": "on"
 }
