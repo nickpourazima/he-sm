@@ -1,20 +1,80 @@
 \chapter{Method}
 
+The main method of data collection for SMS tap based tests involve collection of the time delta between the tap and event onset, called the \textit{asynchrony}. The mean of the asynchonies is typically negative (\textit{NMA}), indicative of the participants anticipation of the beat rather than reaction. Positive asynchonies within the shortest reaction time window (150 ms) are arguably an anticipation of the preceeding stimuli. Furthermore, the standard deviation of the asynchrony $(SD_{asy})$ is an index of stability.  \cite{repp2013sensorimotor}
 
-Previous studies have shown that periodically bouncing ball stimuli moving with a rectified sinusoidal velocity profile are the most effective moving stimuli in improving synchronization to a visual beat.~\cite{gan2015synchronization}
+Other important metrics include the variability and mean of the inter tap interval (\textit{ITI}) and the inter onset interval (\textit{IOI}), or the time between successive beats - measured in milliseconds. Mismatch between the ITI and IOI implies poor synchronization skill from the participant. 
 
-The method which follows is a nature expansion of this ideology into the haptic domain.
+It has been shown previously that professional musicians exhibit a lower ITI variability with percussionists as well as pianists. Surprisingly, both amateurs and non-musicians had no $SD_{asy}$ difference.
+
+A new definition will be put forth for the purposes of this research to quantify the ramp up and decay time of the haptic signal. 
+
+Isochronous vs. nonisochronous ~\cite{polak2016both}
+
+The method which follows is a nature expansion of SMS research to discover whether the haptic modality resonates as much as the audible.
+
+\section{Test Cases}
+Test 1:
+    Setup:
+        All test groups
+        Haptic on sleeve, 4 in spacing
+        Arduino with FSR to accept finger tap on dominant hand
+    Method:
+        Modality only:
+            Isochronous synchronization:
+                1. 45 bpm over 1 minute
+                2. 90 bpm over 1 minute
+                3. 135 bpm over 1 minute
+                4. 180 bpm over 1 minute
+            Dynamic synchronization:
+                1. variable tempo from 0-45 bpm for 1 minute
+                2. variable tempo from 45-90 bpm for 1 minute
+                2. variable tempo from 90-135 bpm for 1 minute
+                3. variable tempo from 135-180 bpm for 1 minute
+        Response to MIDI stimulus:
+            Isochronous synchronization:
+                3 tracks
+            Dynamic synchronization:
+                3 tracks
+        Response to (beat tracking) audio stimulus:
+            Isochronous synchronization:
+                3 tracks
+            Dynamic synchronization:
+                3 tracks
+
+Test 2:
+    Setup:
+        All test groups    
+        2 vibros per arm
+        Arduino with FSR to accept finger tap on dominant hand
+
+Test 3:
+    Setup:
+        For amateurs and prof musicians only
+        vibros placed at user discretion   
+    Method:
+        As a practice tool with primary instrument:
+            Isochronous synchronization:
+            Dynamic synchronization: 
 
 
-\section{Arduino}
-\subsection{Tap Onset Latency Evaluation}
+\section{Tap Onset Latency Evaluation}
 
 A sensorimotor synchronization experiment was conducted to discover how auditory feedback to a tap onset could be presented with minimal latency and responses recorded with the most accuracy. It was found that not only was the auditory response latency the least for the Arduino system using a force sensitive resistor (mean = 0.6 ms, sd = 0.3), but it had missed the fewest taps and recorded the least superfluous responses as compared to a percussion pad with the FTAP and Max MSP systems [Tap Arduino, 1].
 
-\subsection{Beat Tracking}
+
+\section{Beat Tracking}
 
 Max Patch based on \verb!THIS RESEARCH! 
 
 does this
 
 for the purposing of testing this
+
+\section{Expectations}
+
+If it can be proven for nonmusicians that NMA does not exhibit a linear increase as the IOI increases with the haptic...than, x
+
+According to prior research, expect musicians NMAs to be small and nearly constant as IOI is increased.\cite{repp2013sensorimotor,4}
+
+
+
