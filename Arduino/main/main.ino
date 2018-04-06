@@ -184,6 +184,7 @@ void go(){
           if(start){
             average = avg;
             startTime=millis();
+            Serial.println(startTime);
             newState++;
           }
           break;
@@ -216,7 +217,8 @@ void go(){
         case START:
           if(start){
             average = avg;
-            startTime=millis(); 
+            startTime=millis();
+            Serial.println(startTime); 
             state++;
           }
           break;

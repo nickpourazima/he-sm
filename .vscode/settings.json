@@ -23,5 +23,7 @@
         "vibros",
         "émile"
     ],
-    "editor.wordWrap": "on"
+    "editor.wordWrap": "on",
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": false
 }
