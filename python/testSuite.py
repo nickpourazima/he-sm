@@ -1,10 +1,13 @@
+#   Author: Nick Pourazima
+#   Contact: npourazima@gmail.com
+#   Description:
 import serial
 import time
-import Tkinter
-#from tkinter import *
+import os
+import tkinter as tk
 from functools import partial
 from random import shuffle
-from Tkinter import *
+from pygame import mixer
 
 #SERIAL VARS
 SERIAL_PORT = '/dev/tty.usbserial-A907CAHB'
@@ -21,22 +24,23 @@ OFF = '0'
 DISCRETE = '1'
 CONTINOUS = '2'
 CRLF = '\r\n'
-class MyFirstGUI:
-    def __init__(self, master):
-        self.master = master
-        master.title("HESM Test Suite")
+startFlag = False
+class App(tk.Tk):
+    def __init__(self):
+        tk.Tk.__init__(self)
+        self.userNameEntryLabel = tk.Label(self,text="Username: ")
+        self.userNameEntry = tk.Entry(self)
+        self.startButton = tk.Button(self, text="Start", command=self.on_button)
+        self.userNameEntryLabel.pack(side = "left")
+        self.userNameEntry.pack(side = "right")
+        self.startButton.pack(side = "bottom")
 
-        self.label = Label(master, text="Subject Name:")
-        self.label.pack()
+    def on_button(self):
+        userName = (self.userNameEntry.get())
+        global startFlag 
+        startFlag = True
+        self.quit()
 
-        self.greet_button = Button(master, text="Output File: ", command=self.greet)
-        self.greet_button.pack()
-
-        self.close_button = Button(master, text="Close", command=master.quit)
-        self.close_button.pack()
-
-    def greet(self):
-        print("Greetings!")
 def steady_haptic(mode,tempo,timer):
     time.sleep(5)
     ser.write(mode + CRLF)
@@ -53,8 +57,18 @@ def steady_haptic(mode,tempo,timer):
             ser.write(OFF+CRLF)
             break
 
+def playback():
+    mixer.pre_init(44100, -16, 2, 2048)
+    mixer.init()
+    mixer.music.load('/Users/nickpourazima/GitHub/he-sm/click_16bit_20sec_45bpm.wav')
+    mixer.music.play()
+    time.sleep(20)
+    # mixer.music.fadeout(10)
 #open serial
-ser = serial.Serial(SERIAL_PORT, BAUD)
+if(os.path.exists(SERIAL_PORT)):
+    ser = serial.Serial(SERIAL_PORT, BAUD)
+else:
+    print ("No serial connected...")
 hapticTestCases = {
     'H1a1': partial(steady_haptic,DISCRETE,BPM1,15),
     'H1a2': partial(steady_haptic,DISCRETE,BPM2,15),
@@ -67,11 +81,9 @@ hapticTestCases = {
 }
 
 def main():
-    #get users name
-
     #open save file
 
-    #build gui
+    #build test gui
 
     #instructions && user inputs ready key
 
@@ -79,19 +91,23 @@ def main():
 
     #run through test cases (can do random or in order)
 
-    # keys = hapticTestCases.keys()
-    # shuffle(keys)
-    # print keys
+    keys = list(hapticTestCases.keys())
+    shuffle(keys)
+    print (keys)
+    playback()
     # for key in keys:
     #     hapticTestCases[key]()
-    root = Tk()
-    my_gui = MyFirstGUI(root)
-    root.mainloop()
 
     #blank window or brief reset before next test
 
     #upon finishing, close serial
+
     #summary && output file presented
 
 if __name__ == "__main__":
-    main()
+    app = App()
+    app.mainloop()
+    if(startFlag):
+        main()
+    else:
+        print ("EXECUTION ERROR")
