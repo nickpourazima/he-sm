@@ -9,6 +9,11 @@ from functools import partial
 from random import shuffle
 from pygame import mixer
 
+#TO-DO Tomorrow
+# finish building audio, music, and dynamic tests
+# interface to FSR SW
+# integrate intermediary gui page
+
 
 #SERIAL VARS
 SERIAL_PORT = '/dev/tty.usbserial-A907CAHB'
@@ -67,8 +72,6 @@ class mainGUI(tk.Tk):
 
         frame = self.frames[cont]
         frame.tkraise()
-
-        
 class StartPage(tk.Frame):
 
     def __init__(self, parent, controller):
@@ -96,21 +99,36 @@ class InstructionPage(tk.Frame):
         tk.Frame.__init__(self, parent)
         label = tk.Label(self, text=instructions, font=LARGE_FONT)
         label.pack(pady=10,padx=10)
-
-        button1 =   tk.Button(self, text="Start Tests",
-                            command=lambda: controller.show_frame(TestPage))
+        self.myController = controller
+        button1 =   tk.Button(self, text="Agree.",
+                            command=self.advance)
         button1.pack()
-
         button2 =   tk.Button(self, text="Back to Home",
                             command=lambda: controller.show_frame(StartPage))
         button2.pack()
+
+    def advance(self):
+        global startFlag 
+        startFlag = True
+        self.myController.show_frame(TestPage)
 class TestPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        label = tk.Label(self, text="GET READY!!!", font=LARGE_FONT)
-        label.pack(pady=10,padx=10)
-        global startFlag 
-        startFlag = True
+        self.label = tk.Label(self, text="GET READY!!!", font=LARGE_FONT)
+        self.label.pack(pady=10,padx=10)
+        self.flash()
+
+        button1 = tk.Button(self,text="START",command=self.end)
+        button1.pack()
+
+    def flash(self):
+        bg = self.label.cget("background")
+        fg = self.label.cget("foreground")
+        self.label.configure(background=fg, foreground=bg)
+        self.after(500, self.flash)
+
+    def end(self):
+        self.quit()
 
 def steady_haptic(mode,tempo,timer):
     time.sleep(5)
@@ -127,6 +145,7 @@ def steady_haptic(mode,tempo,timer):
         if(end-start >= timer):
             ser.write(OFF+CRLF)
             break
+    playBeep()
 
 def playback(audio_file):
     mixer.pre_init(44100, -16, 2, 2048)
@@ -149,6 +168,7 @@ def playBeep():
     while mixer.music.get_busy():
         pass
     print ("Starting...")
+
 #open serial
 if(os.path.exists(SERIAL_PORT)):
     ser = serial.Serial(SERIAL_PORT, BAUD)
@@ -177,14 +197,6 @@ audioTestCases = {
     'A1b4': partial(playback,audioFile[3]),
 }
 def main():
-    #gather user info
-
-    #open file for saving
-
-    #build test gui
-
-    #instructions && user inputs ready key
-
     #practice mode
 
     #run through test cases (can do random or in order)
@@ -209,10 +221,6 @@ def main():
     #summary && output file presented
 
 if __name__ == "__main__":
-    # app = simpleapp_tk(None)
-    # app.title('Test Suite')
-    # app.mainloop()
-
     app = mainGUI()
     app.title("Audible & Haptic Test Suite (Author: Nick Pourazima - CMU 18')")
     app.mainloop()
@@ -220,4 +228,4 @@ if __name__ == "__main__":
     if(startFlag):
         main()
     else:
-        print ("EXECUTION ERROR")
+        print ("Didn't run main()")
