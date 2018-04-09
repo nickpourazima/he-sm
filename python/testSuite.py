@@ -5,9 +5,17 @@ import serial
 import time
 import os
 import tkinter as tk
+
 from functools import partial
 from random import shuffle
 from pygame import mixer
+
+# import threading
+# import os.path
+# from tkinter import filedialog,messagebox
+# import platform
+# import sys
+
 
 #TO-DO Tomorrow
 # finish building audio, music, and dynamic tests
@@ -16,8 +24,12 @@ from pygame import mixer
 
 
 #SERIAL VARS
-SERIAL_PORT = '/dev/tty.usbserial-A907CAHB'
-BAUD = 115200
+# TAP_SERIAL_PORT = '/dev/tty.usbmodem1421'
+# TAP_BAUD = 9600
+# MAX_LINES = 42
+
+HAPTIC_SERIAL_PORT = '/dev/tty.usbserial-A907CAHB'
+HAPTIC_BAUD = 115200
 
 #TEMPO INFO
 BPM1 = '45'
@@ -100,7 +112,7 @@ class InstructionPage(tk.Frame):
         label = tk.Label(self, text=instructions, font=LARGE_FONT)
         label.pack(pady=10,padx=10)
         self.myController = controller
-        button1 =   tk.Button(self, text="Agree.",
+        button1 =   tk.Button(self, text="Accept",
                             command=self.advance)
         button1.pack()
         button2 =   tk.Button(self, text="Back to Home",
@@ -114,11 +126,11 @@ class InstructionPage(tk.Frame):
 class TestPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        self.label = tk.Label(self, text="GET READY!!!", font=LARGE_FONT)
+        self.label = tk.Label(self, text="Setup output file", font=LARGE_FONT)
         self.label.pack(pady=10,padx=10)
         self.flash()
 
-        button1 = tk.Button(self,text="START",command=self.end)
+        button1 = tk.Button(self,text="Okay",command=self.end)
         button1.pack()
 
     def flash(self):
@@ -129,6 +141,7 @@ class TestPage(tk.Frame):
 
     def end(self):
         self.quit()
+        os.system("python2.7 python/captureGui.py")
 
 def steady_haptic(mode,tempo,timer):
     time.sleep(5)
@@ -170,8 +183,8 @@ def playBeep():
     print ("Starting...")
 
 #open serial
-if(os.path.exists(SERIAL_PORT)):
-    ser = serial.Serial(SERIAL_PORT, BAUD)
+if(os.path.exists(HAPTIC_SERIAL_PORT)):
+    ser = serial.Serial(HAPTIC_SERIAL_PORT, HAPTIC_BAUD)
 else:
     print ("No serial connected...")
 
