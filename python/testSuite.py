@@ -9,8 +9,8 @@ import tkinter as tk
 from functools import partial
 from random import shuffle
 from pygame import mixer
-
-# import threading
+# from multiprocessing import Process
+import threading
 # import os.path
 # from tkinter import filedialog,messagebox
 # import platform
@@ -24,9 +24,9 @@ from pygame import mixer
 
 
 #SERIAL VARS
-# TAP_SERIAL_PORT = '/dev/tty.usbmodem1421'
-# TAP_BAUD = 9600
-# MAX_LINES = 42
+TAP_SERIAL_PORT = '/dev/tty.usbmodem1421'
+TAP_BAUD = 9600
+TIMEOUT = 0.25
 
 HAPTIC_SERIAL_PORT = '/dev/tty.usbserial-A907CAHB'
 HAPTIC_BAUD = 115200
@@ -43,6 +43,9 @@ DISCRETE = '1'
 CONTINOUS = '2'
 CRLF = '\r\n'
 startFlag = False
+closeFile = False
+
+PACKET_LENGTH = 8
 
 audioFile =[
     '/Users/nickpourazima/GitHub/he-sm/click_44.1_16bit_20sec_45bpm.wav',
@@ -54,6 +57,14 @@ audioFile =[
 userName = ""
 instructions = "You will first do this and then this. Then there will be a break where you put this on so you can do that. Got it?"
 LARGE_FONT= ("Verdana", 12)
+
+#open serial
+if(os.path.exists(HAPTIC_SERIAL_PORT)):
+    hapticSerial = serial.Serial(HAPTIC_SERIAL_PORT, HAPTIC_BAUD)
+if(os.path.exists(TAP_SERIAL_PORT)):
+    tapSerial = serial.Serial(TAP_SERIAL_PORT,TAP_BAUD,timeout=TIMEOUT)
+else:
+    print ("No serial connected...")
 
 
 class mainGUI(tk.Tk):
@@ -105,6 +116,7 @@ class StartPage(tk.Frame):
         global userName
         userName = (self.name.get())
         self.myController.show_frame(InstructionPage)
+
 class InstructionPage(tk.Frame):
 
     def __init__(self, parent, controller):
@@ -123,14 +135,14 @@ class InstructionPage(tk.Frame):
         global startFlag 
         startFlag = True
         self.myController.show_frame(TestPage)
+
 class TestPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.label = tk.Label(self, text="Setup output file", font=LARGE_FONT)
         self.label.pack(pady=10,padx=10)
-        self.flash()
-
-        button1 = tk.Button(self,text="Okay",command=self.end)
+        # self.flash()
+        button1 = tk.Button(self,text="Okay",command=self.quit)
         button1.pack()
 
     def flash(self):
@@ -139,25 +151,26 @@ class TestPage(tk.Frame):
         self.label.configure(background=fg, foreground=bg)
         self.after(500, self.flash)
 
-    def end(self):
-        self.quit()
-        os.system("python2.7 python/captureGui.py")
+        # os.system("python2.7 python/captureGui.py")
 
 def steady_haptic(mode,tempo,timer):
     time.sleep(5)
-    ser.write(mode + CRLF)
-    ser.write(tempo + CRLF)
+    hapticSerial.write((mode + CRLF).encode())
+    hapticSerial.write((tempo + CRLF).encode())
     start = time.time()
     while True:
-        reading = ser.readline().decode('utf-8')
+        reading = hapticSerial.readline().decode('utf-8')
         print(reading)
         end = time.time()
         elapsed = end - start
-        ser.flush()
+        hapticSerial.flush()
         print(elapsed)
         if(end-start >= timer):
-            ser.write(OFF+CRLF)
+            hapticSerial.write((OFF+CRLF).encode())
+            global closeFile 
+            closeFile = True
             break
+    print(closeFile)
     playBeep()
 
 def playback(audio_file):
@@ -173,6 +186,7 @@ def playback(audio_file):
 
 def playBeep():
     print ("Prepare for next test in 3 seconds")
+    mixer.pre_init(44100, -16, 2, 2048)
     mixer.init()
     mixer.music.load(audioFile[4])
     mixer.music.set_volume(0.1)
@@ -182,11 +196,61 @@ def playBeep():
         pass
     print ("Starting...")
 
-#open serial
-if(os.path.exists(HAPTIC_SERIAL_PORT)):
-    ser = serial.Serial(HAPTIC_SERIAL_PORT, HAPTIC_BAUD)
-else:
-    print ("No serial connected...")
+def interpret_output_discrete(r):
+
+    # Interpret the raw (binary) output that we got from Arduino.
+
+    #Packet
+    #|---------+---+---------+----------+-------------+---|
+    #| Byte    | 1 | 2,3     | 4,5      | 6,7         | 8 |
+    #| Content | B | [onset] | [offset] | [max force] | E |
+    #|---------+---+---------+----------+-------------+---|
+    
+    #Where [t] = N for oNset, F for oFfset
+    #and [time] is the timestamp (in msec)
+
+
+    # Here we interpret the packet that we received from Arduino.
+    # Note that the first element of the packet (B in our case) has been omitted here.
+    tap_onset  = ord(r[0])+256*ord(r[1])
+    tap_offset = ord(r[2])+256*ord(r[3])
+    maxforce   = ord(r[4])+256*ord(r[5])
+    
+    # Make a formatted output
+    output = "%i %i %i"%(tap_onset,tap_offset,maxforce)
+    print (output)
+
+    return output
+
+def getTap():
+    filename = (userName+time.asctime()) # get the filename we are supposed to output to
+    dumpfile = open(filename,'w')
+    output_header = "onset offset maxforce"
+    dumpfile.write(output_header+"\n")
+    while True:
+        # Ok, let's read one byte
+        r = tapSerial.read(1)
+        # print(r)
+        if bytes.decode(r)=="B": # This could be the beginning of a packet from arduino
+            print("reading packet")
+            avail=0 # how many bytes are available
+            while avail<PACKET_LENGTH-1: # read to fill up the packet
+                avail=tapSerial.inWaiting()
+
+            # all right, now we can read
+            r = tapSerial.read(PACKET_LENGTH-1) # read the whole packet straight away
+            s = str(r,'latin-1')
+            # print(s)
+            # Now continue to work with this
+            if len(s)==(PACKET_LENGTH-1) and s[-1]=="E": # if we have the correct ending also
+                print("about to write packet")
+                output = interpret_output_discrete(s)
+                dumpfile.write(output+"\n")
+                dumpfile.flush()
+                print("WRITTEN")
+        if closeFile:
+            break
+
 
 hapticTestCases = {
     'H1a1': partial(steady_haptic,DISCRETE,BPM1,15),
@@ -198,7 +262,16 @@ hapticTestCases = {
     'H1b3': partial(steady_haptic,CONTINOUS,BPM3,15),
     'H1b4': partial(steady_haptic,CONTINOUS,BPM4,15)
 }
-
+# hapticTestCases = {
+#     'H1a1': partial(steady_haptic,DISCRETE,BPM1,15),
+#     'H1a2': partial(steady_haptic,DISCRETE,BPM2,15),
+#     'H1a3': partial(steady_haptic,DISCRETE,BPM3,15),
+#     'H1a4': partial(steady_haptic,DISCRETE,BPM4,15),
+#     'H1b1': partial(steady_haptic,CONTINOUS,BPM1,15),
+#     'H1b2': partial(steady_haptic,CONTINOUS,BPM2,15),
+#     'H1b3': partial(steady_haptic,CONTINOUS,BPM3,15),
+#     'H1b4': partial(steady_haptic,CONTINOUS,BPM4,15)
+# }
 audioTestCases = {
     'A1a1': partial(playback,audioFile[0]),
     'A1a2': partial(playback,audioFile[1]),
@@ -209,24 +282,31 @@ audioTestCases = {
     'A1b3': partial(playback,audioFile[2]),
     'A1b4': partial(playback,audioFile[3]),
 }
+
 def main():
     #practice mode
 
     #run through test cases (can do random or in order)
 
-    hapticKeys = list(hapticTestCases.keys())
-    shuffle(hapticKeys)
-    print (hapticKeys)
+    # hapticKeys = list(hapticTestCases.keys())
+    # shuffle(hapticKeys)
+    # print (hapticKeys)
+
     # for key in hapticKeys:
     #     hapticTestCases[key]()
     
-    audioKeys = list(audioTestCases.keys())
-    shuffle(audioKeys)
-    print (audioKeys)
+    # audioKeys = list(audioTestCases.keys())
+    # shuffle(audioKeys)
+    # print (audioKeys)
     # for key in audioKeys:
     #     audioTestCases[key]()
 
-    print (userName)
+    p1 = threading.Thread(target = steady_haptic,args = (DISCRETE,BPM1,15))
+    p2 = threading.Thread(target = getTap)
+    p1.start()
+    p2.start()
+
+    # print (userName)
     #blank window or brief reset before next test
 
     #upon finishing, close serial
@@ -237,8 +317,8 @@ if __name__ == "__main__":
     app = mainGUI()
     app.title("Audible & Haptic Test Suite (Author: Nick Pourazima - CMU 18')")
     app.mainloop()
-    
     if(startFlag):
         main()
     else:
-        print ("Didn't run main()")
+        "Didn't work"
+    
