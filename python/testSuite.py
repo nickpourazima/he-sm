@@ -10,7 +10,7 @@ from functools import partial
 from random import shuffle
 from pygame import mixer
 # from multiprocessing import Process
-import threading
+from threading import Thread
 # import os.path
 # from tkinter import filedialog,messagebox
 # import platform
@@ -44,6 +44,7 @@ CONTINOUS = '2'
 CRLF = '\r\n'
 startFlag = False
 closeFile = False
+fileNumber = 0
 
 PACKET_LENGTH = 8
 
@@ -154,7 +155,8 @@ class TestPage(tk.Frame):
         # os.system("python2.7 python/captureGui.py")
 
 def steady_haptic(mode,tempo,timer):
-    time.sleep(5)
+    playBeep()
+    # time.sleep(5)
     hapticSerial.write((mode + CRLF).encode())
     hapticSerial.write((tempo + CRLF).encode())
     start = time.time()
@@ -174,7 +176,8 @@ def steady_haptic(mode,tempo,timer):
     playBeep()
 
 def playback(audio_file):
-    mixer.pre_init(44100, -16, 2, 2048)
+    playBeep()
+    # mixer.pre_init(44100, -16, 2, 2048)
     mixer.init()
     mixer.music.load(audio_file)
     mixer.music.set_volume(0.3)
@@ -223,7 +226,9 @@ def interpret_output_discrete(r):
     return output
 
 def getTap():
-    filename = (userName+time.asctime()) # get the filename we are supposed to output to
+    global closeFile
+    global fileNumber
+    filename = (userName+' '+str(fileNumber)+' '+time.asctime()) # get the filename we are supposed to output to
     dumpfile = open(filename,'w')
     output_header = "onset offset maxforce"
     dumpfile.write(output_header+"\n")
@@ -232,7 +237,6 @@ def getTap():
         r = tapSerial.read(1)
         # print(r)
         if bytes.decode(r)=="B": # This could be the beginning of a packet from arduino
-            print("reading packet")
             avail=0 # how many bytes are available
             while avail<PACKET_LENGTH-1: # read to fill up the packet
                 avail=tapSerial.inWaiting()
@@ -243,70 +247,66 @@ def getTap():
             # print(s)
             # Now continue to work with this
             if len(s)==(PACKET_LENGTH-1) and s[-1]=="E": # if we have the correct ending also
-                print("about to write packet")
                 output = interpret_output_discrete(s)
                 dumpfile.write(output+"\n")
                 dumpfile.flush()
-                print("WRITTEN")
         if closeFile:
+            closeFile = False
+            fileNumber+=1
             break
 
 
 hapticTestCases = {
-    'H1a1': partial(steady_haptic,DISCRETE,BPM1,15),
-    'H1a2': partial(steady_haptic,DISCRETE,BPM2,15),
-    'H1a3': partial(steady_haptic,DISCRETE,BPM3,15),
-    'H1a4': partial(steady_haptic,DISCRETE,BPM4,15),
-    'H1b1': partial(steady_haptic,CONTINOUS,BPM1,15),
-    'H1b2': partial(steady_haptic,CONTINOUS,BPM2,15),
-    'H1b3': partial(steady_haptic,CONTINOUS,BPM3,15),
-    'H1b4': partial(steady_haptic,CONTINOUS,BPM4,15)
+    'H1a1': (DISCRETE,BPM1,15),
+    'H1a2': (DISCRETE,BPM2,15),
+    'H1a3': (DISCRETE,BPM3,15),
+    'H1a4': (DISCRETE,BPM4,15),
+    'H1b1': (CONTINOUS,BPM1,15),
+    'H1b2': (CONTINOUS,BPM2,15),
+    'H1b3': (CONTINOUS,BPM3,15),
+    'H1b4': (CONTINOUS,BPM4,15)
 }
-# hapticTestCases = {
-#     'H1a1': partial(steady_haptic,DISCRETE,BPM1,15),
-#     'H1a2': partial(steady_haptic,DISCRETE,BPM2,15),
-#     'H1a3': partial(steady_haptic,DISCRETE,BPM3,15),
-#     'H1a4': partial(steady_haptic,DISCRETE,BPM4,15),
-#     'H1b1': partial(steady_haptic,CONTINOUS,BPM1,15),
-#     'H1b2': partial(steady_haptic,CONTINOUS,BPM2,15),
-#     'H1b3': partial(steady_haptic,CONTINOUS,BPM3,15),
-#     'H1b4': partial(steady_haptic,CONTINOUS,BPM4,15)
-# }
 audioTestCases = {
-    'A1a1': partial(playback,audioFile[0]),
-    'A1a2': partial(playback,audioFile[1]),
-    'A1a3': partial(playback,audioFile[2]),
-    'A1a4': partial(playback,audioFile[3]),
-    'A1b1': partial(playback,audioFile[0]),
-    'A1b2': partial(playback,audioFile[1]),
-    'A1b3': partial(playback,audioFile[2]),
-    'A1b4': partial(playback,audioFile[3]),
+    'A1a1': (audioFile[0]),
+    'A1a2': (audioFile[1]),
+    'A1a3': (audioFile[2]),
+    'A1a4': (audioFile[3]),
+    'A1b1': (audioFile[0]),
+    'A1b2': (audioFile[1]),
+    'A1b3': (audioFile[2]),
+    'A1b4': (audioFile[3])
 }
 
 def main():
     #practice mode
 
-    #run through test cases (can do random or in order)
+    #run through test cases (randomly)
 
-    # hapticKeys = list(hapticTestCases.keys())
-    # shuffle(hapticKeys)
-    # print (hapticKeys)
+    hapticKeys = list(hapticTestCases.keys())
+    shuffle(hapticKeys)
+    print (hapticKeys)
 
-    # for key in hapticKeys:
-    #     hapticTestCases[key]()
-    
-    # audioKeys = list(audioTestCases.keys())
-    # shuffle(audioKeys)
-    # print (audioKeys)
-    # for key in audioKeys:
-    #     audioTestCases[key]()
+    for key in hapticKeys:
+        t1 = Thread(target = steady_haptic, args = hapticTestCases.get(key))
+        t2 = Thread(target= getTap)
+        t1.start()
+        t2.start()
+        t1.join()
+        t2.join()
 
-    p1 = threading.Thread(target = steady_haptic,args = (DISCRETE,BPM1,15))
-    p2 = threading.Thread(target = getTap)
-    p1.start()
-    p2.start()
+    audioKeys = list(audioTestCases.keys())
+    shuffle(audioKeys)
+    print (audioKeys)
 
-    # print (userName)
+    for key in audioKeys:
+        t1 = Thread(target = playback, args = audioTestCases.get(key))
+        t2 = Thread(target= getTap)
+        t1.start()
+        t2.start()
+        t1.join()
+        t2.join()
+
+    print("FIN")
     #blank window or brief reset before next test
 
     #upon finishing, close serial
@@ -320,5 +320,5 @@ if __name__ == "__main__":
     if(startFlag):
         main()
     else:
-        "Didn't work"
+        "Main was not run, please debug"
     
