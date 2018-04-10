@@ -19,9 +19,13 @@ from threading import Thread
 
 #TO-DO Tomorrow
 # finish building audio, music, and dynamic tests
-# interface to FSR SW
-# integrate intermediary gui page
+# integrate intermediary gui page, flashing countdown in sync with audio?
+# save files by test name
 
+#LOW PRIORITY
+#instruction verbiage
+#comments/clean up code
+#captureGUI to 3.6 pull request
 
 #SERIAL VARS
 TAP_SERIAL_PORT = '/dev/tty.usbmodem1421'
