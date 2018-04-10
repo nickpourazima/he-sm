@@ -9,24 +9,14 @@
 #
 #
 
-
-
-
-
 import threading
 
 import os.path 
 
-
-import Tkinter 
-import tkFileDialog
-from Tkinter import *
-from tkFileDialog import asksaveasfilename
-
-import tkMessageBox
-
-
-from FileDialog import LoadFileDialog, SaveFileDialog
+import tkinter
+from tkinter import *
+from tkinter import filedialog, messagebox
+from tkinter.filedialog import asksaveasfilename,LoadFileDialog,SaveFileDialog
 
 import platform
 import os
@@ -38,8 +28,8 @@ try:
     import serial
 except:
     msg = "An error occurred while importing the pySerial module.\n\nGo to https://pypi.python.org/pypi/pyserial to install the module,\nor refer to our manual for help.\n\nThe program will now quit."
-    print msg
-    tkMessageBox.showinfo("Error importing pySerial", msg)
+    print (msg)
+    messagebox.showinfo("Error importing pySerial", msg)
     sys.exit(-1)
 
 
@@ -48,14 +38,9 @@ baudrate_discrete   = 9600    # for the discrete data setting (load the correspo
 baudrate_continuous = 115200  # for the continuous data setting (load the corresponding Arduino script)
 
 
-
-
-
-
 ## The maximum number of lines to remain in the GUI text area
 ## (this prevents errors due to keeping all lines in memory)
 MAX_LINES = 42
-
 
 
 class Reporter:
@@ -70,11 +55,11 @@ class Reporter:
         if not self.lock:
             self.lock = True
             #print "Reporting",message
-            self.text.insert(Tkinter.END,message)
+            self.text.insert(tkinter.END,message)
 
             #numlines = int(self.text.index('end - 1 line').split('.')[0])
             #numlines = int(self.text.index('end').split('.')[0]) - 1
-            numlines = self.text.get("1.0", Tkinter.END).count("\n")
+            numlines = self.text.get("1.0", tkinter.END).count("\n")
             #print numlines
             #log['state'] = 'normal'
             if numlines>MAX_LINES:
@@ -82,7 +67,7 @@ class Reporter:
                 #self.text.delete(1.0, "%i.0"%(MAX_LINES-numlines+1))
                 self.text.delete("1.0", "2.0")
 
-            self.text.see(Tkinter.END)
+            self.text.see(tkinter.END)
             self.lock= False
 
     def settextreceiver(self,textreceiver):
@@ -222,7 +207,7 @@ def askSaveFile():
     global fileS
     global reporter
 
-    filename = asksaveasfilename(parent=root,
+    filename = filedialog.asksaveasfilename(parent=root,
                                  defaultextension=".txt",
                                  initialfile=fileS.get(),
                                  filetypes=[("text files","*.txt"),
@@ -280,7 +265,7 @@ def runCapture():
        
     if os.path.isfile(filename):
         reporter.report("Output file previously existed! If we continue, we will overwrite all data in it.\n")
-        if not tkMessageBox.askyesno('Confirm overwriting data file', 'The data file you have selected for output already exists.\nIf we proceed, all data currently in the file will be erased.\n\nAre you sure that you want to continue?'):
+        if not messagebox.askyesno('Confirm overwriting data file', 'The data file you have selected for output already exists.\nIf we proceed, all data currently in the file will be erased.\n\nAre you sure that you want to continue?'):
             reporter.report("Capture aborted because the user does not want to overwrite the data file.\n")
             stopCapture()
             return -1
@@ -304,7 +289,7 @@ def runCapture():
         # Ok, let's read one byte
         r = comm.read(1)
 
-        if r=="B": # This could be the beginning of a packet from arduino
+        if bytes.decode(r)=="B": # This could be the beginning of a packet from arduino
 
             avail=0 # how many bytes are available
             while avail<PACKET_LENGTH-1: # read to fill up the packet
@@ -312,11 +297,11 @@ def runCapture():
 
             # all right, now we can read
             r = comm.read(PACKET_LENGTH-1) # read the whole packet straight away
-
+            s = str(r,'latin-1')
             # Now continue to work with this
-            if len(r)==(PACKET_LENGTH-1) and r[-1]=="E": # if we have the correct ending also
+            if len(s)==(PACKET_LENGTH-1) and s[-1]=="E": # if we have the correct ending also
 
-                output = interpret_output(r)
+                output = interpret_output(s)
                 dumpfile.write(output+"\n")
                 dumpfile.flush()
 
@@ -401,7 +386,7 @@ def build_gui():
     global keepGoingB # keep track of whether we're still capturing
     global root
 
-    root =Tk()
+    root = Tk()
     root.title('Tap-Arduino Capture GUI (Ben Schultz & Floris van Vugt)')
 
     usbS       = StringVar()
