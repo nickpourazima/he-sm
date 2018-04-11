@@ -18,14 +18,15 @@ import sys
 
 
 #TO-DO Tomorrow
-# finish building audio, music, and dynamic tests
+# finish building dynamic tests
 # integrate intermediary gui page, flashing countdown in sync with audio?
-# save files by test name
+# time stamp functions save to output or print for IOI data
+# can pipe terminal to txt as other reference
 
 #LOW PRIORITY
 #instruction verbiage
 #comments/clean up code
-#captureGUI to 3.6 pull request
+#captureGUI to 3.6 pull request --> not  a priority
 
 #SERIAL VARS
 TAP_SERIAL_PORT = '/dev/tty.usbmodem1421'
