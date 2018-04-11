@@ -14,7 +14,7 @@ from threading import Thread
 # import os.path
 # from tkinter import filedialog,messagebox
 # import platform
-# import sys
+import sys
 
 
 #TO-DO Tomorrow
@@ -48,28 +48,40 @@ CONTINOUS = '2'
 CRLF = '\r\n'
 startFlag = False
 closeFile = False
-fileNumber = 0
+t0 = ''
 
 PACKET_LENGTH = 8
 
 audioFile =[
-    '/Users/nickpourazima/GitHub/he-sm/click_44.1_16bit_20sec_45bpm.wav',
-    '/Users/nickpourazima/GitHub/he-sm/click_44.1_16bit_20sec_90bpm.wav',
-    '/Users/nickpourazima/GitHub/he-sm/click_44.1_16bit_20sec_135bpm.wav',
-    '/Users/nickpourazima/GitHub/he-sm/click_44.1_16bit_20sec_180bpm.wav',
-    '/Users/nickpourazima/GitHub/he-sm/beep-11.wav'
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/click_44.1_16bit_20sec_45bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/click_44.1_16bit_20sec_90bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/click_44.1_16bit_20sec_135bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/click_44.1_16bit_20sec_180bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/swing_click_44.1_16bit_30sec_45bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/swing_click_44.1_16bit_30sec_90bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/swing_click_44.1_16bit_30sec_135bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/swing_click_44.1_16bit_30sec_180bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/staccato_44.1_16bit_32sec_45bpm',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/staccato_44.1_16bit_16sec_90bpm',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/staccato_44.1_16bit_11sec_135bpm',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/staccato_44.1_16bit_8sec_180bpm',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/cres_f_decres_mp_44.1_16bit_32sec_45bpm',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/cres_f_decres_mp_44.1_16bit_16sec_90bpm',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/cres_f_decres_mp_44.1_16bit_11sec_135bpm',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/cres_f_decres_mp_44.1_16bit_8sec_180bpm',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/beep-11.wav'
 ]
 userName = ""
 instructions = "You will first do this and then this. Then there will be a break where you put this on so you can do that. Got it?"
 LARGE_FONT= ("Verdana", 12)
 
 #open serial
-if(os.path.exists(HAPTIC_SERIAL_PORT)):
+if(os.path.exists(HAPTIC_SERIAL_PORT) and os.path.exists(TAP_SERIAL_PORT)):
     hapticSerial = serial.Serial(HAPTIC_SERIAL_PORT, HAPTIC_BAUD)
-if(os.path.exists(TAP_SERIAL_PORT)):
     tapSerial = serial.Serial(TAP_SERIAL_PORT,TAP_BAUD,timeout=TIMEOUT)
 else:
     print ("No serial connected...")
+    sys.exit()
 
 
 class mainGUI(tk.Tk):
@@ -144,10 +156,10 @@ class InstructionPage(tk.Frame):
 class TestPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        self.label = tk.Label(self, text="Setup output file", font=LARGE_FONT)
+        self.label = tk.Label(self, text="GET READY", font=LARGE_FONT)
         self.label.pack(pady=10,padx=10)
         # self.flash()
-        button1 = tk.Button(self,text="Okay",command=self.quit)
+        button1 = tk.Button(self,text="Start",command=self.quit)
         button1.pack()
 
     def flash(self):
@@ -155,8 +167,6 @@ class TestPage(tk.Frame):
         fg = self.label.cget("foreground")
         self.label.configure(background=fg, foreground=bg)
         self.after(500, self.flash)
-
-        # os.system("python2.7 python/captureGui.py")
 
 def steady_haptic(mode,tempo,timer):
     playBeep()
@@ -189,13 +199,14 @@ def playback(audio_file):
     mixer.music.fadeout(20500)
     while mixer.music.get_busy():
         pass
+    global closeFile
+    closeFile = True
     playBeep()
 
 def playBeep():
-    print ("Prepare for next test in 3 seconds")
     mixer.pre_init(44100, -16, 2, 2048)
     mixer.init()
-    mixer.music.load(audioFile[4])
+    mixer.music.load(audioFile[16])
     mixer.music.set_volume(0.1)
     mixer.music.play()
     mixer.music.fadeout(3000)
@@ -231,9 +242,13 @@ def interpret_output_discrete(r):
 
 def getTap():
     global closeFile
-    global fileNumber
-    filename = (userName+' '+str(fileNumber)+' '+time.asctime()) # get the filename we are supposed to output to
-    dumpfile = open(filename,'w')
+    if not (os.path.isdir('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)):
+        os.makedirs('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)
+    currentPath = '/Users/nickpourazima/GitHub/he-sm/TestOutput/'+str(userName)
+    filename = (userName+' '+t0+' '+time.asctime()) # get the filename we are supposed to output to
+    completeName = os.path.join(currentPath,filename)
+    print (completeName)
+    dumpfile = open(completeName,'w')
     output_header = "onset offset maxforce"
     dumpfile.write(output_header+"\n")
     while True:
@@ -256,7 +271,6 @@ def getTap():
                 dumpfile.flush()
         if closeFile:
             closeFile = False
-            fileNumber+=1
             break
 
 
@@ -271,26 +285,34 @@ hapticTestCases = {
     'H1b4': (CONTINOUS,BPM4,15)
 }
 audioTestCases = {
-    'A1a1': (audioFile[0]),
-    'A1a2': (audioFile[1]),
-    'A1a3': (audioFile[2]),
-    'A1a4': (audioFile[3]),
-    'A1b1': (audioFile[0]),
-    'A1b2': (audioFile[1]),
-    'A1b3': (audioFile[2]),
-    'A1b4': (audioFile[3])
+    'A1a1': audioFile[0],
+    'A1a2': audioFile[1],
+    'A1a3': audioFile[2],
+    'A1a4': audioFile[3],
+    'A1b1': audioFile[4],
+    'A1b2': audioFile[5],
+    'A1b3': audioFile[6],
+    'A1b4': audioFile[7],
+    'A2a1': audioFile[8],
+    'A2a2': audioFile[9],
+    'A2a3': audioFile[10],
+    'A2a4': audioFile[11],
+    'A2b1': audioFile[12],
+    'A2b2': audioFile[13],
+    'A2b3': audioFile[14],
+    'A2b4': audioFile[15]
 }
 
 def main():
     #practice mode
-
+    global t0
     #run through test cases (randomly)
-
     hapticKeys = list(hapticTestCases.keys())
     shuffle(hapticKeys)
     print (hapticKeys)
 
     for key in hapticKeys:
+        t0  = key
         t1 = Thread(target = steady_haptic, args = hapticTestCases.get(key))
         t2 = Thread(target= getTap)
         t1.start()
@@ -303,7 +325,9 @@ def main():
     print (audioKeys)
 
     for key in audioKeys:
-        t1 = Thread(target = playback, args = audioTestCases.get(key))
+        print (audioTestCases.get(key))
+        t0 = key
+        t1 = Thread(target = playback, args = [audioTestCases.get(key)])
         t2 = Thread(target= getTap)
         t1.start()
         t2.start()
