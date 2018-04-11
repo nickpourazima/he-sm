@@ -18,14 +18,15 @@ import sys
 
 
 #TO-DO Tomorrow
+# look into A2b's not playing back, might need to re-bounce
 # finish building dynamic tests
-# integrate intermediary gui page, flashing countdown in sync with audio?
 # time stamp functions save to output or print for IOI data
 # can pipe terminal to txt as other reference
 
 #LOW PRIORITY
 #instruction verbiage
 #comments/clean up code
+# integrate intermediary gui page, flashing countdown in sync with audio?
 #captureGUI to 3.6 pull request --> not  a priority
 
 #SERIAL VARS
@@ -171,7 +172,7 @@ class TestPage(tk.Frame):
 
 def steady_haptic(mode,tempo,timer):
     playBeep()
-    # time.sleep(5)
+    time.sleep(1)
     hapticSerial.write((mode + CRLF).encode())
     hapticSerial.write((tempo + CRLF).encode())
     start = time.time()
@@ -184,25 +185,27 @@ def steady_haptic(mode,tempo,timer):
         print(elapsed)
         if(end-start >= timer):
             hapticSerial.write((OFF+CRLF).encode())
-            global closeFile 
-            closeFile = True
             break
-    print(closeFile)
-    playBeep()
+    global closeFile 
+    closeFile = True
+    time.sleep(1)
+    # playBeep()
 
 def playback(audio_file):
     playBeep()
-    # mixer.pre_init(44100, -16, 2, 2048)
+    time.sleep(1)
+    mixer.pre_init(44100, -16, 2, 2048)
     mixer.init()
     mixer.music.load(audio_file)
-    mixer.music.set_volume(0.3)
+    mixer.music.set_volume(0.4)
     mixer.music.play()
-    mixer.music.fadeout(20500)
+    # mixer.music.fadeout(20500)
     while mixer.music.get_busy():
         pass
     global closeFile
     closeFile = True
-    playBeep()
+    time.sleep(1)
+    # playBeep()
 
 def playBeep():
     mixer.pre_init(44100, -16, 2, 2048)
@@ -210,7 +213,7 @@ def playBeep():
     mixer.music.load(audioFile[16])
     mixer.music.set_volume(0.1)
     mixer.music.play()
-    mixer.music.fadeout(3000)
+    mixer.music.fadeout(5000)
     while mixer.music.get_busy():
         pass
     print ("Starting...")
@@ -308,32 +311,34 @@ def main():
     #practice mode
     global t0
     #run through test cases (randomly)
-    hapticKeys = list(hapticTestCases.keys())
-    shuffle(hapticKeys)
-    print (hapticKeys)
+    # hapticKeys = list(hapticTestCases.keys())
+    # shuffle(hapticKeys)
+    # print (hapticKeys)
 
-    for key in hapticKeys:
-        t0  = key
-        t1 = Thread(target = steady_haptic, args = hapticTestCases.get(key))
-        t2 = Thread(target= getTap)
-        t1.start()
-        t2.start()
-        t1.join()
-        t2.join()
+    # for key in hapticKeys:
+    #     t0  = key
+    #     t1 = Thread(target = steady_haptic, args = hapticTestCases.get(key))
+    #     t2 = Thread(target= getTap)
+    #     t1.start()
+    #     t2.start()
+    #     t1.join()
+    #     t2.join()
 
     audioKeys = list(audioTestCases.keys())
     shuffle(audioKeys)
     print (audioKeys)
 
-    for key in audioKeys:
-        print (audioTestCases.get(key))
-        t0 = key
-        t1 = Thread(target = playback, args = [audioTestCases.get(key)])
-        t2 = Thread(target= getTap)
-        t1.start()
-        t2.start()
-        t1.join()
-        t2.join()
+    # for key in audioKeys:
+    #     print (audioTestCases.get(key))
+    #     t0 = key
+    #     t1 = Thread(target = playback, args = [audioTestCases.get(key)])
+    #     t2 = Thread(target= getTap)
+    #     t1.start()
+    #     t2.start()
+    #     t1.join()
+    #     t2.join()
+    for x in audioFile:
+        playback(x)
 
     print("FIN")
     #blank window or brief reset before next test
