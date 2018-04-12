@@ -138,8 +138,8 @@ void getBPM(){
       Serial.println("~~~~~~~~~~ CONTINOUS MODE ~~~~~~~~~");
       discrete = false;
     } 
-    else if(incomingByte < 45 || incomingByte > 180){
-      Serial.println("Please input a BPM value greater than (or equal) to 45 and less than (or equal) to 180");
+    else if(incomingByte < 20 || incomingByte > 220){
+      Serial.println("Please input a BPM value greater than (or equal) to 20 and less than (or equal) to 220");
     }
     else{
       avg = 60000/incomingByte;

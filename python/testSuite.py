@@ -5,20 +5,13 @@ import serial
 import time
 import os
 import tkinter as tk
-
+import sys
 from functools import partial
 from random import shuffle
 from pygame import mixer
-# from multiprocessing import Process
 from threading import Thread
-# import os.path
-# from tkinter import filedialog,messagebox
-# import platform
-import sys
-
 
 #TO-DO Tomorrow
-# look into A2b's not playing back, might need to re-bounce
 # finish building dynamic tests
 # time stamp functions save to output or print for IOI data
 # can pipe terminal to txt as other reference
@@ -48,12 +41,19 @@ OFF = '0'
 DISCRETE = '1'
 CONTINOUS = '2'
 CRLF = '\r\n'
+
+#GUI VARS
+LARGE_FONT= ("Verdana", 12)
+
+#Get Tap / Write File VARS
+PACKET_LENGTH = 8
 startFlag = False
 closeFile = False
+startRead = False
 t0 = ''
+userName = ""
 
-PACKET_LENGTH = 8
-
+instructions = "You will first do this and then this. Then there will be a break where you put this on so you can do that. Got it?"
 audioFile =[
     '/Users/nickpourazima/GitHub/he-sm/AudioFiles/click_44.1_16bit_20sec_45bpm.wav',
     '/Users/nickpourazima/GitHub/he-sm/AudioFiles/click_44.1_16bit_20sec_90bpm.wav',
@@ -63,19 +63,17 @@ audioFile =[
     '/Users/nickpourazima/GitHub/he-sm/AudioFiles/swing_click_44.1_16bit_30sec_90bpm.wav',
     '/Users/nickpourazima/GitHub/he-sm/AudioFiles/swing_click_44.1_16bit_30sec_135bpm.wav',
     '/Users/nickpourazima/GitHub/he-sm/AudioFiles/swing_click_44.1_16bit_30sec_180bpm.wav',
-    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/staccato_44.1_16bit_32sec_45bpm',
-    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/staccato_44.1_16bit_16sec_90bpm',
-    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/staccato_44.1_16bit_11sec_135bpm',
-    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/staccato_44.1_16bit_8sec_180bpm',
-    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/cres_f_decres_mp_44.1_16bit_32sec_45bpm',
-    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/cres_f_decres_mp_44.1_16bit_16sec_90bpm',
-    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/cres_f_decres_mp_44.1_16bit_11sec_135bpm',
-    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/cres_f_decres_mp_44.1_16bit_8sec_180bpm',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/staccato_44.1_16bit_32sec_45bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/staccato_44.1_16bit_16sec_90bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/staccato_44.1_16bit_11sec_135bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/staccato_44.1_16bit_8sec_180bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/cres_f_decres_mp_44.1_16bit_32sec_45bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/cres_f_decres_mp_44.1_16bit_16sec_90bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/cres_f_decres_mp_44.1_16bit_11sec_135bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/cres_f_decres_mp_44.1_16bit_8sec_180bpm.wav',
     '/Users/nickpourazima/GitHub/he-sm/AudioFiles/beep-11.wav'
 ]
-userName = ""
-instructions = "You will first do this and then this. Then there will be a break where you put this on so you can do that. Got it?"
-LARGE_FONT= ("Verdana", 12)
+
 
 #open serial
 if(os.path.exists(HAPTIC_SERIAL_PORT) and os.path.exists(TAP_SERIAL_PORT)):
@@ -172,7 +170,6 @@ class TestPage(tk.Frame):
 
 def steady_haptic(mode,tempo,timer):
     playBeep()
-    time.sleep(1)
     hapticSerial.write((mode + CRLF).encode())
     hapticSerial.write((tempo + CRLF).encode())
     start = time.time()
@@ -191,9 +188,44 @@ def steady_haptic(mode,tempo,timer):
     time.sleep(1)
     # playBeep()
 
+def dynamic_haptic(mode,tempo,timer):
+    playBeep()
+    hapticSerial.write((mode + CRLF).encode())
+    hapticSerial.write((tempo + CRLF).encode())
+    newTempo = int(tempo)
+    start = time.time()
+    while True:
+        reading = hapticSerial.readline().decode('utf-8')
+        print(reading)
+        end = time.time()
+        elapsed = end - start
+        hapticSerial.flush()
+        print(elapsed)
+        if(elapsed <= timer/4):
+            newTempo = newTempo+5
+            hapticSerial.write((str(newTempo)+ CRLF).encode())
+            print('STAGE ONE: ' + newTempo)
+        elif(elapsed >= timer/4 and elapsed <= timer/2):
+            newTempo = newTempo-5
+            hapticSerial.write((str(newTempo)+ CRLF).encode())
+            print('STAGE TWO: ' + newTempo)
+        elif(elapsed >= timer/2 and elapsed <= (timer/2+timer/4)):
+            newTempo = newTempo+10
+            hapticSerial.write((str(newTempo)+ CRLF).encode())
+            print('STAGE THREE: ' + newTempo)
+        elif(elapsed >= (timer/2+timer/4) and elapsed <= timer):
+            newTempo = newTempo-10
+            hapticSerial.write((str(newTempo)+ CRLF).encode())
+            print('STAGE FOUR: ' + newTempo) 
+        else:
+            hapticSerial.write((OFF+CRLF).encode())
+            break 
+    global closeFile
+    closeFile = True
+    time.sleep(1)
+
 def playback(audio_file):
     playBeep()
-    time.sleep(1)
     mixer.pre_init(44100, -16, 2, 2048)
     mixer.init()
     mixer.music.load(audio_file)
@@ -208,6 +240,7 @@ def playback(audio_file):
     # playBeep()
 
 def playBeep():
+    global startRead
     mixer.pre_init(44100, -16, 2, 2048)
     mixer.init()
     mixer.music.load(audioFile[16])
@@ -216,6 +249,8 @@ def playBeep():
     mixer.music.fadeout(5000)
     while mixer.music.get_busy():
         pass
+    time.sleep(1)
+    startRead = True
     print ("Starting...")
 
 def interpret_output_discrete(r):
@@ -245,7 +280,7 @@ def interpret_output_discrete(r):
     return output
 
 def getTap():
-    global closeFile
+    global closeFile,startRead
     if not (os.path.isdir('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)):
         os.makedirs('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)
     currentPath = '/Users/nickpourazima/GitHub/he-sm/TestOutput/'+str(userName)
@@ -256,37 +291,47 @@ def getTap():
     output_header = "onset offset maxforce"
     dumpfile.write(output_header+"\n")
     while True:
-        # Ok, let's read one byte
-        r = tapSerial.read(1)
-        # print(r)
-        if bytes.decode(r)=="B": # This could be the beginning of a packet from arduino
-            avail=0 # how many bytes are available
-            while avail<PACKET_LENGTH-1: # read to fill up the packet
-                avail=tapSerial.inWaiting()
+        if startRead:
+            # Ok, let's read one byte
+            r = tapSerial.read(1)
+            # print(r)
+            if bytes.decode(r)=="B": # This could be the beginning of a packet from arduino
+                avail=0 # how many bytes are available
+                while avail<PACKET_LENGTH-1: # read to fill up the packet
+                    avail=tapSerial.inWaiting()
 
-            # all right, now we can read
-            r = tapSerial.read(PACKET_LENGTH-1) # read the whole packet straight away
-            s = str(r,'latin-1')
-            # print(s)
-            # Now continue to work with this
-            if len(s)==(PACKET_LENGTH-1) and s[-1]=="E": # if we have the correct ending also
-                output = interpret_output_discrete(s)
-                dumpfile.write(output+"\n")
-                dumpfile.flush()
+                # all right, now we can read
+                r = tapSerial.read(PACKET_LENGTH-1) # read the whole packet straight away
+                s = str(r,'latin-1')
+                # print(s)
+                # Now continue to work with this
+                if len(s)==(PACKET_LENGTH-1) and s[-1]=="E": # if we have the correct ending also
+                    output = interpret_output_discrete(s)
+                    dumpfile.write(output+"\n")
+                    dumpfile.flush()
         if closeFile:
             closeFile = False
+            startRead = False
             break
 
 
 hapticTestCases = {
-    'H1a1': (DISCRETE,BPM1,15),
-    'H1a2': (DISCRETE,BPM2,15),
-    'H1a3': (DISCRETE,BPM3,15),
-    'H1a4': (DISCRETE,BPM4,15),
-    'H1b1': (CONTINOUS,BPM1,15),
-    'H1b2': (CONTINOUS,BPM2,15),
-    'H1b3': (CONTINOUS,BPM3,15),
-    'H1b4': (CONTINOUS,BPM4,15)
+    'H1a1': (DISCRETE,BPM1,20),
+    'H1a2': (DISCRETE,BPM2,20),
+    'H1a3': (DISCRETE,BPM3,20),
+    'H1a4': (DISCRETE,BPM4,20),
+    'H1b1': (CONTINOUS,BPM1,20),
+    'H1b2': (CONTINOUS,BPM2,20),
+    'H1b3': (CONTINOUS,BPM3,20),
+    'H1b4': (CONTINOUS,BPM4,20),
+    'H2a1': (DISCRETE,BPM1,20),
+    'H2a2': (DISCRETE,BPM2,20),
+    'H2a3': (DISCRETE,BPM3,20),
+    'H2a4': (DISCRETE,BPM4,20),
+    'H2b1': (CONTINOUS,BPM1,20),
+    'H2b2': (CONTINOUS,BPM2,20),
+    'H2b3': (CONTINOUS,BPM3,20),
+    'H2b4': (CONTINOUS,BPM4,20)
 }
 audioTestCases = {
     'A1a1': audioFile[0],
@@ -311,36 +356,32 @@ def main():
     #practice mode
     global t0
     #run through test cases (randomly)
-    # hapticKeys = list(hapticTestCases.keys())
-    # shuffle(hapticKeys)
-    # print (hapticKeys)
-
-    # for key in hapticKeys:
-    #     t0  = key
-    #     t1 = Thread(target = steady_haptic, args = hapticTestCases.get(key))
-    #     t2 = Thread(target= getTap)
-    #     t1.start()
-    #     t2.start()
-    #     t1.join()
-    #     t2.join()
+    hapticKeys = list(hapticTestCases.keys())
+    shuffle(hapticKeys)
 
     audioKeys = list(audioTestCases.keys())
     shuffle(audioKeys)
-    print (audioKeys)
 
-    # for key in audioKeys:
-    #     print (audioTestCases.get(key))
+    allKeys = hapticKeys + audioKeys
+    shuffle(allKeys)
+    print(allKeys)
+    # for key in allKeys:
     #     t0 = key
-    #     t1 = Thread(target = playback, args = [audioTestCases.get(key)])
+    #     if(t0[:2]=='H1'):
+    #         t1 = Thread(target = steady_haptic, args = hapticTestCases.get(key))
+    #     elif(t0[:2]=='H2'):
+    #         t1 = Thread(target = dynamic_haptic, args = hapticTestCases.get(key))
+    #     elif(t0[0]=='A'):
+    #         t1 = Thread(target = playback, args = [audioTestCases.get(key)])
     #     t2 = Thread(target= getTap)
     #     t1.start()
     #     t2.start()
     #     t1.join()
     #     t2.join()
-    for x in audioFile:
-        playback(x)
 
-    print("FIN")
+    dynamic_haptic(DISCRETE,'60',30)
+
+    print("FINISHED")
     #blank window or brief reset before next test
 
     #upon finishing, close serial
