@@ -72,16 +72,16 @@ void setup() {
   }
   attachInterrupt(digitalPinToInterrupt(buttonPin), getAverage, FALLING); 
 //  digitalWrite(ledPin2,LOW);
-  Serial.println("");
-  Serial.println("");
-  Serial.println("============   READY   ============");
-  Serial.println("Input desired operation mode, '1' (discrete/instantaneous)"); 
-  Serial.println("or '2' (continous/ramp up & down) and then press ENTER:");
-  Serial.println("-----------------------------------");
-  Serial.println("Next, input desired BPM and press ENTER:");
-  Serial.println("-----------------------");
-  Serial.println("To stop the motors, input '0'");
-  Serial.println("===================================");
+  // Serial.println("");
+  // Serial.println("");
+  // Serial.println("============   READY   ============");
+  // Serial.println("Input desired operation mode, '1' (discrete/instantaneous)"); 
+  // Serial.println("or '2' (continous/ramp up & down) and then press ENTER:");
+  // Serial.println("-----------------------------------");
+  // Serial.println("Next, input desired BPM and press ENTER:");
+  // Serial.println("-----------------------");
+  // Serial.println("To stop the motors, input '0'");
+  // Serial.println("===================================");
 }
 
 void loop() {
