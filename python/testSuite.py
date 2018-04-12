@@ -12,15 +12,18 @@ from pygame import mixer
 from threading import Thread
 
 #TO-DO Tomorrow
-# finish building dynamic tests
-# time stamp functions save to output or print for IOI data
+# think about tempo write time vs. time of full interval to complete, 
+# can only change at rate equivalent to rate +1 essentially otherwise jumps in value
+# finish building dynamic audio tests
+# CRUCIAL: time stamp functions save to output or print for IOI data
 # can pipe terminal to txt as other reference
 
 #LOW PRIORITY
-#instruction verbiage
-#comments/clean up code
+# instruction verbiage
+# comments/clean up code
 # integrate intermediary gui page, flashing countdown in sync with audio?
-#captureGUI to 3.6 pull request --> not  a priority
+# captureGUI to 3.6 pull request --> not  a priorit
+# data output format
 
 #SERIAL VARS
 TAP_SERIAL_PORT = '/dev/tty.usbmodem1421'
@@ -193,8 +196,11 @@ def dynamic_haptic(mode,tempo,timer):
     hapticSerial.write((mode + CRLF).encode())
     hapticSerial.write((tempo + CRLF).encode())
     newTempo = int(tempo)
+    increment = 10
+    print(newTempo)
     start = time.time()
     while True:
+        time.sleep((60000/newTempo)/1000)
         reading = hapticSerial.readline().decode('utf-8')
         print(reading)
         end = time.time()
@@ -202,24 +208,24 @@ def dynamic_haptic(mode,tempo,timer):
         hapticSerial.flush()
         print(elapsed)
         if(elapsed <= timer/4):
-            newTempo = newTempo+5
+            newTempo = newTempo+increment
             hapticSerial.write((str(newTempo)+ CRLF).encode())
-            print('STAGE ONE: ' + newTempo)
+            print('STAGE ONE: ' + str(newTempo))
         elif(elapsed >= timer/4 and elapsed <= timer/2):
-            newTempo = newTempo-5
+            newTempo = newTempo-increment
             hapticSerial.write((str(newTempo)+ CRLF).encode())
-            print('STAGE TWO: ' + newTempo)
+            print('STAGE TWO: ' + str(newTempo))
         elif(elapsed >= timer/2 and elapsed <= (timer/2+timer/4)):
-            newTempo = newTempo+10
+            newTempo = newTempo+increment
             hapticSerial.write((str(newTempo)+ CRLF).encode())
-            print('STAGE THREE: ' + newTempo)
+            print('STAGE THREE: ' + str(newTempo))
         elif(elapsed >= (timer/2+timer/4) and elapsed <= timer):
-            newTempo = newTempo-10
+            newTempo = newTempo-increment
             hapticSerial.write((str(newTempo)+ CRLF).encode())
-            print('STAGE FOUR: ' + newTempo) 
+            print('STAGE FOUR: ' + str(newTempo))
         else:
             hapticSerial.write((OFF+CRLF).encode())
-            break 
+            break
     global closeFile
     closeFile = True
     time.sleep(1)
@@ -379,7 +385,7 @@ def main():
     #     t1.join()
     #     t2.join()
 
-    dynamic_haptic(DISCRETE,'60',30)
+    dynamic_haptic(CONTINOUS,'60',20)
 
     print("FINISHED")
     #blank window or brief reset before next test
