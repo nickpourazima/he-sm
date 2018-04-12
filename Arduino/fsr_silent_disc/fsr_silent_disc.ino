@@ -35,7 +35,7 @@ int max_force = 0; // preset maximum fsr reading
 //////////////////////////////////// SETUP
 void setup() {
   Serial.begin(9600); // slow speed debugging
-//  Serial.begin(115200); // high speed debugging
+  //Serial.begin(115200); // high speed debugging
   //Serial.begin(1555200); // good speed for processing (must match python code for reading!)
   
 }

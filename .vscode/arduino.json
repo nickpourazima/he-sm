@@ -1,5 +1,5 @@
 {
-    "board": "adafruit:avr:protrinket5ftdi",
-    "port": "/dev/cu.usbserial-A907CAHB",
+    "board": "arduino:avr:uno",
+    "port": "/dev/cu.usbmodem1421",
     "sketch": "Arduino/main/main.ino"
 }
