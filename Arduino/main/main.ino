@@ -50,6 +50,7 @@ uint8_t state = START;
 unsigned long startTime = 0;
 int average = 0;
 
+unsigned long t = 0;
 //boolean start = false;
 //int avg = 0;
 
@@ -127,20 +128,20 @@ void getBPM(){
   if(readline(Serial.read(),buffer,4)>0){
     incomingByte = atoi(buffer);
     if(incomingByte == 0){
-      Serial.println("=============   OFF   =============");
+      // Serial.println("=============   OFF   =============");
       start=false;
     }
     else if(incomingByte == 1){
-      Serial.println("---------- DISCRETE MODE ----------");
+      // Serial.println("---------- DISCRETE MODE ----------");
       discrete = true;         
     }
     else if(incomingByte == 2){
-      Serial.println("~~~~~~~~~~ CONTINOUS MODE ~~~~~~~~~");
+      // Serial.println("~~~~~~~~~~ CONTINOUS MODE ~~~~~~~~~");
       discrete = false;
     } 
-    else if(incomingByte < 20 || incomingByte > 220){
-      Serial.println("Please input a BPM value greater than (or equal) to 20 and less than (or equal) to 220");
-    }
+    // else if(incomingByte < 20 || incomingByte > 220){
+    //   Serial.println("Please input a BPM value greater than (or equal) to 20 and less than (or equal) to 220");
+    // }
     else{
       avg = 60000/incomingByte;
       start = true;     
@@ -218,7 +219,7 @@ void go(){
           if(start){
             average = avg;
             startTime=millis();
-            Serial.println(startTime); 
+            Serial.println(startTime);
             state++;
           }
           break;

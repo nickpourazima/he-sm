@@ -6,23 +6,30 @@ import time
 import os
 import tkinter as tk
 import sys
+import datetime
 from functools import partial
 from random import shuffle
 from pygame import mixer
 from threading import Thread
-
+from tabulate import tabulate
 #TO-DO Tomorrow
+# re-organize output from haptic such that inter onset interval is acquired
+# timestamp of tests
+# timestamp of tap info
+
 # think about tempo write time vs. time of full interval to complete, 
 # can only change at rate equivalent to rate +1 essentially otherwise jumps in value
 # finish building dynamic audio tests
-# CRUCIAL: time stamp functions save to output or print for IOI data
+# CRUCIAL: 
+# time stamp functions save to output 
+# also need IOI data from audio somehow -> onset detection https://musicinformationretrieval.com/onset_detection.html
 # can pipe terminal to txt as other reference
 
 #LOW PRIORITY
 # instruction verbiage
 # comments/clean up code
 # integrate intermediary gui page, flashing countdown in sync with audio?
-# captureGUI to 3.6 pull request --> not  a priorit
+# captureGUI to 3.6 pull request --> not a priority
 # data output format
 
 #SERIAL VARS
@@ -55,6 +62,7 @@ closeFile = False
 startRead = False
 t0 = ''
 userName = ""
+timestamp = 0
 
 instructions = "You will first do this and then this. Then there will be a break where you put this on so you can do that. Got it?"
 audioFile =[
@@ -130,7 +138,6 @@ class StartPage(tk.Frame):
         button.pack()
 
     def advance(self):
-        print("Working so far")
         self.name.focus_set()
         self.name.selection_range(0, tk.END)
         global userName
@@ -172,21 +179,23 @@ class TestPage(tk.Frame):
         self.after(500, self.flash)
 
 def steady_haptic(mode,tempo,timer):
+    global closeFile, timestamp
     playBeep()
     hapticSerial.write((mode + CRLF).encode())
     hapticSerial.write((tempo + CRLF).encode())
     start = time.time()
+    table = []
     while True:
+        timestamp = datetime.datetime.utcnow()
         reading = hapticSerial.readline().decode('utf-8')
-        print(reading)
         end = time.time()
         elapsed = end - start
         hapticSerial.flush()
-        print(elapsed)
+        table.append([timestamp, reading, elapsed])
         if(end-start >= timer):
             hapticSerial.write((OFF+CRLF).encode())
+            print (tabulate(table, headers = ("Timestamp", "Haptic Onset", "Elapsed Time")))
             break
-    global closeFile 
     closeFile = True
     time.sleep(1)
     # playBeep()
@@ -313,7 +322,7 @@ def getTap():
                 # Now continue to work with this
                 if len(s)==(PACKET_LENGTH-1) and s[-1]=="E": # if we have the correct ending also
                     output = interpret_output_discrete(s)
-                    dumpfile.write(output+"\n")
+                    dumpfile.write(output+ '' + timestamp + "\n")
                     dumpfile.flush()
         if closeFile:
             closeFile = False
@@ -385,8 +394,11 @@ def main():
     #     t1.join()
     #     t2.join()
 
-    dynamic_haptic(CONTINOUS,'60',20)
+    steady_haptic(CONTINOUS,'120',120)
+    # dynamic_haptic(CONTINOUS,'60',20)
 
+    
+    
     print("FINISHED")
     #blank window or brief reset before next test
 
