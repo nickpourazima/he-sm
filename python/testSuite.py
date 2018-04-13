@@ -62,7 +62,10 @@ closeFile = False
 startRead = False
 t0 = ''
 userName = ""
-timestamp = 0
+timestamp = datetime.datetime
+hapticData = []
+tapData = []
+
 
 instructions = "You will first do this and then this. Then there will be a break where you put this on so you can do that. Got it?"
 audioFile =[
@@ -179,51 +182,30 @@ class TestPage(tk.Frame):
         self.after(500, self.flash)
 
 def steady_haptic(mode,tempo,timer):
-    global closeFile, timestamp, startRead
-    table = []
-    onset,offset,maxforce = 0,0,0
-    if not os.path.isdir('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName):
-        os.makedirs('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)
-    currentPath = '/Users/nickpourazima/GitHub/he-sm/TestOutput/'+str(userName)
-    filename = (userName+' '+t0+' '+time.asctime()) # get the filename we are supposed to output to
-    completeName = os.path.join(currentPath,filename)
-    dumpfile = open(completeName,'w')
+    global closeFile, startRead
+    readyFlag = False
 
-    playBeep()
-    hapticSerial.write((mode + CRLF).encode())
-    hapticSerial.write((tempo + CRLF).encode())
-    hapticSerial.flush()
-    start = time.time()
-
-    while startRead:
-        timestamp = datetime.datetime.utcnow()
-        reading = hapticSerial.readline().decode('utf-8')
+    # playBeep()
+    if startRead:
+        hapticSerial.write((mode + CRLF).encode())
+        hapticSerial.write((tempo + CRLF).encode())
+        hapticSerial.flush()
+        readyFlag = True
+        start = time.time()
+    while readyFlag:
         end = time.time()
         elapsed = end - start
-       
-        # Ok, let's read one byte
-        r = tapSerial.read(1)
+        reading = hapticSerial.readline().decode('utf-8')
 
-        if bytes.decode(r)=="B": # This could be the beginning of a packet from arduino
-            avail=0 # how many bytes are available
-            while avail<PACKET_LENGTH-1: # read to fill up the packet
-                avail=tapSerial.inWaiting()
-
-            # all right, now we can read
-            r = tapSerial.read(PACKET_LENGTH-1) # read the whole packet straight away
-            s = str(r,'latin-1')
-
-            # Now continue to work with this
-            if len(s)==(PACKET_LENGTH-1) and s[-1]=="E": # if we have the correct ending also
-                onset,offset,maxforce = interpret_output_discrete(s)
-
-        table.append([timestamp, reading, onset, offset, maxforce, elapsed])
-        if elapsed >= timer:
+        (hapticData.append([timestamp.now(),elapsed,reading,None,None,None,None]))
+        if(elapsed >= timer):
             hapticSerial.write((OFF+CRLF).encode())
-            dumpfile.write(tabulate(table, headers = ("Timestamp", "Haptic Onset", "Tap Onset", "Tap Offset", "MaxForce", "Elapsed Time")))
-            dumpfile.flush()
-            startRead = False
+            closeFile = True
             break
+ 
+
+    # time.sleep(1)
+    # playBeep()
 
 def dynamic_haptic(mode,tempo,timer):
     playBeep()
@@ -315,43 +297,54 @@ def interpret_output_discrete(r):
     
     # Make a formatted output
     # output = "%i %i %i"%(tap_onset,tap_offset,maxforce)
+    # print (output)
 
-    return (tap_onset,tap_offset,maxforce)
+    return tap_onset,tap_offset,maxforce
 
-# def getTap():
-#     global closeFile,startRead
-#     if not (os.path.isdir('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)):
-#         os.makedirs('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)
-#     currentPath = '/Users/nickpourazima/GitHub/he-sm/TestOutput/'+str(userName)
-#     filename = (userName+' '+t0+' '+time.asctime()) # get the filename we are supposed to output to
-#     completeName = os.path.join(currentPath,filename)
-#     print (completeName)
-#     dumpfile = open(completeName,'w')
-#     output_header = "onset offset maxforce"
-#     dumpfile.write(output_header+"\n")
-#     while True:
-#         if startRead:
-#             # Ok, let's read one byte
-#             r = tapSerial.read(1)
-#             # print(r)
-#             if bytes.decode(r)=="B": # This could be the beginning of a packet from arduino
-#                 avail=0 # how many bytes are available
-#                 while avail<PACKET_LENGTH-1: # read to fill up the packet
-#                     avail=tapSerial.inWaiting()
+def getTap():
+    global closeFile,startRead
+    readyFlag = False
+    # if not (os.path.isdir('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)):
+    #     os.makedirs('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)
+    # currentPath = '/Users/nickpourazima/GitHub/he-sm/TestOutput/'+str(userName)
+    # filename = (userName+' '+t0+' '+time.asctime()) # get the filename we are supposed to output to
+    # completeName = os.path.join(currentPath,filename)
+    # print (completeName)
+    # dumpfile = open(completeName,'w')
+    # output_header = "onset offset maxforce"
+    # dumpfile.write(output_header+"\n")
+    print("before startRead")
+    print(startRead)
+    if startRead:
+        print("after startRead")
+        tapSerial.reset_input_buffer()
+        readyFlag = True
+        start = time.time()
+    while readyFlag:
+        end = time.time()
+        elapsed = end - start
+        # Ok, let's read one byte
+        r = tapSerial.read(1)
+        # print(r)
+        if bytes.decode(r)=="B": # This could be the beginning of a packet from arduino
+            avail=0 # how many bytes are available
+            while avail<PACKET_LENGTH-1: # read to fill up the packet
+                avail=tapSerial.inWaiting()
 
-#                 # all right, now we can read
-#                 r = tapSerial.read(PACKET_LENGTH-1) # read the whole packet straight away
-#                 s = str(r,'latin-1')
-#                 # print(s)
-#                 # Now continue to work with this
-#                 if len(s)==(PACKET_LENGTH-1) and s[-1]=="E": # if we have the correct ending also
-#                     output = interpret_output_discrete(s)
-#                     dumpfile.write(output+ '' + timestamp + "\n")
-#                     dumpfile.flush()
-#         if closeFile:
-#             closeFile = False
-#             startRead = False
-#             break
+            # all right, now we can read
+            r = tapSerial.read(PACKET_LENGTH-1) # read the whole packet straight away
+            s = str(r,'latin-1')
+            # print(s)
+            # Now continue to work with this
+            if len(s)==(PACKET_LENGTH-1) and s[-1]=="E": # if we have the correct ending also
+                onset,offset,maxforce = interpret_output_discrete(s)
+                tapData.append([timestamp.now(),None,None,elapsed,onset,offset,maxforce])
+                # dumpfile.write(output+"\n")
+                # dumpfile.flush()
+        if closeFile:
+            closeFile = False
+            startRead = False
+            break
 
 
 hapticTestCases = {
@@ -418,11 +411,20 @@ def main():
     #     t1.join()
     #     t2.join()
 
-    steady_haptic(CONTINOUS,'60',10)
+    t0 = Thread(target=playBeep)
+    t0.start()
+    t0.join()
+    t1 = Thread(target=steady_haptic, args = (CONTINOUS,'60',10))
+    t2 = Thread(target=getTap)
+    t1.start()
+    t2.start()
+    t1.join()
+    t2.join()
+    combo = hapticData+tapData
+    print (tabulate(combo,headers=['Timestamp','Haptic Elapsed Time','Haptic Onset','Tap Elapsed Time','Tap Onset','Tap Offset','Tap Maxforce']))
+    
     # dynamic_haptic(CONTINOUS,'60',20)
 
-    
-    
     print("FINISHED")
     #blank window or brief reset before next test
 

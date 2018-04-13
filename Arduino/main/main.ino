@@ -50,7 +50,6 @@ uint8_t state = START;
 unsigned long startTime = 0;
 int average = 0;
 
-unsigned long t = 0;
 //boolean start = false;
 //int avg = 0;
 
@@ -158,18 +157,18 @@ int readline(int readch, char *buffer, int len)
   if (readch > 0) {
     switch (readch) {
       case '\n': // Ignore new-lines
-        Serial.write('\n');
+        // Serial.write('\n');
 //        break;
       case '\r': // Return on CR
-        Serial.write('\r');
-        Serial.write('\n');
+        // Serial.write('\r');
+        // Serial.write('\n');
         rpos = pos;
         pos = 0;  // Reset position index ready for next time
         return rpos;
       default:
         if (pos < len-1) {
           buffer[pos++] = readch;
-          Serial.write(readch);
+          // Serial.write(readch);
           buffer[pos] = 0;
         }
     }
@@ -219,7 +218,7 @@ void go(){
           if(start){
             average = avg;
             startTime=millis();
-            Serial.println(startTime);
+            Serial.println(startTime); 
             state++;
           }
           break;
