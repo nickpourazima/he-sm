@@ -35,7 +35,7 @@ from tabulate import tabulate
 #SERIAL VARS
 TAP_SERIAL_PORT = '/dev/tty.usbmodem1421'
 TAP_BAUD = 9600
-TIMEOUT = 0.25
+TIMEOUT = 0
 
 HAPTIC_SERIAL_PORT = '/dev/tty.usbserial-A907CAHB'
 HAPTIC_BAUD = 115200
@@ -88,7 +88,7 @@ audioFile =[
 
 #open serial
 if(os.path.exists(HAPTIC_SERIAL_PORT) and os.path.exists(TAP_SERIAL_PORT)):
-    hapticSerial = serial.Serial(HAPTIC_SERIAL_PORT, HAPTIC_BAUD)
+    hapticSerial = serial.Serial(HAPTIC_SERIAL_PORT, HAPTIC_BAUD,timeout=None)
     tapSerial = serial.Serial(TAP_SERIAL_PORT,TAP_BAUD,timeout=TIMEOUT)
 else:
     print ("No serial connected...")
@@ -180,6 +180,7 @@ class TestPage(tk.Frame):
 
 def steady_haptic(mode,tempo,timer):
     global closeFile, timestamp, startRead
+    readyFlag= False
     table = []
     onset,offset,maxforce = 0,0,0
     if not os.path.isdir('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName):
@@ -190,20 +191,18 @@ def steady_haptic(mode,tempo,timer):
     dumpfile = open(completeName,'w')
 
     playBeep()
-    hapticSerial.write((mode + CRLF).encode())
-    hapticSerial.write((tempo + CRLF).encode())
-    hapticSerial.flush()
-    start = time.time()
-
-    while startRead:
+    if startRead:
+        hapticSerial.write((mode + CRLF).encode())
+        hapticSerial.write((tempo + CRLF).encode())
+        hapticSerial.flush()
+        readyFlag = True
+        start = time.time()
         timestamp = datetime.datetime.utcnow()
-        reading = hapticSerial.readline().decode('utf-8')
+    while readyFlag:
         end = time.time()
         elapsed = end - start
-       
-        # Ok, let's read one byte
+        # Read one byte
         r = tapSerial.read(1)
-
         if bytes.decode(r)=="B": # This could be the beginning of a packet from arduino
             avail=0 # how many bytes are available
             while avail<PACKET_LENGTH-1: # read to fill up the packet
@@ -215,15 +214,16 @@ def steady_haptic(mode,tempo,timer):
 
             # Now continue to work with this
             if len(s)==(PACKET_LENGTH-1) and s[-1]=="E": # if we have the correct ending also
+                reading = hapticSerial.readline().decode('utf-8')
                 onset,offset,maxforce = interpret_output_discrete(s)
-
-        table.append([timestamp, reading, onset, offset, maxforce, elapsed])
+                table.append([timestamp, reading, onset, offset, maxforce, elapsed])
         if elapsed >= timer:
             hapticSerial.write((OFF+CRLF).encode())
-            dumpfile.write(tabulate(table, headers = ("Timestamp", "Haptic Onset", "Tap Onset", "Tap Offset", "MaxForce", "Elapsed Time")))
+            dumpfile.write(tabulate(table, headers = ("Start Time", "Haptic Onset", "Tap Onset", "Tap Offset", "MaxForce", "Elapsed Time")))
             dumpfile.flush()
             startRead = False
             break
+
 
 def dynamic_haptic(mode,tempo,timer):
     playBeep()
