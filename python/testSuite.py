@@ -1,6 +1,27 @@
 #   Author: Nick Pourazima
+#   School: Carnegie Mellon University
+#   Department: Music Technology
 #   Contact: npourazima@gmail.com
+#   Date: ~Spring 2018
 #   Description:
+#       Master contoller for haptic (Pro Trinket) and FSR tap hardware (Arduino Uno). 
+#       Synchronizes timing via multi-threaded operations. Outputs test cases for analysis.
+
+#TO-DO
+    # CRUCIAL
+    # re-organize output from haptic such that inter onset interval is acquired
+    # think about tempo write time vs. time of full interval to complete, 
+    # can only change at rate equivalent to rate +1 essentially otherwise jumps in value
+    # finish building dynamic audio tests
+    # also need IOI data from audio somehow -> onset detection https://musicinformationretrieval.com/onset_detection.html
+
+    #LOW PRIORITY
+    # instruction verbiage
+    # comments/clean up code
+    # integrate intermediary gui page, flashing countdown in sync with audio?
+    # captureGUI to 3.6 pull request --> not a priority
+    # data output format
+
 import serial
 import time
 import os
@@ -12,25 +33,6 @@ from random import shuffle
 from pygame import mixer
 from threading import Thread
 from tabulate import tabulate
-#TO-DO Tomorrow
-# re-organize output from haptic such that inter onset interval is acquired
-# timestamp of tests
-# timestamp of tap info
-
-# think about tempo write time vs. time of full interval to complete, 
-# can only change at rate equivalent to rate +1 essentially otherwise jumps in value
-# finish building dynamic audio tests
-# CRUCIAL: 
-# time stamp functions save to output 
-# also need IOI data from audio somehow -> onset detection https://musicinformationretrieval.com/onset_detection.html
-# can pipe terminal to txt as other reference
-
-#LOW PRIORITY
-# instruction verbiage
-# comments/clean up code
-# integrate intermediary gui page, flashing countdown in sync with audio?
-# captureGUI to 3.6 pull request --> not a priority
-# data output format
 
 #SERIAL VARS
 TAP_SERIAL_PORT = '/dev/tty.usbmodem1421'
@@ -66,7 +68,6 @@ timestamp = datetime.datetime
 hapticData = []
 tapData = []
 
-
 instructions = "You will first do this and then this. Then there will be a break where you put this on so you can do that. Got it?"
 audioFile =[
     '/Users/nickpourazima/GitHub/he-sm/AudioFiles/click_44.1_16bit_20sec_45bpm.wav',
@@ -88,15 +89,13 @@ audioFile =[
     '/Users/nickpourazima/GitHub/he-sm/AudioFiles/beep-11.wav'
 ]
 
-
-#open serial
+#check for serial
 if(os.path.exists(HAPTIC_SERIAL_PORT) and os.path.exists(TAP_SERIAL_PORT)):
     hapticSerial = serial.Serial(HAPTIC_SERIAL_PORT, HAPTIC_BAUD)
     tapSerial = serial.Serial(TAP_SERIAL_PORT,TAP_BAUD,timeout=TIMEOUT)
 else:
     print ("No serial connected...")
     sys.exit()
-
 
 class mainGUI(tk.Tk):
 
@@ -346,7 +345,6 @@ def getTap():
             startRead = False
             break
 
-
 hapticTestCases = {
     'H1a1': (DISCRETE,BPM1,20),
     'H1a2': (DISCRETE,BPM2,20),
@@ -365,6 +363,7 @@ hapticTestCases = {
     'H2b3': (CONTINOUS,BPM3,20),
     'H2b4': (CONTINOUS,BPM4,20)
 }
+
 audioTestCases = {
     'A1a1': audioFile[0],
     'A1a2': audioFile[1],
