@@ -47,8 +47,27 @@ Test 3:
             Isochronous synchronization:
             Dynamic synchronization: 
 
+\section{Delay Evaluation}
 
-\section{Tap Onset Latency Evaluation}
+Overall strategy to minimize delay maximize accuracy/precision
+
+Sources of potential error:
+
+    *FTDI/USB -> Pro Trinket (16MHz) --> Laptop
+
+    *USB -> Arduino -> Laptop
+
+    *Serial write to haptic to motor spin up
+
+    *FSR analog read/mentioned debounce
+
+    Sol: python threading
+
+    Evaluation with scope:
+
+
+
+\subsection{Tap Onset Latency Evaluation}
 
 A sensorimotor synchronization experiment was conducted to discover how auditory feedback to a tap onset could be presented with minimal latency and responses recorded with the most accuracy. It was found that not only was the auditory response latency the least for the Arduino system using a force sensitive resistor (mean = 0.6 ms, sd = 0.3), but it had missed the fewest taps and recorded the least superfluous responses as compared to a percussion pad with the FTAP and Max MSP systems [Tap Arduino, 1].
 

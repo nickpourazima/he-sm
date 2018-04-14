@@ -36,7 +36,7 @@ from tabulate import tabulate
 
 #SERIAL VARS
 TAP_SERIAL_PORT = '/dev/tty.usbmodem1421'
-TAP_BAUD = 9600
+TAP_BAUD = 115200
 TIMEOUT = 0.25
 
 HAPTIC_SERIAL_PORT = '/dev/tty.usbserial-A907CAHB'
@@ -180,15 +180,19 @@ class TestPage(tk.Frame):
         self.label.configure(background=fg, foreground=bg)
         self.after(500, self.flash)
 
-def steady_haptic(mode,tempo,timer):
+def haptic(steady,mode,tempo,timer,increment=1):
     global closeFile, startRead
     readyFlag = False
 
-    # playBeep()
     if startRead:
         hapticSerial.write((mode + CRLF).encode())
         hapticSerial.write((tempo + CRLF).encode())
         hapticSerial.flush()
+        if steady:
+            pass
+        elif not steady:
+            newTempo = int(tempo)
+            increment = 10 
         readyFlag = True
         start = time.time()
     while readyFlag:
@@ -196,54 +200,29 @@ def steady_haptic(mode,tempo,timer):
         elapsed = end - start
         reading = hapticSerial.readline().decode('utf-8')
 
+        # time.sleep((60000/newTempo)/1000)
+        if(not steady and elapsed <= timer/4):
+            newTempo = newTempo+increment
+            hapticSerial.write((str(newTempo)+ CRLF).encode())
+            print('STAGE ONE: ' + str(newTempo))
+        elif(not steady and elapsed >= timer/4 and elapsed <= timer/2):
+            newTempo = newTempo-increment
+            hapticSerial.write((str(newTempo)+ CRLF).encode())
+            print('STAGE TWO: ' + str(newTempo))
+        elif(not steady and elapsed >= timer/2 and elapsed <= (timer/2+timer/4)):
+            newTempo = newTempo+increment
+            hapticSerial.write((str(newTempo)+ CRLF).encode())
+            print('STAGE THREE: ' + str(newTempo))
+        elif(not steady and elapsed >= (timer/2+timer/4) and elapsed <= timer):
+            newTempo = newTempo-increment
+            hapticSerial.write((str(newTempo)+ CRLF).encode())
+            print('STAGE FOUR: ' + str(newTempo))
+
         (hapticData.append([timestamp.now(),elapsed,reading,None,None,None,None]))
         if(elapsed >= timer):
             hapticSerial.write((OFF+CRLF).encode())
             closeFile = True
             break
- 
-
-    # time.sleep(1)
-    # playBeep()
-
-def dynamic_haptic(mode,tempo,timer):
-    playBeep()
-    hapticSerial.write((mode + CRLF).encode())
-    hapticSerial.write((tempo + CRLF).encode())
-    newTempo = int(tempo)
-    increment = 10
-    print(newTempo)
-    start = time.time()
-    while True:
-        time.sleep((60000/newTempo)/1000)
-        reading = hapticSerial.readline().decode('utf-8')
-        print(reading)
-        end = time.time()
-        elapsed = end - start
-        hapticSerial.flush()
-        print(elapsed)
-        if(elapsed <= timer/4):
-            newTempo = newTempo+increment
-            hapticSerial.write((str(newTempo)+ CRLF).encode())
-            print('STAGE ONE: ' + str(newTempo))
-        elif(elapsed >= timer/4 and elapsed <= timer/2):
-            newTempo = newTempo-increment
-            hapticSerial.write((str(newTempo)+ CRLF).encode())
-            print('STAGE TWO: ' + str(newTempo))
-        elif(elapsed >= timer/2 and elapsed <= (timer/2+timer/4)):
-            newTempo = newTempo+increment
-            hapticSerial.write((str(newTempo)+ CRLF).encode())
-            print('STAGE THREE: ' + str(newTempo))
-        elif(elapsed >= (timer/2+timer/4) and elapsed <= timer):
-            newTempo = newTempo-increment
-            hapticSerial.write((str(newTempo)+ CRLF).encode())
-            print('STAGE FOUR: ' + str(newTempo))
-        else:
-            hapticSerial.write((OFF+CRLF).encode())
-            break
-    global closeFile
-    closeFile = True
-    time.sleep(1)
 
 def playback(audio_file):
     playBeep()
@@ -312,10 +291,7 @@ def getTap():
     # dumpfile = open(completeName,'w')
     # output_header = "onset offset maxforce"
     # dumpfile.write(output_header+"\n")
-    print("before startRead")
-    print(startRead)
     if startRead:
-        print("after startRead")
         tapSerial.reset_input_buffer()
         readyFlag = True
         start = time.time()
@@ -346,22 +322,22 @@ def getTap():
             break
 
 hapticTestCases = {
-    'H1a1': (DISCRETE,BPM1,20),
-    'H1a2': (DISCRETE,BPM2,20),
-    'H1a3': (DISCRETE,BPM3,20),
-    'H1a4': (DISCRETE,BPM4,20),
-    'H1b1': (CONTINOUS,BPM1,20),
-    'H1b2': (CONTINOUS,BPM2,20),
-    'H1b3': (CONTINOUS,BPM3,20),
-    'H1b4': (CONTINOUS,BPM4,20),
-    'H2a1': (DISCRETE,BPM1,20),
-    'H2a2': (DISCRETE,BPM2,20),
-    'H2a3': (DISCRETE,BPM3,20),
-    'H2a4': (DISCRETE,BPM4,20),
-    'H2b1': (CONTINOUS,BPM1,20),
-    'H2b2': (CONTINOUS,BPM2,20),
-    'H2b3': (CONTINOUS,BPM3,20),
-    'H2b4': (CONTINOUS,BPM4,20)
+    'H1a1': (True,DISCRETE,BPM1,20),
+    'H1a2': (True,DISCRETE,BPM2,20),
+    'H1a3': (True,DISCRETE,BPM3,20),
+    'H1a4': (True,DISCRETE,BPM4,20),
+    'H1b1': (True,CONTINOUS,BPM1,20),
+    'H1b2': (True,CONTINOUS,BPM2,20),
+    'H1b3': (True,CONTINOUS,BPM3,20),
+    'H1b4': (True,CONTINOUS,BPM4,20),
+    'H2a1': (False,DISCRETE,BPM1,20,10),
+    'H2a2': (False,DISCRETE,BPM2,20,5),
+    'H2a3': (False,DISCRETE,BPM3,20,3),
+    'H2a4': (False,DISCRETE,BPM4,20,1),
+    'H2b1': (False,CONTINOUS,BPM1,20,10),
+    'H2b2': (False,CONTINOUS,BPM2,20,5),
+    'H2b3': (False,CONTINOUS,BPM3,20,3),
+    'H2b4': (False,CONTINOUS,BPM4,20,1)
 }
 
 audioTestCases = {
@@ -413,7 +389,7 @@ def main():
     t0 = Thread(target=playBeep)
     t0.start()
     t0.join()
-    t1 = Thread(target=steady_haptic, args = (CONTINOUS,'60',10))
+    t1 = Thread(target=haptic, args = (False,DISCRETE,'60',120))
     t2 = Thread(target=getTap)
     t1.start()
     t2.start()

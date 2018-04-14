@@ -13,7 +13,7 @@ For more information see http://www.ladyada.net/learn/sensors/fsr.html
 ////////////////////////////////////  set variables 
 int fsrAnalogPin = 0; // FSR is connected to analog 0
 int fsrReading;      // the analog reading from the FSR resistor divider
-int threshold = 20; // the FSR threshold necessary to make a sound (ON)
+int threshold = 10; // the FSR threshold necessary to make a sound (ON)
 int low_thresh = 10; // where the FSR reading must go to to be OFF
 int time_thresh = 40; // set a time threshold for how long to wait until another sound can be made
 int offset_thresh = 40; // set a time threshold for how long to wait after depression (prevent double taps)
@@ -29,14 +29,18 @@ unsigned long cur_onset = 0; // preset current onset time
 unsigned long cur_offset = 0; // preset current offset time
 int max_force = 0; // preset maximum fsr reading
 
+
+bool sendPacket = false;
+
 //////////////////////////////////// load libraries
 #include <avr/pgmspace.h>
 
 //////////////////////////////////// SETUP
 void setup() {
-  Serial.begin(9600); // slow speed debugging
-  //Serial.begin(115200); // high speed debugging
+//  Serial.begin(9600); // slow speed debugging
+  Serial.begin(115200); // high speed debugging
   //Serial.begin(1555200); // good speed for processing (must match python code for reading!)
+  pinMode(2, OUTPUT);
   
 }
 
@@ -103,10 +107,20 @@ void getInfos() {
   timeStamp = millis(); // get time (in milliseconds)      
   if (fsrReading > max_force) max_force = fsrReading;
   
+  if ((cur_on==1) && (sendPacket == false)){
+    sendPacket = true;
+    digitalWrite(2,HIGH); 
+    collectData();
+     
+  }
+
   if ((cur_on==1) && (fsrReading < low_thresh)) {
-    cur_offset = timeStamp; // get offset time    
-    collectData(); // send data 
+    cur_offset = timeStamp; // get offset time
+       
+//    collectData(); // send data
     cur_on=0; // turn off
+    sendPacket = false;
+    digitalWrite(2,LOW);
     }
 }
 
