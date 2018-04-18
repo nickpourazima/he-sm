@@ -289,24 +289,24 @@
 
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}86}]:} \PY{n}{x}\PY{p}{,} \PY{n}{sr} \PY{o}{=} \PY{n}{librosa}\PY{o}{.}\PY{n}{load}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{/Users/nickpourazima/GitHub/he\PYZhy{}sm/AudioFiles/swing\PYZus{}click\PYZus{}44.1\PYZus{}16bit\PYZus{}30sec\PYZus{}45bpm.wav}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-         \PY{n+nb}{print}\PY{p}{(}\PY{n}{x}\PY{o}{.}\PY{n}{shape}\PY{p}{,} \PY{n}{sr}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}158}]:} \PY{n}{x}\PY{p}{,} \PY{n}{sr} \PY{o}{=} \PY{n}{librosa}\PY{o}{.}\PY{n}{load}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{/Users/nickpourazima/GitHub/he\PYZhy{}sm/AudioFiles/dynamic\PYZus{}cres\PYZus{}f\PYZus{}decres\PYZus{}mp\PYZus{}44.1\PYZus{}16bit\PYZus{}30sec\PYZus{}30\PYZhy{}60bpm.wav}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+          \PY{n+nb}{print}\PY{p}{(}\PY{n}{x}\PY{o}{.}\PY{n}{shape}\PY{p}{,} \PY{n}{sr}\PY{p}{)}
 \end{Verbatim}
 
 
     \begin{Verbatim}[commandchars=\\\{\}]
-(705600,) 22050
+(699338,) 22050
 
     \end{Verbatim}
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}90}]:} \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{20}\PY{p}{,} \PY{l+m+mi}{20}\PY{p}{)}\PY{p}{)}
-         \PY{n}{librosa}\PY{o}{.}\PY{n}{display}\PY{o}{.}\PY{n}{waveplot}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{sr}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}160}]:} \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{15}\PY{p}{,} \PY{l+m+mi}{15}\PY{p}{)}\PY{p}{)}
+          \PY{n}{librosa}\PY{o}{.}\PY{n}{display}\PY{o}{.}\PY{n}{waveplot}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{sr}\PY{p}{)}
 \end{Verbatim}
 
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}90}]:} <matplotlib.collections.PolyCollection at 0x13a93ea58>
+{\color{outcolor}Out[{\color{outcolor}160}]:} <matplotlib.collections.PolyCollection at 0x157971320>
 \end{Verbatim}
             
     \begin{center}
@@ -315,42 +315,42 @@
     { \hspace*{\fill} \\}
     
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}91}]:} \PY{n}{onset\PYZus{}frames} \PY{o}{=} \PY{n}{librosa}\PY{o}{.}\PY{n}{onset}\PY{o}{.}\PY{n}{onset\PYZus{}detect}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{sr}\PY{o}{=}\PY{n}{sr}\PY{p}{)}
-         \PY{n+nb}{print}\PY{p}{(}\PY{n}{onset\PYZus{}frames}\PY{p}{)} \PY{c+c1}{\PYZsh{} frame numbers of estimated onsets}
+{\color{incolor}In [{\color{incolor}161}]:} \PY{n}{onset\PYZus{}frames} \PY{o}{=} \PY{n}{librosa}\PY{o}{.}\PY{n}{onset}\PY{o}{.}\PY{n}{onset\PYZus{}detect}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{sr}\PY{o}{=}\PY{n}{sr}\PY{p}{)}
+          \PY{n+nb}{print}\PY{p}{(}\PY{n}{onset\PYZus{}frames}\PY{p}{)} \PY{c+c1}{\PYZsh{} frame numbers of estimated onsets}
 \end{Verbatim}
 
 
     \begin{Verbatim}[commandchars=\\\{\}]
-[  58  116  173  231  288  345  403  460  518  575  633  690  747  805
-  862  920  977 1034 1092 1149 1207 1264 1322]
+[  58  116  173  222  268  333  410  458  502  547  618  677  722  789
+  871  925  970 1022 1080 1137 1195]
 
     \end{Verbatim}
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}92}]:} \PY{n}{onset\PYZus{}times} \PY{o}{=} \PY{n}{librosa}\PY{o}{.}\PY{n}{frames\PYZus{}to\PYZus{}time}\PY{p}{(}\PY{n}{onset\PYZus{}frames}\PY{p}{)}
-         \PY{n+nb}{print}\PY{p}{(}\PY{n}{onset\PYZus{}times}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}162}]:} \PY{n}{onset\PYZus{}times} \PY{o}{=} \PY{n}{librosa}\PY{o}{.}\PY{n}{frames\PYZus{}to\PYZus{}time}\PY{p}{(}\PY{n}{onset\PYZus{}frames}\PY{p}{)}
+          \PY{n+nb}{print}\PY{p}{(}\PY{n}{onset\PYZus{}times}\PY{p}{)}
 \end{Verbatim}
 
 
     \begin{Verbatim}[commandchars=\\\{\}]
-[ 1.34675737  2.69351474  4.01705215  5.36380952  6.68734694  8.01088435
-  9.35764172 10.68117914 12.02793651 13.35147392 14.69823129 16.02176871
- 17.34530612 18.69206349 20.01560091 21.36235828 22.68589569 24.00943311
- 25.35619048 26.67972789 28.02648526 29.35002268 30.69678005]
+[ 1.34675737  2.69351474  4.01705215  5.15482993  6.22294785  7.7322449
+  9.52018141 10.63473923 11.65641723 12.70131519 14.34993197 15.7199093
+ 16.76480726 18.32054422 20.2245805  21.47845805 22.52335601 23.73079365
+ 25.07755102 26.40108844 27.7478458 ]
 
     \end{Verbatim}
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}93}]:} \PY{n}{S} \PY{o}{=} \PY{n}{librosa}\PY{o}{.}\PY{n}{stft}\PY{p}{(}\PY{n}{x}\PY{p}{)}
-         \PY{n}{logS} \PY{o}{=} \PY{n}{librosa}\PY{o}{.}\PY{n}{amplitude\PYZus{}to\PYZus{}db}\PY{p}{(}\PY{n+nb}{abs}\PY{p}{(}\PY{n}{S}\PY{p}{)}\PY{p}{)}
-         \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{14}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{)}\PY{p}{)}
-         \PY{n}{librosa}\PY{o}{.}\PY{n}{display}\PY{o}{.}\PY{n}{specshow}\PY{p}{(}\PY{n}{logS}\PY{p}{,} \PY{n}{sr}\PY{o}{=}\PY{n}{sr}\PY{p}{,} \PY{n}{x\PYZus{}axis}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{time}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{y\PYZus{}axis}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{log}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{cmap}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Reds}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-         \PY{n}{plt}\PY{o}{.}\PY{n}{vlines}\PY{p}{(}\PY{n}{onset\PYZus{}times}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{10000}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsh{}3333FF}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}163}]:} \PY{n}{S} \PY{o}{=} \PY{n}{librosa}\PY{o}{.}\PY{n}{stft}\PY{p}{(}\PY{n}{x}\PY{p}{)}
+          \PY{n}{logS} \PY{o}{=} \PY{n}{librosa}\PY{o}{.}\PY{n}{amplitude\PYZus{}to\PYZus{}db}\PY{p}{(}\PY{n+nb}{abs}\PY{p}{(}\PY{n}{S}\PY{p}{)}\PY{p}{)}
+          \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{14}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{)}\PY{p}{)}
+          \PY{n}{librosa}\PY{o}{.}\PY{n}{display}\PY{o}{.}\PY{n}{specshow}\PY{p}{(}\PY{n}{logS}\PY{p}{,} \PY{n}{sr}\PY{o}{=}\PY{n}{sr}\PY{p}{,} \PY{n}{x\PYZus{}axis}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{time}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{y\PYZus{}axis}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{log}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{cmap}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Reds}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+          \PY{n}{plt}\PY{o}{.}\PY{n}{vlines}\PY{p}{(}\PY{n}{onset\PYZus{}times}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{10000}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{\PYZsh{}3333FF}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
 \end{Verbatim}
 
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}93}]:} <matplotlib.collections.LineCollection at 0x1435e3198>
+{\color{outcolor}Out[{\color{outcolor}163}]:} <matplotlib.collections.LineCollection at 0x1579f3128>
 \end{Verbatim}
             
     \begin{center}
@@ -359,14 +359,14 @@
     { \hspace*{\fill} \\}
     
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}94}]:} \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{14}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{)}\PY{p}{)}
-         \PY{n}{librosa}\PY{o}{.}\PY{n}{display}\PY{o}{.}\PY{n}{waveplot}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{sr}\PY{o}{=}\PY{n}{sr}\PY{p}{)}
-         \PY{n}{plt}\PY{o}{.}\PY{n}{vlines}\PY{p}{(}\PY{n}{onset\PYZus{}times}\PY{p}{,} \PY{o}{\PYZhy{}}\PY{l+m+mf}{0.8}\PY{p}{,} \PY{l+m+mf}{0.79}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{r}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{alpha}\PY{o}{=}\PY{l+m+mf}{0.8}\PY{p}{)} 
+{\color{incolor}In [{\color{incolor}164}]:} \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{14}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{)}\PY{p}{)}
+          \PY{n}{librosa}\PY{o}{.}\PY{n}{display}\PY{o}{.}\PY{n}{waveplot}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{sr}\PY{o}{=}\PY{n}{sr}\PY{p}{)}
+          \PY{n}{plt}\PY{o}{.}\PY{n}{vlines}\PY{p}{(}\PY{n}{onset\PYZus{}times}\PY{p}{,} \PY{o}{\PYZhy{}}\PY{l+m+mf}{0.8}\PY{p}{,} \PY{l+m+mf}{0.79}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{r}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{alpha}\PY{o}{=}\PY{l+m+mf}{0.8}\PY{p}{)} 
 \end{Verbatim}
 
 
 \begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}94}]:} <matplotlib.collections.LineCollection at 0x128053588>
+{\color{outcolor}Out[{\color{outcolor}164}]:} <matplotlib.collections.LineCollection at 0x14363f400>
 \end{Verbatim}
             
     \begin{center}

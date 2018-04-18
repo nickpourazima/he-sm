@@ -67,13 +67,17 @@ timestamp = datetime.datetime
 audioData = []
 hapticData = []
 tapData = []
+currentPath = ''
 
-instructions = ("The series of upcoming tests seek to measure your ability to synchronize to a varying beat across the modalities of touch and sound."
-+CRLF+"You will hear a series of either audio or haptic (touch) based trials. Each are varying in duration."+CRLF+ 
-"Preceeding the start of every test is a 5 second beep. Once the test starts please try your best to tap to the presented down beat."+CRLF+
-"For some of the haptic tests, you will hear a continous pulse which moves down and then back up, the downbeat is the pulse felt first."+CRLF+
-"Place the wearable haptic sleeve on the limb of your choice and designate either your non-dominant or dominant hand to tap on the pad."+CRLF+
-"When you are ready advance to the next page and click Start to begin the first test.")
+instructions = (
+    "The series of upcoming tests seek to measure your ability to synchronize to a varying beat across the modalities of touch and sound."
+    +CRLF+"You will hear a series of either audio or haptic (touch) based trials. Each are varying in duration."+CRLF+ 
+    "Preceeding the start of every test is a 5 second beep. Once the test starts please try your best to tap to the presented down beat."+CRLF+
+    "For the music based tests, tap on every note."+CRLF+
+    "For some of the haptic tests, you will hear a continous pulse which moves down and then back up, the downbeat is the pulse felt first."+CRLF+
+    "Place the wearable haptic sleeve on the limb of your choice and designate either your non-dominant or dominant hand to tap on the pad."+CRLF+
+    "When you are ready advance to the next page and click Start to begin the first test."
+    )
 audioFile =[
     '/Users/nickpourazima/GitHub/he-sm/AudioFiles/click_44.1_16bit_20sec_45bpm.wav',
     '/Users/nickpourazima/GitHub/he-sm/AudioFiles/click_44.1_16bit_20sec_90bpm.wav',
@@ -191,7 +195,78 @@ audioOnsets = {
     'A2b4': [0.34829932, 0.69659864, 1.021678, 1.34675737, 1.69505669, 2.02013605, 
     2.34521542, 2.69351474, 3.0185941, 3.36689342, 3.69197279, 4.01705215, 
     4.36535147, 4.69043084, 5.0155102, 5.36380952, 5.68888889, 6.01396825, 
-    6.36226757, 6.68734694, 7.0124263]
+    6.36226757, 6.68734694, 7.0124263],
+    'A3a1':[1.13777778, 2.20589569, 3.7384127, 5.50312925, 6.64090703, 7.63936508,
+    8.68426304, 10.35609977, 11.70285714, 12.77097506, 14.32671202, 16.20752834, 
+    17.43818594, 18.45986395, 19.7137415],
+    'A3a2':[0.62693878, 1.20743764, 1.92725624, 2.67029478, 3.27401361, 3.85451247, 
+    4.43501134, 5.17804989, 5.85142857, 6.43192744, 7.15174603, 7.91800454, 
+    8.54494331, 9.12544218],
+    'A3a3':[0.44117914, 0.85913832, 1.25387755, 1.67183673, 2.08979592, 2.53097506,
+    3.0185941, 3.50621315, 4.01705215, 4.48145125, 4.96907029, 5.41024943, 
+    5.82820862, 6.29260771, 6.7570068, 7.2678458, 7.75546485, 8.19664399, 8.63782313, 
+    9.03256236, 9.45052154, 9.84526077, 10.28643991],
+    'A3a4':[0.34829932, 0.67337868, 0.9752381, 1.27709751, 1.60217687, 1.90403628, 
+    2.22911565, 2.55419501, 2.90249433, 3.25079365, 3.59909297, 3.97061224, 
+    4.31891156, 4.64399093, 4.96907029, 5.29414966, 5.61922902, 5.92108844, 
+    6.2461678, 6.59446712, 6.94276644, 7.29106576, 7.66258503, 8.01088435, 
+    8.38240363, 8.70748299, 9.03256236, 9.33442177, 9.63628118, 9.96136054, 
+    10.28643991, 10.61151927],
+    'A3b1':[1.13777778, 2.20589569, 3.7384127, 5.52634921, 6.64090703, 7.63936508, 
+    8.70748299, 10.35609977, 11.70285714, 12.77097506, 14.32671202, 16.20752834, 
+    17.43818594, 18.4830839],
+    'A3b2':[0.62693878, 0.7662585, 1.2306576, 1.36997732, 1.92725624, 2.67029478, 
+    3.29723356, 3.85451247, 3.9938322, 4.45823129, 5.17804989, 5.85142857, 
+    5.9907483, 6.43192744, 7.15174603, 7.91800454, 8.54494331, 8.68426304, 
+    9.12544218],
+    'A3b3':[0.13931973, 0.27863946, 0.46439909, 0.69659864, 0.85913832, 1.09133787, 
+    1.27709751, 1.50929705, 1.67183673, 1.90403628, 2.08979592, 2.34521542, 2.55419501,
+    3.0185941, 3.52943311, 4.01705215, 4.5046712, 4.96907029, 
+    5.43346939, 5.66566893, 5.85142857, 6.29260771, 6.78022676, 6.89632653, 
+    7.2678458, 7.75546485, 7.87156463, 8.21986395, 8.63782313, 8.87002268, 
+    9.05578231, 9.28798186, 9.45052154, 9.68272109, 9.86848073, 10.10068027, 
+    10.28643991, 10.54185941],
+    'A3b4':[0.11609977, 0.34829932, 0.67337868, 0.85913832, 0.9752381, 1.30031746, 
+    1.4860771, 1.60217687, 1.78793651, 1.90403628, 2.22911565, 2.57741497, 
+    2.7631746, 2.90249433, 3.11147392, 3.27401361, 3.62231293, 3.83129252, 
+    3.97061224, 4.31891156, 4.52789116, 4.66721088, 4.85297052, 4.99229025, 
+    5.17804989, 5.29414966, 5.61922902, 5.80498866, 5.92108844, 6.2461678, 
+    6.45514739, 6.59446712, 6.80344671, 6.94276644, 7.15174603, 7.31428571, 
+    7.66258503, 7.87156463, 8.03410431, 8.2430839, 8.38240363, 8.70748299, 
+    8.91646259, 9.03256236, 9.218322, 9.33442177, 9.65950113, 9.84526077, 
+    9.96136054, 10.28643991, 10.61151927, 10.82049887],
+    'A4a1':[1.34675737, 2.69351474, 4.01705215, 5.15482993, 6.22294785, 7.7322449, 
+    9.52018141, 10.63473923, 11.65641723, 12.70131519, 14.34993197, 15.7199093, 
+    16.76480726, 18.32054422, 20.2245805, 21.47845805, 22.52335601, 23.73079365, 
+    25.07755102, 26.40108844, 27.72462585],
+    'A4a2':[0.69659864, 1.34675737, 2.02013605, 2.62385488, 3.2275737, 3.92417234, 
+    4.69043084, 5.29414966, 5.85142857, 6.45514739, 7.17496599, 7.84834467, 
+    8.45206349, 9.14866213, 9.93814059, 10.54185941, 11.12235828, 11.79573696, 
+    12.44589569, 13.11927438, 13.79265306],
+    'A4a3':[0.44117914, 0.85913832, 1.27709751, 1.67183673, 2.08979592, 2.53097506, 
+    3.0185941, 3.52943311, 4.01705215, 4.5046712, 4.96907029, 5.43346939, 
+    5.85142857, 6.29260771, 6.78022676, 7.2678458, 7.75546485, 8.21986395, 
+    8.63782313, 9.05578231, 9.45052154],
+    'A4a4':[0.34829932, 0.67337868, 0.9752381, 1.30031746, 1.60217687, 1.90403628, 
+    2.22911565, 2.57741497, 2.90249433, 3.27401361, 3.62231293, 3.97061224, 
+    4.31891156, 4.66721088, 4.99229025, 5.31736961, 5.61922902, 5.92108844, 
+    6.2461678, 6.59446712, 6.94276644],
+    'A4b1':[1.34675737, 2.69351474, 4.01705215, 5.15482993, 6.22294785, 7.7322449, 
+    9.52018141, 10.63473923, 11.65641723, 12.70131519, 14.34993197, 15.7199093, 
+    16.76480726, 18.32054422, 20.2245805, 21.47845805, 22.52335601, 23.73079365, 
+    25.07755102, 26.40108844, 27.7478458],
+    'A4b2':[0.69659864, 1.34675737, 2.02013605, 2.62385488, 3.2275737, 3.92417234, 
+    4.69043084, 5.29414966, 5.87464853, 6.45514739, 7.17496599, 7.84834467, 
+    8.45206349, 9.14866213, 9.93814059, 10.54185941, 11.14557823, 11.79573696, 
+    12.44589569, 13.11927438, 13.79265306],
+    'A4b3':[0.44117914, 0.85913832, 1.27709751, 1.67183673, 2.08979592, 2.55419501, 
+    3.0185941, 3.52943311, 4.01705215, 4.5046712, 4.96907029, 5.43346939, 
+    5.85142857, 6.29260771, 6.78022676, 7.2678458, 7.75546485, 8.21986395, 
+    8.63782313, 9.05578231, 9.45052154],
+    'A4b4':[0.34829932, 0.67337868, 0.9752381, 1.30031746, 1.6021768, 1.90403628, 
+    2.22911565, 2.57741497, 2.92571429, 3.27401361, 3.62231293, 3.97061224, 
+    4.31891156, 4.66721088, 4.99229025, 5.31736961, 5.61922902, 5.92108844, 
+    6.2461678, 6.59446712, 6.94276644]
 }
 
 hapticTestCases = {
@@ -467,24 +542,21 @@ def getTap():
             startRead = False
             break
 
-# def saveOutput():
-    # if not (os.path.isdir('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)):
-    #     os.makedirs('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)
-    # currentPath = '/Users/nickpourazima/GitHub/he-sm/TestOutput/'+str(userName)
-    # filename = (userName+' '+t0+' '+time.asctime()) # get the filename we are supposed to output to
-    # completeName = os.path.join(currentPath,filename)
-    # # print (completeName)
-    # dumpfile = open(completeName,'w')
-    # output_header = "onset offset maxforce"
-    # dumpfile.write(output_header+"\n")
-    # dumpfile.write(output+"\n")
-    # dumpfile.flush()
-    # if(Haptic Test):
-    # # combo = hapticData+tapData
-    # # print (tabulate(combo,headers=['Timestamp','Haptic Elapsed Time','Haptic Onset','Tap Elapsed Time','Tap Onset']))
-    # if(Audio Test):
-    # combo = audioData+tapData
-    # print (tabulate(combo,headers=['Timestamp','Audio Elapsed Time','Audio Onset','Tap Elapsed Time','Tap Onset']))
+def saveOutput(testType):
+    if not (os.path.isdir('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)):
+        os.makedirs('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)
+    currentPath = '/Users/nickpourazima/GitHub/he-sm/TestOutput/'+str(userName)
+    filename = (userName+' '+t0+' '+time.asctime()) # get the filename we are supposed to output to
+    completeName = os.path.join(currentPath,filename)
+    dumpfile = open(completeName,'w')
+    if(testType=='haptic'):
+        combo = hapticData+tapData
+        dataTable = tabulate(combo,headers=['Timestamp','Haptic Elapsed Time','Haptic Onset','Tap Elapsed Time','Tap Onset']) 
+    if(testType=='audio'):
+        combo = audioData+tapData
+        dataTable = tabulate(combo,headers=['Timestamp','Audio Elapsed Time','Audio Onset','Tap Elapsed Time','Tap Onset'])
+    dumpfile.write(dataTable+"\n")
+    dumpfile.flush()
     # SUMMARY FILE -> Test case ordering, maybe also generate graphs?
 
 
@@ -499,36 +571,44 @@ def main():
     shuffle(audioKeys)
 
     # ========= ALL TESTS ==========
-    # allKeys = hapticKeys + audioKeys
-    # shuffle(allKeys)
-    # print(allKeys)
-    # for key in allKeys:
-    #     t0 = key
-    #     if(t0[:2]=='H1'):
-    #         t1 = Thread(target = steady_haptic, args = hapticTestCases.get(key))
-    #     elif(t0[:2]=='H2'):
-    #         t1 = Thread(target = dynamic_haptic, args = hapticTestCases.get(key))
-    #     elif(t0[0]=='A'):
-    #         t1 = Thread(target = playback, args = [audioTestCases.get(key)])
-    #     t2 = Thread(target= getTap)
-    #     t1.start()
-    #     t2.start()
-    #     t1.join()
-    #     t2.join()
+    allKeys = hapticKeys + audioKeys
+    shuffle(allKeys)
+    print(allKeys)
+    for key in allKeys:
+        t0 = key
+        t1 = Thread(target=playBeep)
+        t1.start()
+        if(t0[0]=='H'):
+            t2 = Thread(target = haptic, args = hapticTestCases.get(key))
+            testType = 'haptic'
+        elif(t0[0]=='A'):
+            t2 = Thread(target = playback, args = [audioTestCases.get(key)])
+            testType = 'audio'
+        t3 = Thread(target= getTap)
+        t1.join()
+        t2.start()
+        t3.start()
+        t2.join()
+        t3.join()
+        saveOutput(testType)
+    summaryName = os.path.join(currentPath,(userName+' '+' Summary '+time.asctime()))
+    summaryFile = open(summaryName,'w')
+    summaryFile.write(tabulate(allKeys,headers=['Test Run Order']))
+    summaryFile.flush()
 
     # TESTING SINGLE AUDIO TEST CASE
-    t0 = 'A1a1'
-    t1 = Thread(target=playBeep)
-    t1.start()
-    t1.join()
-    t2 = Thread(target=playback, args = [audioTestCases.get('A1a1')])
-    t3 = Thread(target=getTap)
-    t2.start()
-    t3.start()
-    t2.join()
-    t3.join()
-    combo = audioData+tapData
-    print (tabulate(combo,headers=['Timestamp','Audio Elapsed Time','Audio Onset','Tap Elapsed Time','Tap Onset']))
+    # t0 = 'A1a1'
+    # t1 = Thread(target=playBeep)
+    # t1.start()
+    # t1.join()
+    # t2 = Thread(target=playback, args = [audioTestCases.get('A1a1')])
+    # t3 = Thread(target=getTap)
+    # t2.start()
+    # t3.start()
+    # t2.join()
+    # t3.join()
+    # combo = audioData+tapData
+    # print (tabulate(combo,headers=['Timestamp','Audio Elapsed Time','Audio Onset','Tap Elapsed Time','Tap Onset']))
     
 
     # TESTING SINGLE HAPTIC TEST CASE
