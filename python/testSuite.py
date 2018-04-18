@@ -9,7 +9,6 @@
 
 #TO-DO
     # CRUCIAL
-    # test audio with table output
     # calculate asynchrony automatically, still store output files
     # finish building dynamic audio tests
 
@@ -87,6 +86,22 @@ audioFile =[
     '/Users/nickpourazima/GitHub/he-sm/AudioFiles/cres_f_decres_mp_44.1_16bit_16sec_90bpm.wav',
     '/Users/nickpourazima/GitHub/he-sm/AudioFiles/cres_f_decres_mp_44.1_16bit_11sec_135bpm.wav',
     '/Users/nickpourazima/GitHub/he-sm/AudioFiles/cres_f_decres_mp_44.1_16bit_8sec_180bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/dynamic_click_44.1_16bit_20sec_30-60bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/dynamic_click_44.1_16bit_10sec_75-105bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/dynamic_click_44.1_16bit_10sec_120-150bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/dynamic_click_44.1_16bit_10sec_165-195bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/dynamic_swing_click_44.1_16bit_20sec_30-60bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/dynamic_swing_click_44.1_16bit_10sec_75-105bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/dynamic_swing_click_44.1_16bit_10sec_120-150bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/dynamic_swing_click_44.1_16bit_10sec_165-195bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/dynamic_staccato_44.1_16bit_30sec_30-60bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/dynamic_staccato_44.1_16bit_15sec_75-105bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/dynamic_staccato_44.1_16bit_10sec_120-150bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/dynamic_staccato_44.1_16bit_10sec_165-195bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/dynamic_cres_f_decres_mp_44.1_16bit_30sec_30-60bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/dynamic_cres_f_decres_mp_44.1_16bit_15sec_75-105bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/dynamic_cres_f_decres_mp_44.1_16bit_10sec_120-150bpm.wav',
+    '/Users/nickpourazima/GitHub/he-sm/AudioFiles/dynamic_cres_f_decres_mp_44.1_16bit_10sec_165-195bpm.wav',
     '/Users/nickpourazima/GitHub/he-sm/AudioFiles/beep-11.wav'
 ]
 audioOnsets = defaultdict(list)
@@ -173,6 +188,61 @@ audioOnsets = {
     4.36535147, 4.69043084, 5.0155102, 5.36380952, 5.68888889, 6.01396825, 
     6.36226757, 6.68734694, 7.0124263]
 }
+
+hapticTestCases = {
+    'H1a1': (True,DISCRETE,BPM1,20),
+    'H1a2': (True,DISCRETE,BPM2,20),
+    'H1a3': (True,DISCRETE,BPM3,20),
+    'H1a4': (True,DISCRETE,BPM4,20),
+    'H1b1': (True,CONTINOUS,BPM1,20),
+    'H1b2': (True,CONTINOUS,BPM2,20),
+    'H1b3': (True,CONTINOUS,BPM3,20),
+    'H1b4': (True,CONTINOUS,BPM4,20),
+    'H2a1': (False,DISCRETE,BPM1,20,10),
+    'H2a2': (False,DISCRETE,BPM2,20,5),
+    'H2a3': (False,DISCRETE,BPM3,20,3),
+    'H2a4': (False,DISCRETE,BPM4,20,1),
+    'H2b1': (False,CONTINOUS,BPM1,20,10),
+    'H2b2': (False,CONTINOUS,BPM2,20,5),
+    'H2b3': (False,CONTINOUS,BPM3,20,3),
+    'H2b4': (False,CONTINOUS,BPM4,20,1)
+}
+
+audioTestCases = {
+    'A1a1': audioFile[0],
+    'A1a2': audioFile[1],
+    'A1a3': audioFile[2],
+    'A1a4': audioFile[3],
+    'A1b1': audioFile[4],
+    'A1b2': audioFile[5],
+    'A1b3': audioFile[6],
+    'A1b4': audioFile[7],
+    'A2a1': audioFile[8],
+    'A2a2': audioFile[9],
+    'A2a3': audioFile[10],
+    'A2a4': audioFile[11],
+    'A2b1': audioFile[12],
+    'A2b2': audioFile[13],
+    'A2b3': audioFile[14],
+    'A2b4': audioFile[15],
+    'A3a1': audioFile[16],
+    'A3a2': audioFile[17],
+    'A3a3': audioFile[18],
+    'A3a4': audioFile[19],
+    'A3b1': audioFile[20],
+    'A3b2': audioFile[21],
+    'A3b3': audioFile[22],
+    'A3b4': audioFile[23],
+    'A4a1': audioFile[24],
+    'A4a2': audioFile[25],
+    'A4a3': audioFile[26],
+    'A4a4': audioFile[27],
+    'A4b1': audioFile[28],
+    'A4b2': audioFile[29],
+    'A4b3': audioFile[30],
+    'A4b4': audioFile[31],
+}
+
 #check for serial
 if(os.path.exists(HAPTIC_SERIAL_PORT) and os.path.exists(TAP_SERIAL_PORT)):
     hapticSerial = serial.Serial(HAPTIC_SERIAL_PORT, HAPTIC_BAUD)
@@ -329,7 +399,7 @@ def playBeep():
     global startRead
     mixer.pre_init(44100, -16, 2, 2048)
     mixer.init()
-    mixer.music.load(audioFile[16])
+    mixer.music.load(audioFile[32])
     mixer.music.set_volume(0.1)
     mixer.music.play()
     mixer.music.fadeout(5000)
@@ -392,44 +462,6 @@ def getTap():
             startRead = False
             break
 
-hapticTestCases = {
-    'H1a1': (True,DISCRETE,BPM1,20),
-    'H1a2': (True,DISCRETE,BPM2,20),
-    'H1a3': (True,DISCRETE,BPM3,20),
-    'H1a4': (True,DISCRETE,BPM4,20),
-    'H1b1': (True,CONTINOUS,BPM1,20),
-    'H1b2': (True,CONTINOUS,BPM2,20),
-    'H1b3': (True,CONTINOUS,BPM3,20),
-    'H1b4': (True,CONTINOUS,BPM4,20),
-    'H2a1': (False,DISCRETE,BPM1,20,10),
-    'H2a2': (False,DISCRETE,BPM2,20,5),
-    'H2a3': (False,DISCRETE,BPM3,20,3),
-    'H2a4': (False,DISCRETE,BPM4,20,1),
-    'H2b1': (False,CONTINOUS,BPM1,20,10),
-    'H2b2': (False,CONTINOUS,BPM2,20,5),
-    'H2b3': (False,CONTINOUS,BPM3,20,3),
-    'H2b4': (False,CONTINOUS,BPM4,20,1)
-}
-
-audioTestCases = {
-    'A1a1': audioFile[0],
-    'A1a2': audioFile[1],
-    'A1a3': audioFile[2],
-    'A1a4': audioFile[3],
-    'A1b1': audioFile[4],
-    'A1b2': audioFile[5],
-    'A1b3': audioFile[6],
-    'A1b4': audioFile[7],
-    'A2a1': audioFile[8],
-    'A2a2': audioFile[9],
-    'A2a3': audioFile[10],
-    'A2a4': audioFile[11],
-    'A2b1': audioFile[12],
-    'A2b2': audioFile[13],
-    'A2b3': audioFile[14],
-    'A2b4': audioFile[15]
-}
-
 # def saveOutput():
     # if not (os.path.isdir('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)):
     #     os.makedirs('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)
@@ -442,12 +474,13 @@ audioTestCases = {
     # dumpfile.write(output_header+"\n")
     # dumpfile.write(output+"\n")
     # dumpfile.flush()
-#     if(Haptic Test):
-#         # combo = hapticData+tapData
-#         # print (tabulate(combo,headers=['Timestamp','Haptic Elapsed Time','Haptic Onset','Tap Elapsed Time','Tap Onset']))
-#     if(Audio Test):
-#         combo = audioData+tapData
-#         print (tabulate(combo,headers=['Timestamp','Audio Elapsed Time','Audio Onset','Tap Elapsed Time','Tap Onset']))
+    # if(Haptic Test):
+    # # combo = hapticData+tapData
+    # # print (tabulate(combo,headers=['Timestamp','Haptic Elapsed Time','Haptic Onset','Tap Elapsed Time','Tap Onset']))
+    # if(Audio Test):
+    # combo = audioData+tapData
+    # print (tabulate(combo,headers=['Timestamp','Audio Elapsed Time','Audio Onset','Tap Elapsed Time','Tap Onset']))
+    # SUMMARY FILE -> Test case ordering, maybe also generate graphs?
 
 
 def main():
