@@ -68,7 +68,12 @@ audioData = []
 hapticData = []
 tapData = []
 
-instructions = "The series of upcoming tests seek to measure your ability to snychronize to varying rhythmic fluctuations and conditions across touch and sound. You will hear a series of either audio or haptic (touch) based trials. Each are varying in length as well as rhythmic conditions. Preceeding the start of every test is a 5 second beep. Once the test starts please try your best to synchronize to the presented down beat. For some of the haptic tests, you will hear a continous pulse which moves down and then back up, the downbeat is the pulse felt first. Place the wearable haptic sleeve on the limb of your choice and designate either your non-dominant or dominant hand to tap on the pad"
+instructions = ("The series of upcoming tests seek to measure your ability to synchronize to a varying beat across the modalities of touch and sound."
++CRLF+"You will hear a series of either audio or haptic (touch) based trials. Each are varying in duration."+CRLF+ 
+"Preceeding the start of every test is a 5 second beep. Once the test starts please try your best to tap to the presented down beat."+CRLF+
+"For some of the haptic tests, you will hear a continous pulse which moves down and then back up, the downbeat is the pulse felt first."+CRLF+
+"Place the wearable haptic sleeve on the limb of your choice and designate either your non-dominant or dominant hand to tap on the pad."+CRLF+
+"When you are ready advance to the next page and click Start to begin the first test.")
 audioFile =[
     '/Users/nickpourazima/GitHub/he-sm/AudioFiles/click_44.1_16bit_20sec_45bpm.wav',
     '/Users/nickpourazima/GitHub/he-sm/AudioFiles/click_44.1_16bit_20sec_90bpm.wav',
