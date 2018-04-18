@@ -40,7 +40,7 @@ void setup() {
 //  Serial.begin(9600); // slow speed debugging
   Serial.begin(115200); // high speed debugging
   //Serial.begin(1555200); // good speed for processing (must match python code for reading!)
-  pinMode(2, OUTPUT);
+//  pinMode(2, OUTPUT);
   
 }
 
@@ -109,7 +109,7 @@ void getInfos() {
   
   if ((cur_on==1) && (sendPacket == false)){
     sendPacket = true;
-    digitalWrite(2,HIGH); 
+//    digitalWrite(2,HIGH); 
     collectData();
      
   }
@@ -120,7 +120,7 @@ void getInfos() {
 //    collectData(); // send data
     cur_on=0; // turn off
     sendPacket = false;
-    digitalWrite(2,LOW);
+//    digitalWrite(2,LOW);
     }
 }
 
