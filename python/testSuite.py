@@ -9,18 +9,15 @@
 
 #TO-DO
     # CRUCIAL
-    # re-organize output from haptic such that inter onset interval is acquired
-    # think about tempo write time vs. time of full interval to complete, 
-    # can only change at rate equivalent to rate +1 essentially otherwise jumps in value
+    # test audio with table output
+    # calculate asynchrony automatically, still store output files
     # finish building dynamic audio tests
-    # also need IOI data from audio somehow -> onset detection https://musicinformationretrieval.com/onset_detection.html
 
     #LOW PRIORITY
     # instruction verbiage
     # comments/clean up code
     # integrate intermediary gui page, flashing countdown in sync with audio?
     # captureGUI to 3.6 pull request --> not a priority
-    # data output format
 
 import serial
 import time
@@ -28,6 +25,8 @@ import os
 import tkinter as tk
 import sys
 import datetime
+import numpy
+import pandas as pd
 from functools import partial
 from random import shuffle
 from pygame import mixer
@@ -66,6 +65,7 @@ startRead = False
 t0 = ''
 userName = ""
 timestamp = datetime.datetime
+audioData = []
 hapticData = []
 tapData = []
 
@@ -179,7 +179,7 @@ if(os.path.exists(HAPTIC_SERIAL_PORT) and os.path.exists(TAP_SERIAL_PORT)):
     tapSerial = serial.Serial(TAP_SERIAL_PORT,TAP_BAUD,timeout=TIMEOUT)
 else:
     print ("No serial connected...")
-    # sys.exit()
+    sys.exit()
 
 class mainGUI(tk.Tk):
 
@@ -276,7 +276,6 @@ def haptic(steady,mode,tempo,timer,increment=1):
             pass
         elif not steady:
             newTempo = int(tempo)
-            increment = 10 
         readyFlag = True
         start = time.time()
     while readyFlag:
@@ -302,26 +301,29 @@ def haptic(steady,mode,tempo,timer,increment=1):
             hapticSerial.write((str(newTempo)+ CRLF).encode())
             print('STAGE FOUR: ' + str(newTempo))
 
-        (hapticData.append([timestamp.now(),elapsed,reading,None,None,None,None]))
+        hapticData.append([timestamp.now(),elapsed,reading,None,None,None,None])
         if(elapsed >= timer):
             hapticSerial.write((OFF+CRLF).encode())
             closeFile = True
             break
 
 def playback(audio_file):
-    playBeep()
+    global closeFile
     mixer.pre_init(44100, -16, 2, 2048)
     mixer.init()
     mixer.music.load(audio_file)
     mixer.music.set_volume(0.4)
     mixer.music.play()
+    startTime = timestamp.now()
+    start = time.time()
     # mixer.music.fadeout(20500)
     while mixer.music.get_busy():
-        pass
-    global closeFile
+        elapsed = time.time()-start
+    audioData.append([startTime,elapsed,None,None,None])
+    onset = list(audioOnsets.get(t0))
+    for item in onset:
+        audioData.append([startTime+datetime.timedelta(0,item),None,item,None,None])
     closeFile = True
-    time.sleep(1)
-    # playBeep()
 
 def playBeep():
     global startRead
@@ -359,22 +361,12 @@ def interpret_output_discrete(r):
     
     # Make a formatted output
     # output = "%i %i %i"%(tap_onset,tap_offset,maxforce)
-    # print (output)
 
     return tap_onset,tap_offset,maxforce
 
 def getTap():
     global closeFile,startRead
     readyFlag = False
-    # if not (os.path.isdir('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)):
-    #     os.makedirs('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)
-    # currentPath = '/Users/nickpourazima/GitHub/he-sm/TestOutput/'+str(userName)
-    # filename = (userName+' '+t0+' '+time.asctime()) # get the filename we are supposed to output to
-    # completeName = os.path.join(currentPath,filename)
-    # print (completeName)
-    # dumpfile = open(completeName,'w')
-    # output_header = "onset offset maxforce"
-    # dumpfile.write(output_header+"\n")
     if startRead:
         tapSerial.reset_input_buffer()
         readyFlag = True
@@ -384,22 +376,17 @@ def getTap():
         elapsed = end - start
         # Ok, let's read one byte
         r = tapSerial.read(1)
-        # print(r)
         if bytes.decode(r)=="B": # This could be the beginning of a packet from arduino
             avail=0 # how many bytes are available
             while avail<PACKET_LENGTH-1: # read to fill up the packet
                 avail=tapSerial.inWaiting()
-
             # all right, now we can read
             r = tapSerial.read(PACKET_LENGTH-1) # read the whole packet straight away
             s = str(r,'latin-1')
-            # print(s)
             # Now continue to work with this
             if len(s)==(PACKET_LENGTH-1) and s[-1]=="E": # if we have the correct ending also
                 onset,offset,maxforce = interpret_output_discrete(s)
-                tapData.append([timestamp.now(),None,None,elapsed,onset,offset,maxforce])
-                # dumpfile.write(output+"\n")
-                # dumpfile.flush()
+                tapData.append([timestamp.now(),None,None,elapsed,onset])
         if closeFile:
             closeFile = False
             startRead = False
@@ -443,6 +430,26 @@ audioTestCases = {
     'A2b4': audioFile[15]
 }
 
+# def saveOutput():
+    # if not (os.path.isdir('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)):
+    #     os.makedirs('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)
+    # currentPath = '/Users/nickpourazima/GitHub/he-sm/TestOutput/'+str(userName)
+    # filename = (userName+' '+t0+' '+time.asctime()) # get the filename we are supposed to output to
+    # completeName = os.path.join(currentPath,filename)
+    # # print (completeName)
+    # dumpfile = open(completeName,'w')
+    # output_header = "onset offset maxforce"
+    # dumpfile.write(output_header+"\n")
+    # dumpfile.write(output+"\n")
+    # dumpfile.flush()
+#     if(Haptic Test):
+#         # combo = hapticData+tapData
+#         # print (tabulate(combo,headers=['Timestamp','Haptic Elapsed Time','Haptic Onset','Tap Elapsed Time','Tap Onset']))
+#     if(Audio Test):
+#         combo = audioData+tapData
+#         print (tabulate(combo,headers=['Timestamp','Audio Elapsed Time','Audio Onset','Tap Elapsed Time','Tap Onset']))
+
+
 def main():
     #practice mode
     global t0
@@ -453,8 +460,9 @@ def main():
     audioKeys = list(audioTestCases.keys())
     shuffle(audioKeys)
 
-    allKeys = hapticKeys + audioKeys
-    shuffle(allKeys)
+    # ========= ALL TESTS ==========
+    # allKeys = hapticKeys + audioKeys
+    # shuffle(allKeys)
     # print(allKeys)
     # for key in allKeys:
     #     t0 = key
@@ -470,27 +478,35 @@ def main():
     #     t1.join()
     #     t2.join()
 
-    t0 = Thread(target=playBeep)
-    t0.start()
-    t0.join()
-    t1 = Thread(target=haptic, args = (False,DISCRETE,'60',120))
-    t2 = Thread(target=getTap)
+    # TESTING SINGLE AUDIO TEST CASE
+    t0 = 'A1a1'
+    t1 = Thread(target=playBeep)
     t1.start()
-    t2.start()
     t1.join()
+    t2 = Thread(target=playback, args = [audioTestCases.get('A1a1')])
+    t3 = Thread(target=getTap)
+    t2.start()
+    t3.start()
     t2.join()
-    combo = hapticData+tapData
-    print (tabulate(combo,headers=['Timestamp','Haptic Elapsed Time','Haptic Onset','Tap Elapsed Time','Tap Onset','Tap Offset','Tap Maxforce']))
+    t3.join()
+    combo = audioData+tapData
+    print (tabulate(combo,headers=['Timestamp','Audio Elapsed Time','Audio Onset','Tap Elapsed Time','Tap Onset']))
     
 
-    # dynamic_haptic(CONTINOUS,'60',20)
-
+    # TESTING SINGLE HAPTIC TEST CASE
+    # t1 = Thread(target=playBeep)
+    # t1.start()
+    # t1.join()
+    # t2 = Thread(target=haptic, args = hapticTestCases.get('H2b1'))
+    # t3 = Thread(target=getTap)
+    # t2.start()
+    # t3.start()
+    # t2.join()
+    # t3.join()
+    # combo = hapticData+tapData
+    # print (tabulate(combo,headers=['Timestamp','Haptic Elapsed Time','Haptic Onset','Tap Elapsed Time','Tap Onset']))
+    
     print("FINISHED")
-    #blank window or brief reset before next test
-
-    #upon finishing, close serial
-
-    #summary && output file presented
 
 if __name__ == "__main__":
     app = mainGUI()
