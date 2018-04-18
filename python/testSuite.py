@@ -9,13 +9,12 @@
 
 #TO-DO
     # CRUCIAL
-    # calculate asynchrony automatically, still store output files
-    # finish building dynamic audio tests
+    # graph data
+    # calculate asynchrony automatically
+    # store output files
 
     #LOW PRIORITY
-    # instruction verbiage
     # comments/clean up code
-    # integrate intermediary gui page, flashing countdown in sync with audio?
     # captureGUI to 3.6 pull request --> not a priority
 
 import serial
