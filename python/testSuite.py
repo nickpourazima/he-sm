@@ -80,6 +80,8 @@ hapticData = []
 hapticData2 = []
 tapData = []
 tapData2 = []
+tapData3 = []
+bpmChange = []
 currentPath = ''
 
 instructions = (
@@ -441,6 +443,7 @@ def haptic(steady,mode,tempo,timer,increment=1):
             newTempo = int(tempo)
         readyFlag = True
         start = time.time()
+
     while readyFlag:
         end = time.time()
         elapsed = end - start
@@ -450,21 +453,21 @@ def haptic(steady,mode,tempo,timer,increment=1):
         if(not steady and elapsed <= timer/4):
             newTempo = newTempo+increment
             hapticSerial.write((str(newTempo)+ CRLF).encode())
-            print('STAGE ONE: ' + str(newTempo))
+            bpmChange.append([None,None,None,str(newTempo),None,None])
         elif(not steady and elapsed >= timer/4 and elapsed <= timer/2):
             newTempo = newTempo-increment
             hapticSerial.write((str(newTempo)+ CRLF).encode())
-            print('STAGE TWO: ' + str(newTempo))
+            bpmChange.append([None,None,None,str(newTempo),None,None])
         elif(not steady and elapsed >= timer/2 and elapsed <= (timer/2+timer/4)):
             newTempo = newTempo+increment
             hapticSerial.write((str(newTempo)+ CRLF).encode())
-            print('STAGE THREE: ' + str(newTempo))
+            bpmChange.append([None,None,None,str(newTempo),None,None])
         elif(not steady and elapsed >= (timer/2+timer/4) and elapsed <= timer):
             newTempo = newTempo-increment
             hapticSerial.write((str(newTempo)+ CRLF).encode())
-            print('STAGE FOUR: ' + str(newTempo))
+            bpmChange.append([None,None,None,str(newTempo),None,None])
 
-        hapticData2.append([timestamp.now(),elapsed,reading,None,None])
+        hapticData2.append([timestamp.now(),elapsed,reading,None,None,None])
         hapticData.append([timestamp.now()])
         if(elapsed >= timer):
             hapticSerial.write((OFF+CRLF).encode())
@@ -552,6 +555,7 @@ def getTap():
             # Now continue to work with this
             if len(s)==(PACKET_LENGTH-1) and s[-1]=="E": # if we have the correct ending also
                 onset = interpret_output_discrete(s)
+                tapData3.append([timestamp.now(),None,None,None,elapsed,onset])
                 tapData2.append([timestamp.now(),None,None,elapsed,onset])
                 tapData.append([timestamp.now()])
         if closeFile:
@@ -565,48 +569,43 @@ def saveOutput(testType):
     currentPath = '/Users/nickpourazima/GitHub/he-sm/TestOutput/'+str(userName)
     filename = (userName+' '+t0+' '+time.asctime()) # get the filename we are supposed to output to
     completeName = os.path.join(currentPath,filename)
-    dumpfile = open(completeName,'w')
-    
-    
+    dumpfile = open(completeName+'.tsv','w')
+
+    # FILTER OUT TIME TO MICROSECONDS
+    # for line in audioData:
+    #     line.strftime('%Y-%m-%d %H:%M:%S.%f')[17:]
+    # for line in hapticData:
+    #     line.strftime('%Y-%m-%d %H:%M:%S.%f')[17:]
+    # for line in tapData:
+    #     line.strftime('%Y-%m-%d %H:%M:%S.%f')[17:]
     a = np.array(audioData)
     b = np.array(hapticData)
     c = np.array(tapData)
     
     if(testType=='haptic'):
-        combo = hapticData2+tapData2
-        dataTable = tabulate(combo,headers=['Haptic Timestamp','Haptic Elapsed Time','Haptic Onset','Tap Elapsed Time','Tap Onset'])
-        
-        # plt.plot(np.transpose(b),'bs')
-        # plt.plot(np.transpose(c),'o-')
+        combo = hapticData2+tapData3+bpmChange
+        dataTable = tabulate(combo,headers=['Timestamp','Haptic Elapsed Time','Haptic Onset','BPM Change','Tap Elapsed Time','Tap Onset'])
         plt.plot(b,'bs')
         plt.plot(c,'o-')
 
     if(testType=='audio'):
         combo = audioData2+tapData2
         dataTable = tabulate(combo,headers=['Timestamp','Audio Elapsed Time','Audio Onset','Tap Elapsed Time','Tap Onset'])
-        
-        # plt.plot(np.transpose(a),'bs')
-        # plt.plot(np.transpose(c),'o-')
         plt.plot(a,'bs')
         plt.plot(c,'o-')
 
-
-    # fig = plt.figure()
     plt.title(t0)
     plt.ylabel('Timestamp')
     plt.xlabel('Onset')
     fig1=plt.gcf()
     # plt.show()
-    plt.draw()
+    # plt.draw()
     fig1.savefig(completeName+'.png',bbox_inches='tight')
     plotly.tools.set_credentials_file(username='afaintillusion', api_key='yDV9rWN1OEY9kfS3VIqV')
     plotly_fig=tls.mpl_to_plotly(fig1)
-    plotly.offline.plot(plotly_fig,filename=completeName)
+    plotly.offline.plot(plotly_fig,filename=(completeName+'.html'))
     dumpfile.write(dataTable+"\n")
     dumpfile.close()
-
-    # SUMMARY FILE -> Test case ordering, maybe also generate graphs?
-
 
 def main():
     #practice mode
