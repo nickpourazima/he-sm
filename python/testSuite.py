@@ -18,6 +18,10 @@
     # captureGUI to 3.6 pull request --> not a priority
 
 import serial
+import plotly
+from plotly.graph_objs import Scatter, Layout
+import plotly.tools as tls
+import plotly.plotly as py
 import time
 import os
 import tkinter as tk
@@ -71,8 +75,11 @@ t0 = ''
 userName = ""
 timestamp = datetime.datetime
 audioData = []
+audioData2 = []
 hapticData = []
+hapticData2 = []
 tapData = []
+tapData2 = []
 currentPath = ''
 
 instructions = (
@@ -457,7 +464,7 @@ def haptic(steady,mode,tempo,timer,increment=1):
             hapticSerial.write((str(newTempo)+ CRLF).encode())
             print('STAGE FOUR: ' + str(newTempo))
 
-        # hapticData.append([timestamp.now(),elapsed,reading,None,None])
+        hapticData2.append([timestamp.now(),elapsed,reading,None,None])
         hapticData.append([timestamp.now()])
         if(elapsed >= timer):
             hapticSerial.write((OFF+CRLF).encode())
@@ -476,11 +483,11 @@ def playback(audio_file):
     # mixer.music.fadeout(20500)
     while mixer.music.get_busy():
         elapsed = time.time()-start
-    # audioData.append([startTime,elapsed,None,None,None])
+    audioData2.append([startTime,elapsed,None,None,None])
     audioData.append([startTime])
     onset = list(audioOnsets.get(t0))
     for item in onset:
-        # audioData.append([startTime+datetime.timedelta(0,item),None,item,None,None])
+        audioData2.append([startTime+datetime.timedelta(0,item),None,item,None,None])
         audioData.append([startTime+datetime.timedelta(0,item)])
     closeFile = True
 
@@ -521,7 +528,7 @@ def interpret_output_discrete(r):
     # Make a formatted output
     # output = "%i %i %i"%(tap_onset,tap_offset,maxforce)
 
-    return tap_onset,tap_offset,maxforce
+    return tap_onset
 
 def getTap():
     global closeFile,startRead
@@ -544,8 +551,8 @@ def getTap():
             s = str(r,'latin-1')
             # Now continue to work with this
             if len(s)==(PACKET_LENGTH-1) and s[-1]=="E": # if we have the correct ending also
-                onset,offset,maxforce = interpret_output_discrete(s)
-                # tapData.append([timestamp.now(),None,None,elapsed,onset])
+                onset = interpret_output_discrete(s)
+                tapData2.append([timestamp.now(),None,None,elapsed,onset])
                 tapData.append([timestamp.now()])
         if closeFile:
             closeFile = False
@@ -558,7 +565,7 @@ def saveOutput(testType):
     currentPath = '/Users/nickpourazima/GitHub/he-sm/TestOutput/'+str(userName)
     filename = (userName+' '+t0+' '+time.asctime()) # get the filename we are supposed to output to
     completeName = os.path.join(currentPath,filename)
-    # dumpfile = open(completeName,'w')
+    dumpfile = open(completeName,'w')
     
     
     a = np.array(audioData)
@@ -566,26 +573,18 @@ def saveOutput(testType):
     c = np.array(tapData)
     
     if(testType=='haptic'):
-        # combo = hapticData+tapData
-        # dataTable = tabulate(combo,headers=['Timestamp','Haptic Elapsed Time','Haptic Onset','Tap Elapsed Time','Tap Onset'])
+        combo = hapticData2+tapData2
+        dataTable = tabulate(combo,headers=['Haptic Timestamp','Haptic Elapsed Time','Haptic Onset','Tap Elapsed Time','Tap Onset'])
         
-        # df_1 = pd.DataFrame(hapticData,columns=['Timestamp','True Onset'])
-        # df_2 = pd.DataFrame(tapData,columns=['Timestamp','Tap Onset'])
-        # plt.plot(np.array(hapticData),'o-')
-        # plt.plot(np.array(tapData),'o-')
         # plt.plot(np.transpose(b),'bs')
         # plt.plot(np.transpose(c),'o-')
         plt.plot(b,'bs')
         plt.plot(c,'o-')
 
     if(testType=='audio'):
-        # combo = audioData+tapData
-        # dataTable = tabulate(combo,headers=['Timestamp','Audio Elapsed Time','Audio Onset','Tap Elapsed Time','Tap Onset'])
+        combo = audioData2+tapData2
+        dataTable = tabulate(combo,headers=['Timestamp','Audio Elapsed Time','Audio Onset','Tap Elapsed Time','Tap Onset'])
         
-        # df_1 = pd.DataFrame(audioData,columns=['Timestamp','True Onset'])
-        # df_2 = pd.DataFrame(tapData,columns=['Timestamp','Tap Onset'])
-        # plt.plot(np.array(audioData),'o-')
-        # plt.plot(np.array(tapData),'o-')
         # plt.plot(np.transpose(a),'bs')
         # plt.plot(np.transpose(c),'o-')
         plt.plot(a,'bs')
@@ -594,27 +593,17 @@ def saveOutput(testType):
 
     # fig = plt.figure()
     plt.title(t0)
-    plt.show()
-    # fig.savefig(completeName)
-    # plt.close(fig)
-    # df.where(df.notnull(), None)
-    # df_1.set_index('Timestamp')
-    # df_2.set_index('Timestamp')
-
-    # # df_1['Timestamp']=md.date2num(df_1['Timestamp'])
-    # # df_2['Timestamp']=md.date2num(df_2['Timestamp'])
-
-    # plt.plot(df_1['Timestamp'],df_1['True Onset'])
-    # plt.gcf().autofmt_xdate()
+    plt.ylabel('Timestamp')
+    plt.xlabel('Onset')
+    fig1=plt.gcf()
     # plt.show()
-
-    # plt.plot(df_2['Timestamp'],df_2['Tap Onset'])
-    # plt.gcf().autofmt_xdate()
-    # plt.show()
-    # f.savefig("test.pdf",bbox_inches='tight')
-
-    # dumpfile.write(dataTable+"\n")
-    # dumpfile.close()
+    plt.draw()
+    fig1.savefig(completeName+'.png',bbox_inches='tight')
+    plotly.tools.set_credentials_file(username='afaintillusion', api_key='yDV9rWN1OEY9kfS3VIqV')
+    plotly_fig=tls.mpl_to_plotly(fig1)
+    plotly.offline.plot(plotly_fig,filename=completeName)
+    dumpfile.write(dataTable+"\n")
+    dumpfile.close()
 
     # SUMMARY FILE -> Test case ordering, maybe also generate graphs?
 
@@ -654,7 +643,7 @@ def main():
         # MINIMIZE TEST DEBUG TIME
         counter+=1
         if counter ==1:
-            break
+            sys.exit()
     # summaryName = os.path.join(currentPath,(userName+' Summary '+time.asctime()))
     # summaryFile = open(summaryName,'w')
     # summaryFile.write(tabulate(allKeys,headers=['Test Run Order']))
