@@ -9,9 +9,9 @@
 
 #TO-DO
     # CRUCIAL
-    # graph data
     # calculate asynchrony automatically
     # store output files
+    # store backup of all data
 
     #LOW PRIORITY
     # comments/clean up code
@@ -23,8 +23,15 @@ import os
 import tkinter as tk
 import sys
 import datetime
-import numpy
+from datetime import timedelta
+import numpy as np
 import pandas as pd
+import matplotlib as mpl
+import matplotlib.dates as md
+mpl.use('TkAgg')
+import matplotlib.pyplot as plt
+plt.style.use('ggplot')
+import seaborn as sns
 from functools import partial
 from random import shuffle
 from pygame import mixer
@@ -269,22 +276,22 @@ audioOnsets = {
 }
 
 hapticTestCases = {
-    'H1a1': (True,DISCRETE,BPM1,20),
-    'H1a2': (True,DISCRETE,BPM2,20),
-    'H1a3': (True,DISCRETE,BPM3,20),
-    'H1a4': (True,DISCRETE,BPM4,20),
-    'H1b1': (True,CONTINOUS,BPM1,20),
-    'H1b2': (True,CONTINOUS,BPM2,20),
-    'H1b3': (True,CONTINOUS,BPM3,20),
-    'H1b4': (True,CONTINOUS,BPM4,20),
-    'H2a1': (False,DISCRETE,BPM1,20,10),
-    'H2a2': (False,DISCRETE,BPM2,20,5),
-    'H2a3': (False,DISCRETE,BPM3,20,3),
-    'H2a4': (False,DISCRETE,BPM4,20,1),
-    'H2b1': (False,CONTINOUS,BPM1,20,10),
-    'H2b2': (False,CONTINOUS,BPM2,20,5),
-    'H2b3': (False,CONTINOUS,BPM3,20,3),
-    'H2b4': (False,CONTINOUS,BPM4,20,1)
+    'H1a1': (True,DISCRETE,BPM1,15),
+    'H1a2': (True,DISCRETE,BPM2,15),
+    'H1a3': (True,DISCRETE,BPM3,15),
+    'H1a4': (True,DISCRETE,BPM4,15),
+    'H1b1': (True,CONTINOUS,BPM1,15),
+    'H1b2': (True,CONTINOUS,BPM2,15),
+    'H1b3': (True,CONTINOUS,BPM3,15),
+    'H1b4': (True,CONTINOUS,BPM4,15),
+    'H2a1': (False,DISCRETE,BPM1,15,10),
+    'H2a2': (False,DISCRETE,BPM2,15,5),
+    'H2a3': (False,DISCRETE,BPM3,15,3),
+    'H2a4': (False,DISCRETE,BPM4,15,1),
+    'H2b1': (False,CONTINOUS,BPM1,15,10),
+    'H2b2': (False,CONTINOUS,BPM2,15,5),
+    'H2b3': (False,CONTINOUS,BPM3,15,3),
+    'H2b4': (False,CONTINOUS,BPM4,15,1)
 }
 
 audioTestCases = {
@@ -450,7 +457,8 @@ def haptic(steady,mode,tempo,timer,increment=1):
             hapticSerial.write((str(newTempo)+ CRLF).encode())
             print('STAGE FOUR: ' + str(newTempo))
 
-        hapticData.append([timestamp.now(),elapsed,reading,None,None,None,None])
+        # hapticData.append([timestamp.now(),elapsed,reading,None,None])
+        hapticData.append([timestamp.now()])
         if(elapsed >= timer):
             hapticSerial.write((OFF+CRLF).encode())
             closeFile = True
@@ -468,10 +476,12 @@ def playback(audio_file):
     # mixer.music.fadeout(20500)
     while mixer.music.get_busy():
         elapsed = time.time()-start
-    audioData.append([startTime,elapsed,None,None,None])
+    # audioData.append([startTime,elapsed,None,None,None])
+    audioData.append([startTime])
     onset = list(audioOnsets.get(t0))
     for item in onset:
-        audioData.append([startTime+datetime.timedelta(0,item),None,item,None,None])
+        # audioData.append([startTime+datetime.timedelta(0,item),None,item,None,None])
+        audioData.append([startTime+datetime.timedelta(0,item)])
     closeFile = True
 
 def playBeep():
@@ -479,7 +489,7 @@ def playBeep():
     mixer.pre_init(44100, -16, 2, 2048)
     mixer.init()
     mixer.music.load(audioFile[32])
-    mixer.music.set_volume(0.1)
+    mixer.music.set_volume(0.05)
     mixer.music.play()
     mixer.music.fadeout(5000)
     while mixer.music.get_busy():
@@ -535,7 +545,8 @@ def getTap():
             # Now continue to work with this
             if len(s)==(PACKET_LENGTH-1) and s[-1]=="E": # if we have the correct ending also
                 onset,offset,maxforce = interpret_output_discrete(s)
-                tapData.append([timestamp.now(),None,None,elapsed,onset])
+                # tapData.append([timestamp.now(),None,None,elapsed,onset])
+                tapData.append([timestamp.now()])
         if closeFile:
             closeFile = False
             startRead = False
@@ -547,15 +558,64 @@ def saveOutput(testType):
     currentPath = '/Users/nickpourazima/GitHub/he-sm/TestOutput/'+str(userName)
     filename = (userName+' '+t0+' '+time.asctime()) # get the filename we are supposed to output to
     completeName = os.path.join(currentPath,filename)
-    dumpfile = open(completeName,'w')
+    # dumpfile = open(completeName,'w')
+    
+    
+    a = np.array(audioData)
+    b = np.array(hapticData)
+    c = np.array(tapData)
+    
     if(testType=='haptic'):
-        combo = hapticData+tapData
-        dataTable = tabulate(combo,headers=['Timestamp','Haptic Elapsed Time','Haptic Onset','Tap Elapsed Time','Tap Onset']) 
+        # combo = hapticData+tapData
+        # dataTable = tabulate(combo,headers=['Timestamp','Haptic Elapsed Time','Haptic Onset','Tap Elapsed Time','Tap Onset'])
+        
+        # df_1 = pd.DataFrame(hapticData,columns=['Timestamp','True Onset'])
+        # df_2 = pd.DataFrame(tapData,columns=['Timestamp','Tap Onset'])
+        # plt.plot(np.array(hapticData),'o-')
+        # plt.plot(np.array(tapData),'o-')
+        # plt.plot(np.transpose(b),'bs')
+        # plt.plot(np.transpose(c),'o-')
+        plt.plot(b,'bs')
+        plt.plot(c,'o-')
+
     if(testType=='audio'):
-        combo = audioData+tapData
-        dataTable = tabulate(combo,headers=['Timestamp','Audio Elapsed Time','Audio Onset','Tap Elapsed Time','Tap Onset'])
-    dumpfile.write(dataTable+"\n")
-    dumpfile.flush()
+        # combo = audioData+tapData
+        # dataTable = tabulate(combo,headers=['Timestamp','Audio Elapsed Time','Audio Onset','Tap Elapsed Time','Tap Onset'])
+        
+        # df_1 = pd.DataFrame(audioData,columns=['Timestamp','True Onset'])
+        # df_2 = pd.DataFrame(tapData,columns=['Timestamp','Tap Onset'])
+        # plt.plot(np.array(audioData),'o-')
+        # plt.plot(np.array(tapData),'o-')
+        # plt.plot(np.transpose(a),'bs')
+        # plt.plot(np.transpose(c),'o-')
+        plt.plot(a,'bs')
+        plt.plot(c,'o-')
+
+
+    # fig = plt.figure()
+    plt.title(t0)
+    plt.show()
+    # fig.savefig(completeName)
+    # plt.close(fig)
+    # df.where(df.notnull(), None)
+    # df_1.set_index('Timestamp')
+    # df_2.set_index('Timestamp')
+
+    # # df_1['Timestamp']=md.date2num(df_1['Timestamp'])
+    # # df_2['Timestamp']=md.date2num(df_2['Timestamp'])
+
+    # plt.plot(df_1['Timestamp'],df_1['True Onset'])
+    # plt.gcf().autofmt_xdate()
+    # plt.show()
+
+    # plt.plot(df_2['Timestamp'],df_2['Tap Onset'])
+    # plt.gcf().autofmt_xdate()
+    # plt.show()
+    # f.savefig("test.pdf",bbox_inches='tight')
+
+    # dumpfile.write(dataTable+"\n")
+    # dumpfile.close()
+
     # SUMMARY FILE -> Test case ordering, maybe also generate graphs?
 
 
@@ -573,6 +633,7 @@ def main():
     allKeys = hapticKeys + audioKeys
     shuffle(allKeys)
     print(allKeys)
+    counter = 0
     for key in allKeys:
         t0 = key
         t1 = Thread(target=playBeep)
@@ -590,10 +651,14 @@ def main():
         t2.join()
         t3.join()
         saveOutput(testType)
-    summaryName = os.path.join(currentPath,(userName+' '+' Summary '+time.asctime()))
-    summaryFile = open(summaryName,'w')
-    summaryFile.write(tabulate(allKeys,headers=['Test Run Order']))
-    summaryFile.flush()
+        # MINIMIZE TEST DEBUG TIME
+        counter+=1
+        if counter ==1:
+            break
+    # summaryName = os.path.join(currentPath,(userName+' Summary '+time.asctime()))
+    # summaryFile = open(summaryName,'w')
+    # summaryFile.write(tabulate(allKeys,headers=['Test Run Order']))
+    # summaryFile.close()
 
     # TESTING SINGLE AUDIO TEST CASE
     # t0 = 'A1a1'
