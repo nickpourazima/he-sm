@@ -9,9 +9,8 @@
 
 #TO-DO
     # CRUCIAL
-    # calculate asynchrony automatically
-    # store output files
-    # store backup of all data
+    # calculate/plot asynchrony automatically
+    # filter timestamps to show millis/micros precision
 
     #LOW PRIORITY
     # comments/clean up code
