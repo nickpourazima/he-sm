@@ -1,53 +1,110 @@
 \chapter{Method}
-A new definition will be put forth for the purposes of this research to quantify the ramp up and decay time of the haptic signal. 
 
-The method which follows is a nature expansion of SMS research to discover whether the haptic modality resonates as much as the audible.
+This chapter outlines each test case, describes the motivation behind the test plan, and delves into both the hardware and software design required to implement the methodology. 
 
-\section{Test Cases}
-Test 1:
-    Setup:
-        All test groups
-        Haptic on sleeve, 4 in spacing
-        Arduino with FSR to accept finger tap on dominant hand
-    Method:
-        Modality only:
-            Isochronous synchronization:
-                1. 45 bpm over 1 minute
-                2. 90 bpm over 1 minute
-                3. 135 bpm over 1 minute
-                4. 180 bpm over 1 minute
-            Dynamic synchronization:
-                1. variable tempo from 0-45 bpm for 1 minute
-                2. variable tempo from 45-90 bpm for 1 minute
-                2. variable tempo from 90-135 bpm for 1 minute
-                3. variable tempo from 135-180 bpm for 1 minute
-        Response to MIDI stimulus:
-            Isochronous synchronization:
-                3 tracks
-            Dynamic synchronization:
-                3 tracks
-        Response to (beat tracking) audio stimulus:
-            Isochronous synchronization:
-                3 tracks
-            Dynamic synchronization:
-                3 tracks
+Since the haptic domain is of primary focus, the auditory modality is utilized as a benchmark or baseline foundation.  The work presented in \ref{visualMet} extensively covers the idea of the interstitial beat occupying the visual domain and as such will not be re-evaluated here.
 
-Test 2:
-    Setup:
-        All test groups    
-        2 vibros per arm
-        Arduino with FSR to accept finger tap on dominant hand
+Each test case is defined and presented in \ref{testPlan}. The overall software development is detailed in \ref{development}. The hardware setup and code re-purposing from TapArduino is discussed in \ref{tap_arduino}.
 
-Test 3:
-    Setup:
-        For amateurs and prof musicians only
-        vibros placed at user discretion   
-    Method:
-        As a practice tool with primary instrument:
-            Isochronous synchronization:
-            Dynamic synchronization: 
+\section{Test Plan} \label{testPlan}
+Testing was divided into two major sections, \textbf{Steady} and \textbf{Dynamic}, implying either an \textit{isochronous} beat or a \textit{non-isochronous} pulse respectively. While structurally identical, the dynamic tests however focussed on rubato within a range starting at the predefined BPM and rising or falling within a specified window. The chosen tempi parallels slow walking to running gaits spanning a range of 45-180 beats per minute.
 
-\section{Delay Evaluation}
+Each section had three subsections centered around either an audible metronome tone (\textbf{A1, A3}), musical note (\textbf{A2, A4}), and lastly the haptic modality (\textbf{H1, H2}). Subsections were further broken down into \textbf{a} and \textbf{b} sections, denoting either \textit{discrete} or \textit{interstitial}/\textit{continuous} mode of operation. A breakdown of the test plan is shown in Figure \ref{fig:TestPlan}.
+
+\begin{table}[]
+    \centering
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{cclllcclll}
+    \hline
+    \multicolumn{10}{c}{Steady} \\ \hline
+    \multicolumn{3}{c}{Discrete} & BPM & Runtime (sec) & \multicolumn{3}{c}{Interstitial} & BPM & Runtime (sec) \\
+    \multirow{4}{*}{A1a} & \multirow{4}{*}{click} & i. & 45 & 20 & \multirow{4}{*}{A1b} & \multirow{4}{*}{legato chime (swing click)} & i. & 45 & 30 \\
+     &  & ii. & 90 & 20 &  &  & ii. & 90 & 16 \\
+     &  & iii. & 135 & 20 &  &  & iii. & 135 & 11 \\
+     &  & iv. & 180 & 20 &  &  & iv. & 180 & 8 \\
+    \multirow{4}{*}{A2a} & \multirow{4}{*}{staccato music (melody)} & i. & 45 & 32 & \multirow{4}{*}{A2b} & \multirow{4}{*}{legato music (melody)} & i. & 45 & 32 \\
+     &  & ii. & 90 & 16 &  &  & ii. & 90 & 16 \\
+     &  & iii. & 135 & 11 &  &  & iii. & 135 & 11 \\
+     &  & iv. & 180 & 8 &  &  & iv. & 180 & 8 \\
+    \multirow{4}{*}{H1a} & \multirow{4}{*}{poke / all on (instantaneous)} & i. & 45 & 15 & \multirow{4}{*}{H1b} & \multirow{4}{*}{oscillate down and back up} & i. & 45 & 15 \\
+     &  & ii. & 90 & 15 &  &  & ii. & 90 & 15 \\
+     &  & iii. & 135 & 15 &  &  & iii. & 135 & 15 \\
+     &  & iv. & 180 & 15 &  &  & iv. & 180 & 15 \\ \hline
+    \multicolumn{10}{c}{Dynamic} \\ \hline
+    \multicolumn{3}{c}{Discrete} & BPM & Runtime (sec) & \multicolumn{3}{c}{Interstitial} & BPM & Runtime (sec) \\
+    \multirow{4}{*}{A3a} & \multirow{4}{*}{click} & i. & 45 +/- 15 & 20 & \multirow{4}{*}{A3b} & \multirow{4}{*}{legato chime (swing click)} & i. & 45 +/- 15 & 20 \\
+     &  & ii. & 90 +/- 15 & 10 &  &  & ii. & 90 +/- 15 & 10 \\
+     &  & iii. & 135 +/- 15 & 10 &  &  & iii. & 135 +/- 15 & 10 \\
+     &  & iv. & 180 +/- 15 & 10 &  &  & iv. & 180 +/- 15 & 10 \\
+    \multirow{4}{*}{A4a} & \multirow{4}{*}{staccato music (melody)} & i. & 45 +/- 15 & 30 & \multirow{4}{*}{A4b} & \multirow{4}{*}{legato music (melody)} & i. & 45 +/- 15 & 30 \\
+     &  & ii. & 90 +/- 15 & 15 &  &  & ii. & 90 +/- 15 & 15 \\
+     &  & iii. & 135 +/- 15 & 10 &  &  & iii. & 135 +/- 15 & 10 \\
+     &  & iv. & 180 +/- 15 & 10 &  &  & iv. & 180 +/- 15 & 10 \\
+    \multirow{4}{*}{H2a} & \multirow{4}{*}{poke / all on (instantaneous)} & i. & 45 +/- 10 & 15 & \multirow{4}{*}{H2b} & \multirow{4}{*}{oscillate down and back up} & i. & 45 +/- 10 & 15 \\
+     &  & ii. & 90 +/- 5 & 15 &  &  & ii. & 90 +/- 5 & 15 \\
+     &  & iii. & 135 +/- 3 & 15 &  &  & iii. & 135 +/- 3 & 15 \\
+     &  & iv. & 180 +/- 1 & 15 &  &  & iv. & 180 +/- 1 & 15
+    \end{tabular}%
+    }
+    \caption{Test Plan}
+    \label{fig:TestPlan}
+\end{table}
+
+\subsection{Audio File Generation}
+All tracks were rendered using the digital audio workstation (DAW) \textit{Logic Pro X} as \textit{.wav} files at a 44.1kHz sample rate with 16 bit resolution.
+
+\textbf{A1a} and \textbf{A3a} required a standard metronomic pulse. This was accomplished using the default Klopfgeist (metronome) plugin from Logic Pro X. No additional tuning was modified and the tonality was left at 0.83 of unity as shown in \ref{fig:klopfgeist}. 
+
+\begin{wrapfigure}{r}{0.25\textwidth}
+    \centering
+    \caption{Steady audibe click}
+    \includegraphics[width=0.25\textwidth]{klopfgeist}
+    \label{fig:klopfgeist}
+\end{wrapfigure}
+
+\textbf{A1a} and \textbf{A3b} however required a swing or legato type of chime in order to convey filling the interstitial space. To capture this effect the Klopfgeist tonality was increased to unity and tuned -27 semitones lower which served to both soften diminish the discrete click, provided an elongated or continuous audible sensation. To give the impression of a sound that was ramping up in amplitude and decaying after the peak, a tremolo effect which mimics a sawtooth wave was added to the signal chain as seen in \ref{fig:modClick}. Last, a multi-band EQ was placed at the end of the signal chain with a bandpass filter from 95Hz-750Hz to remove unwanted frequency presence and a 3.5dB high-Q peak at 220Hz to emphasize the tonality.
+
+\begin{figure}[H]
+    \centering
+    \caption{Modified click parameters for interstitial tests.}
+        \subfloat[Modified Klopfgeist]{\includegraphics[width=0.25\columnwidth]{Klopfgeist_Modified}}
+        \qquad
+        \subfloat[Superimposed tremolo]{\includegraphics[width=0.4\columnwidth]{Tremolo}}
+        \qquad
+        \subfloat[Equalized click tone]{\includegraphics[width=\textwidth]{Modified_Click_EQ}}
+    \label{fig:modClick}
+\end{figure}
+
+Shape comparison:
+
+Sibelius music
+
+Dynamic tempi manipulation
+
+
+\pagebreak
+
+\section{Test Suite}
+High precision data acquisition and the minimization of delay were the central foci of the test suite design. Due to the extensive amount of publicly available libraries, multithreading capability, and plot integration via matplotlib, python was chosen as the development environment. Complementary to the software platform was the implementation of a tap onset detection mechanism via force sensitive resistor and the Arduino Uno. 
+
+\subsection{Software Development} \label{development}
+            Discuss code breakdown
+            
+            GUI
+            
+            Haptic onset detection
+            
+            Tap onset detection
+            
+            Multithreading
+            
+            Audio onset detection
+            
+            Plotting
+
+\subsection{Tap Arduino}    \label{tap_arduino}
+
+\subsection{Delay Evaluation}
 
 Overall strategy to minimize delay maximize accuracy/precision
 
@@ -65,20 +122,10 @@ Sources of potential error:
 
     Evaluation with scope:
 
-
-
 \subsection{Tap Onset Latency Evaluation}
 
 A sensorimotor synchronization experiment was conducted to discover how auditory feedback to a tap onset could be presented with minimal latency and responses recorded with the most accuracy. It was found that not only was the auditory response latency the least for the Arduino system using a force sensitive resistor (mean = 0.6 ms, sd = 0.3), but it had missed the fewest taps and recorded the least superfluous responses as compared to a percussion pad with the FTAP and Max MSP systems [Tap Arduino, 1].
 
-
-\section{Beat Tracking}
-
-Max Patch based on \verb!THIS RESEARCH! 
-
-does this
-
-for the purposing of testing this
 
 \section{Expectations}
 
