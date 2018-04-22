@@ -1,35 +1,90 @@
 \chapter{Haptic Design}
-This chapter discusses the design requirements, initial prototypes, and overall challenges overcome which led to the development of the final prototype, the vibrotactile array.
+This chapter briefly touches on the field of haptics and delves into tactile research. This leads into a discussion of the overall design requirements, initial prototypes, and overall challenges overcome which led to the development of the final prototype, the vibrotactile array.
 
 \section{Brief introduction to haptics}
-\textbf{Haptics} are the field of research which concern the sense of touch as it applies to \textit{kinesthetic} and \textit{tactile} sensation. The tactile sense enables humans to perceive object properties through skin contact while the kinesthetic or \textit{proprioceptive} sense lets one perceive the positions, movements, and forces on one's own body. 
+\textbf{Haptics} are the field of research which concern the sense of touch as it applies to \textit{kinesthetic} and \textit{tactile} sensation. The tactile sense enables humans to perceive object properties through skin contact while the \textit{kinesthetic} or \textit{proprioceptive} sense lets one perceive the positions, movements, and forces on one's own body. 
 
-The skin is lined with four types of sensory receptors which respond to mechanical pressure and distortions such as skin deformation. Out of the four, the \textit{lamellated} or \textit{pacinian corpuscles} (PC) are responsible for sensitivity to vibration and pressure. These are rapidly adapting receptors and are responsible for vibrotactile perception in glabrous skin. 
+The skin is lined with an array of sensory receptors which respond to mechanical pressure and distortions such as skin deformation. The \textit{lamellated} or \textit{pacinian corpuscles} (PC) are responsible for sensitivity to vibration and pressure. These rapidly adapting receptors are responsible for vibrotactile perception in glabrous skin. 
 
-Overstimulation is indeed possible, as action potentials are formed when skin is rapidly distorted but not when pressure is continuous due to mechanical filtering of the stimulus in the lamellar structure. If this was not the case, a person could feel the pressure exerted by wearing clothing.
-Any skin deformation causes action potentials to be generated and the PC's are optimally sensitive at 250Hz \cite{choi2013vibrotactile}.
+When pressure is continuous an effect called \textit{haptic masking} is possible. The \textit{pacinian corpuscles} become saturated with the concentrated stimulus such that the brain ignores these messages with a mechanical filtering system in order to focus on other important happenings. If this was not the case, a person could for example feel the pressure exerted by wearing clothing \cite{choi2013vibrotactile}. This phenomena is important to consider when dealing with haptic placement. As mentioned in \ref{tactileModality}, when the vibrotactiles were placed over a larger area span the results closely matched the auditory modality.
+
+\subsection{Vibrotactiles}
+The exploration of the touch sensation led to a brief evaluation of vibrotactiles.
+\begin{enumerate}
+    \item Linear electromagetic actuators
+    \begin{itemize}
+        \item solenoid:
+        \begin{itemize}
+            \item can leverage resonance, large output for small input
+            \item force dependent on position within magnetic field
+            \item influenced by device orientation relative to gravity
+            \item heats up during use
+        \end{itemize}
+        \item voice coil:
+        \begin{itemize}
+            \item linear dynamics yields consistent output, relatively easy to model
+            \item \textit{C2 tactor}:
+            \begin{itemize}
+                \item 7.6mm contactor preloaded against the skin
+                \item suspension resonates at 250Hz for maximum perceptibility
+            \end{itemize}
+            \item \textit{Haptuator}:
+            \begin{itemize}
+                \item moving magnet design
+                \item not meant to touch the skin
+                \item optimized to render frequencies above 50Hz
+            \end{itemize}
+        \end{itemize}
+    \end{itemize}
+    \item Rotary Electromagnetic Actuators (ERM - eccentric rotating mass)
+    \begin{itemize}
+        \item simple, reliable, rotate continuously with a constant voltage/current applied
+        \item off-center mass affixed to output shaft so that its rotation exerts large radial forces on the body of the motor
+        \item couples freq and amplitude of the resulting vibration to the motors rotational speed
+        \item small voltage yields weaker vibrations
+        \item intrinsic spin-up time could cause delay at the start of the cue
+        \item internal static friction can prevent motor from rotating when the applied voltage is very small
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Vibrotactile Constraints}
+-create consistent mechanical coupling between actuator vibrations and users skin
+-slight changes to such a system drastically affect users ability to feel and comprehend the rendered signals.
+-for fixed actuator size/activation level, magnitude of created vibrations is inversely proportional to the mass of the object (minimize overall weight of device)
+-small high-BW accelerometer to measure vibration output performance
+-when the application involves a large object, a wearable device, and/or multiple stimulation sites, the optimal vibrotactile rendering paradigm is to vibrate one or more small zones.
+
+For example, the localization accuracy of 250-Hz vibrotactile stimuli around the waist was 74\% with 12 equidistant tactile actuators (tactors), 92\% with eight tactors, and 97\% with six tactors 		
+
+
 
 \section{Design requirements}
 
-The initial requirement set forth by Professor Neely in the Haptic Enviro-Sensing Metronome (HESM) design draft is centered around an analogue wave that could squeeze and release. As the analogue wave approaches its crest it provides insight forecasting the approaching \textit{crusis}, allowing the user to prepare for and rebound from the "click-moment" with rich entrainment.
+The initial requirement set forth by Professor Neely in the Haptic Enviro-Sensing Metronome (HESM) design draft is centered around an analogue wave that could squeeze and release. As the analogue wave approaches its crest it provides insight forecasting the approaching \textit{crusis}, allowing the user to prepare for and rebound from the "click-moment" with rich entrainment. 
+
+This observation is in direct parallel to external vibrotactile metronome research as discussed in \ref{vibrotactileMetronome}. The constraint was such that the pulses should feel continuous and not discrete, even mentioning a pendulum motion as the descriptive feeling to convey. 
 
 As the intention is to encourage entrainment of the human body to external forces, the frequencies
 required are quite low, based on the tempi of slow walking to running gaits
 (40 bpm/.67 Hz to 180 bpm/3 Hz).
 
 \cite{Neely}
-\todo[inline,size=\tiny]{add HESM design to bio for citations}
+\todo[inline]{add HESM design to bio for citations}
 
 \section{Initial Prototypes}
+In order ot capture the sensation defined in the design requirements, a series of prototypes were rapidly developed.
 
-\section{Vibrotactile Haptic}
+\subsection{Solenoid bracelet}
+Initial introspection towards capturing this squeeze and release sensation led to the rapid prototyping of a simple solenoid bracelet. 
+
+\subsubsection{Single vibrotactile}
+
+\section{Vibrotactile Haptic Array}
 
 \subsection{Hardware}
 
 
 \subsection{Software}
-
-
 
 \section{Design Challenges}
 

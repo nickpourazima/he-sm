@@ -37,10 +37,59 @@ In a novel advancement challenging the auditory advantage and perhaps paving the
 
 Bouncing ball paper discussion.
 
-\section{The Tactile Modality}
+\section{The Tactile Modality} \label{tactileModality}
 A 2016 study by the Department of Psychology at Ryerson University considered whether the auditory advantage persisted across the tactile modality. The experiment was a tap test of non musicians put through a series of simple and complex rhythmic sequences with a varied area of haptic stimulation. In conditions involving a large area of stimulation and simple rhythmic sequences, tactile synchronization closely matched auditory. They proved that if made salient enough, “the accuracy of synchronization to a tactile metronome can equal synchronization to an auditory metronome, further challenging the idea of an auditory advantage over all other modalities for synchronization to discretely timed rhythmic stimuli.” However, auditory won out for synchronization of complex rhythmic sequences. ~\cite{ammirante2016synchronizing}
 
-\section{Commercial Introspection}
+\subsection{Multisensory Cues}
+\todo[inline]{Revise and reword}
+Maintaining synchrony with a periodic event requires that the central nervous system (CNS) compensate for timing variation arising from sensory, decision and motor processing noise. 
+Keeping in time with a pacing source (metronome) requires continual corrections based on the timing error (asynchrony) between the metronome and performed actions
+The Central Nervous system can alternate between cues depending on the demand of the task or combine info from different senses. In the context of rhythmic cues the brain will weight signals according to the relative reliability in the timing of the events across modalities, ensuring optimal movement production to the underlying event extracted from the signals. 
+
+asynchrony variability for unimodal tactile cues was lower than for the visual metronome (F1,9 = 6.929, P = 0.027) and only slightly higher than that for unimodal auditory cues. \cite{elliott2010multisensory}
+
+\subsection{Haptic Drumkit}
+\todo[inline]{Revise and reword}
+In 2010, this group at the Open University in the UK first thought of a haptic set which was purposed to enable a drummer to learn multi-limb coordination with the broader goal of polyrhythmic entrainment.
+
+Drew up an important distinction between stimulus response and fostering entrainment.
+
+Notes from test subjects:
+	-commented that the haptic guidance was “intimate” and that you didn’t have to work out the division of labor as in audio
+	-drumming had a tendency to drown out signal from vibrotactiles - haptic masking
+	-Blurring attack of haptics at high tempo
+    -for looping patterns it was hard to discern whether the pattern would start
+\cite{holland2010feeling}
+
+\subsection{Vibrotactile Metronome} \label{vibrotactileMetronome}
+\todo[inline]{Revise and reword}
+\cite{ignoto2017development}
+The vibrotactile metronome is a thesis project of Patrick Ignoto of the Centre for Interdisciplinary Research in Music Media and Technology (CIRMMT) program at McGill University.
+
+The work done has some fascinating parallels to this project and gave me some very tangible insights towards testing and overall procedure.
+
+Patrick’s overall goal was to propose a device which uses tactile sense to provide similar functionality to a click track as it’s used for a contemporary classical music conductor with the added benefit of not blocking the ear or interfering with the conductors perception.
+
+His guide for design requirements was the director and conductor of the contemp music ensemble, Prof. Bourgogne. He gave him the constraint that the pulses should feel continuous and not discrete, even mentioning a pendulum motion as the descriptive feeling. 
+
+Another constraint was that the pulses peak amplitude line up with the audio track.
+
+The input click track was converted to a vibrotactile click via some Matlab code
+	Allowed for simultaneity between audible and vibrotactile pulses
+
+Two ERM’s and one pager buzzer
+
+Transmitter connected to PC running Max initially:
+Real-time audio analysis using bonk~ object to find downbeats
+Triggered vibrotactile envelope signal and control message trasmitted to device
+	Redefined Inter-Onset Interval as half previous IOI (rise time) + half nexts IOI (decay time) for more precision to accommodate varying pulse lengths
+
+Had to move to post-processing in Matlab since couldn’t keep up with buffering
+Used findpeaks to find local maxima for each click, determined IOI
+To synchronize with the audio click he triggered the haptic pulse midway between two audio clicks
+
+
+\subsection{Commercial Introspection}
 Peterson tuner BodyBeat Sync (\$140) seeks to revolutionize the traditional metronome through its extensive coverage of all three modalities with a wearable pulsing vibration unit which claims to “allow musicians to easily internalize the beat and develop a note value relationship both audibly and physically.” [Peterson Citation]
 
 Ramp up/down as well as proof via quantification of this rhythmic internalization are missing.
