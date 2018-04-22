@@ -73,7 +73,7 @@
   \centering
   \scalebox{.2}{
     \hyperlink{contents}{  % Link To TOC -- define label in main file.
-      \includegraphics{figs/cmu_seal.png}
+      \includegraphics{figures/cmu_seal.png}
   }}
 \end{figure}
 
