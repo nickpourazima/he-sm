@@ -6,10 +6,39 @@ This chapter briefly touches on the field of haptics and delves into tactile res
 
 The skin is lined with an array of sensory receptors which respond to mechanical pressure and distortions such as skin deformation. The \textit{lamellated} or \textit{pacinian corpuscles} (PC) are responsible for sensitivity to vibration and pressure. These rapidly adapting receptors are responsible for vibrotactile perception in glabrous skin. 
 
-When pressure is continuous an effect called \textit{haptic masking} is possible. The \textit{pacinian corpuscles} become saturated with the concentrated stimulus such that the brain ignores these messages with a mechanical filtering system in order to focus on other important happenings. If this was not the case, a person could for example feel the pressure exerted by wearing clothing \cite{choi2013vibrotactile}. This phenomena is important to consider when dealing with haptic placement. As mentioned in \ref{tactileModality}, when the vibrotactiles were placed over a larger area span the results closely matched the auditory modality.
+Sensitivity to a tactile stimulus grows with the area in contact with the skin and also improves with the stimulus duration until it is saturated. When pressure is continuous an effect called \textit{haptic masking} or the \textit{summation effect} is possible. The \textit{pacinian corpuscles} become saturated with the concentrated stimulus such that the brain ignores these messages with a mechanical filtering system which lowers the perception threshold in order to focus on other important happenings. If this was not the case, a person could for example feel the pressure exerted by wearing clothing \cite{choi2013vibrotactile}. This phenomena is important to consider when dealing with haptic placement. As mentioned in \ref{tactileModality}, when the vibrotactiles were placed over a larger area span the results closely matched the auditory modality.
+
+\subsection{Haptic Considerations}
+Can the user feel it?
+For vibrotactile stimuli perceptibility is strongly dependent on the frequency of vibration. The minimum threshold is observed to be between 150-300Hz and can cover an area smaller than 0.1 micrometer. The absolute thresholds are dependent on factors such as body site, contact area, stimulus duration, stimulus waveform, contact force, skin temperature, presence of other masking stimuli, and age.
+
+Can the user distinguish between the different vibrotactile cues being displayed?
+This is quantified by the discrimination or \textit{difference threshold} also called the \textit{Just Noticeable Difference} (JND). It is defined as the smallest amount a stimulus intensity much change to produce a noteable change in sensory experience. The JND is measured as a \textit{Weber fraction}:
+${\Delta}$I/I = k or the ratio of difference threshold to the reference level.
+Research into experimental psychology has deemed a 20-30\% difference in amplitude or frequency is necessary for robust discrimination between vibrotactile stimuli in practical applications.
+
+How strong does a certain vibrotactile cue feel to the user?
+Steven's power law: (picture)
+-when a stimulus intensity I is above its absolute threshold, human perceives its magnitude as phi(I) (perceptual strength)
+-exponent (dependent on stimulation freq) determines growth rate of the perceived magnitude, ranges from 0.35 to 0.86 for vibrotactiles.
+-perceived intensity is a function of freq and amplitude of vibration (also affecting percieved pitch)
+-similar to Fletcher Munsen curves need to ref equal sensation contours that describe how amplitude and frequenct must vary to yield the same perceived intensity
+
+How good are users at judging timing of vibrotactile cues?
+-tactile perception is generally considered to have high temporal (time related) acuity (sharpness)
+-we can distinguish successive pulses with a time gap as small as 5 ms (12000 BPM)
+-better than vision (25ms) but worse than auditory (0.01 ms)
+
+Can Vibrotactile cues elicit any other perceptual effects?
+-below 3 Hz considered slow kinesthetic motion
+-10-70Hz = rough motion or fluttering
+-100-300Hz = smooth vibration
+-subjective quality of a vibrotactile stimulus can be controlled by modifying the envelope of the stimulus amplitude
+-ex: AM (amplitude modulation) multiplying a low f sin w/ high freq can be useful to control subjective impression and discriminability of output
+
 
 \subsection{Vibrotactiles}
-The exploration of the touch sensation led to a brief evaluation of vibrotactiles.
+The exploration of touch actuation led to the evaluation of available vibrotactiles. The following is a breakdown summarizing a cost and benefits analysis to inform design perspective.
 \begin{enumerate}
     \item Linear electromagetic actuators
     \begin{itemize}
@@ -45,6 +74,7 @@ The exploration of the touch sensation led to a brief evaluation of vibrotactile
         \item intrinsic spin-up time could cause delay at the start of the cue
         \item internal static friction can prevent motor from rotating when the applied voltage is very small
     \end{itemize}
+
 \end{enumerate}
 
 \subsubsection{Vibrotactile Constraints}
