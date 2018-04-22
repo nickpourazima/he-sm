@@ -15,7 +15,7 @@
     #LOW PRIORITY
     # comments/clean up code
     # captureGUI to 3.6 pull request --> not a priority
-
+import webbrowser
 import serial
 import plotly
 from plotly.graph_objs import Scatter, Layout
@@ -676,6 +676,8 @@ def main():
     # print (tabulate(combo,headers=['Timestamp','Haptic Elapsed Time','Haptic Onset','Tap Elapsed Time','Tap Onset']))
     
     print("FINISHED")
+    webbrowser.open('https://goo.gl/forms/LR5y4uy5fg86QcDW2',new=2,autoraise=True)
+
 
 if __name__ == "__main__":
     app = mainGUI()

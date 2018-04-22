@@ -150,7 +150,7 @@ High precision data acquisition and the minimization of delay were the central f
             
             Plotting
 
-\subsection{Tap Arduino}    \label{tap_arduino}
+\subsection{Tap Onset Hardware}    \label{tap_arduino}
 \subsubsection{Tap Onset Latency Evaluation}
 
 A sensorimotor synchronization experiment was conducted to discover how auditory feedback to a tap onset could be presented with minimal latency and responses recorded with the most accuracy. It was found that not only was the auditory response latency the least for the Arduino system using a force sensitive resistor (mean = 0.6 ms, sd = 0.3), but it had missed the fewest taps and recorded the least superfluous responses as compared to a percussion pad with the FTAP and Max MSP systems [Tap Arduino, 1].
@@ -173,9 +173,21 @@ Sources of potential error:
 
     Evaluation with scope:
 
+\subsection{Setup}
 
-\section{Setup}
+To initialize setup, the user is seated and given a pair of closed-back headphones. The FSR is situated to their preference, either dominant or non-dominant hand, and secured into place. Unlike a keyboard or button the FSR gives no feedback or rebound;psychologically ensuring a confident tap on each onset while providing no tactile response. This approach avoids intrinsic lag as there are no mechanical components involved. The delay limit is defined by the threshold applied in the software to avoid debounce, as discussed in Section \ref{}
 
+The user will input their name, read the instructions, agree to the conditions of the test suite, and commence with the test. The order every user encounters will differ as the tests are scrambled. Upon completion, the users are asked to fill out a survey and the results are displayed.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\columnwidth]{TestSuiteFlowDiagram}
+    \caption{Test Suite Flow Chart}
+    \label{fig:TestSuiteFlowDiagram}
+\end{figure}
+
+\subsubsection{Example Output}
+    
 \section{Expectations}
 
 If it can be proven for nonmusicians that NMA does not exhibit a linear increase as the IOI increases with the haptic...than, x
