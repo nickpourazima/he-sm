@@ -118,11 +118,22 @@ Note below in \ref{fig:music_comparison} the gradual, nearly exponential decay d
     \label{fig:music_comparison}
 \end{figure}
 
-\subsubsection{Dynamic tempi manipulation}
+\subsubsection{Dynamic tempi manipulation - audio}
+The dynamic tests involved manipulation of the tempo. This task was accomplished in \textit{Logic Pro X} through automation of the tempo parameter over the time period of the desired waveform. Each test case started on one of the pre-defined BPM's (45,90,135,180) but traversed either sinusoidally or triangular through peaks and troughs ranging plus or minus 15 bpm as shown in \ref{fig:dynamic_audio}.
 
+\begin{figure}[H]
+    \centering
+    \caption{Dynamic Audio Tempo Automation Patterns}
+        \subfloat[45 +/- 15]{\includegraphics[width=.5\columnwidth]{dynamic_45}}
+        \subfloat[90 +/- 15]{\includegraphics[width=.5\columnwidth]{dynamic_90}}
+        \qquad
+        \subfloat[135 +/- 15]{\includegraphics[width=.5\columnwidth]{dynamic_135}}
+        \subfloat[180 +/- 15]{\includegraphics[width=.5\columnwidth]{dynamic_180}}
+    \label{fig:dynamic_audio}
+\end{figure}
 
 \section{Test Suite}
-High precision data acquisition and the minimization of delay were the central foci of the test suite design. Due to the extensive amount of publicly available libraries, multithreading capability, and plot integration via matplotlib, python was chosen as the development environment. Complementary to the software platform was the implementation of a tap onset detection mechanism via force sensitive resistor and the Arduino Uno. 
+High precision data acquisition and the minimization of delay were the central foci of the test suite design. Due to the extensive amount of publicly available libraries, multithreading capability, and plot integration via matplotlib, \textit{Python} was chosen as the development environment. Complementary to the software platform was the implementation of a tap onset detection mechanism via force sensitive resistor (FSR) and the \textit{Arduino Uno}. 
 
 \subsection{Software Development} \label{development}
             Discuss code breakdown
@@ -140,6 +151,9 @@ High precision data acquisition and the minimization of delay were the central f
             Plotting
 
 \subsection{Tap Arduino}    \label{tap_arduino}
+\subsubsection{Tap Onset Latency Evaluation}
+
+A sensorimotor synchronization experiment was conducted to discover how auditory feedback to a tap onset could be presented with minimal latency and responses recorded with the most accuracy. It was found that not only was the auditory response latency the least for the Arduino system using a force sensitive resistor (mean = 0.6 ms, sd = 0.3), but it had missed the fewest taps and recorded the least superfluous responses as compared to a percussion pad with the FTAP and Max MSP systems [Tap Arduino, 1].
 
 \subsection{Delay Evaluation}
 
@@ -159,10 +173,8 @@ Sources of potential error:
 
     Evaluation with scope:
 
-\subsection{Tap Onset Latency Evaluation}
 
-A sensorimotor synchronization experiment was conducted to discover how auditory feedback to a tap onset could be presented with minimal latency and responses recorded with the most accuracy. It was found that not only was the auditory response latency the least for the Arduino system using a force sensitive resistor (mean = 0.6 ms, sd = 0.3), but it had missed the fewest taps and recorded the least superfluous responses as compared to a percussion pad with the FTAP and Max MSP systems [Tap Arduino, 1].
-
+\section{Setup}
 
 \section{Expectations}
 
