@@ -6,16 +6,16 @@ This chapter briefly touches on the field of haptics and delves into tactile res
 
 The skin is lined with an array of sensory receptors which respond to mechanical pressure and distortions such as skin deformation. The \textit{lamellated} or \textit{pacinian corpuscles} (PC) are responsible for sensitivity to vibration and pressure. These rapidly adapting receptors are responsible for vibrotactile perception in glabrous skin. 
 
-Sensitivity to a tactile stimulus grows with the area in contact with the skin and also improves with the stimulus duration until it is saturated. When pressure is continuous an effect called \textit{haptic masking} or the \textit{summation effect} is possible. The \textit{pacinian corpuscles} become saturated with the concentrated stimulus such that the brain ignores these messages with a mechanical filtering system which lowers the perception threshold in order to focus on other important happenings. If this was not the case, a person could for example feel the pressure exerted by wearing clothing \cite{choi2013vibrotactile}. This phenomena is important to consider when dealing with haptic placement. As mentioned in \ref{tactileModality}, when the vibrotactiles were placed over a larger area span the results closely matched the auditory modality.
+Sensitivity to a tactile stimulus grows with the area in contact with the skin and also improves with the stimulus duration until it reaches a point of saturation. When pressure is continuous an effect called \textit{haptic masking} (also known as the \textit{summation effect}) is possible. The overstimulation of the \textit{pacinian corpuscles} causes the brain to ignore these messages with a mechanical filtering system which lowers the perception threshold in order to focus on other important happenings. If this was not the case, a person could for example feel the pressure exerted by wearing clothing \cite{choi2013vibrotactile}. This phenomena is important to consider when dealing with haptic placement. As mentioned in \ref{tactileModality}, when the vibrotactiles were placed over a larger area span haptic masking was avoided and the results closely matched the auditory modality.
 
 \subsection{Haptic Considerations}
 The following questions arise based on extensive research done by Choi and Kuchenbecker \cite{choi2013vibrotactile} and are crucial concepts underpinning the creation a meaningful haptic.
 \begin{enumerate}
     \item \emph{Can the user feel it?}
-Vibrotactile stimuli perceptibility is strongly dependent on the frequency of vibration. The minimum threshold is observed to be between 150-300Hz and can cover an area smaller than 0.1 micrometer. The absolute thresholds are dependent on factors such as body site, contact area, stimulus duration, stimulus waveform, contact force, skin temperature, presence of other masking stimuli, and age.
+Perceptibility of vibrotactile stimuli is strongly dependent on the frequency of vibration. The minimum threshold is observed to be between 150-300Hz and can cover an area smaller than 0.1 micrometer. The absolute thresholds are dependent on factors such as body site, contact area, stimulus duration, stimulus waveform, contact force, skin temperature, presence of other masking stimuli, and age.
 
     \item \emph{Can the user distinguish between the different vibrotactile cues being displayed?}
-This is quantified by the discrimination or \textit{difference threshold} also called the \textit{Just Noticeable Difference} (JND). It is defined as the smallest amount a stimulus intensity much change to produce a noteable change in sensory experience. The JND is measured as a \textit{Weber fraction}:
+This is quantified by the discrimination or \textit{difference threshold} also called the \textit{Just Noticeable Difference} (JND). It is defined as the smallest amount a stimulus intensity much change to produce a noticeable change in sensory experience. The JND is measured as a \textit{Weber fraction}:
 ${\Delta}$I/I = k or the ratio of difference threshold to the reference level.
 Research into experimental psychology has deemed a 20-30\% difference in amplitude or frequency is necessary for robust discrimination between vibrotactile stimuli in practical applications.
 
@@ -25,26 +25,11 @@ Research into experimental psychology has deemed a 20-30\% difference in amplitu
     \includegraphics[width=\linewidth,height=\textheight,keepaspectratio]{Steven's_Power_Law}
     \label{fig:StevensPowerLaw}
 \end{figure}
-    \begin{itemize}
-        \item when a stimulus intensity \textit{I} is above its absolute threshold, humans perceives its magnitude as \begin{math}\Psi(I)\end{math}(perceptual strength)
-        \item the exponent (dependent on stimulation freq) determines growth rate of the perceived magnitude, ranges from 0.35 to 0.86 for vibrotactiles
-        \item perceived intensity is a function of freq and amplitude of vibration (also affecting perceived pitch)
-    \end{itemize}
+When a stimulus intensity \textit{I} is above its absolute threshold, humans perceives its magnitude as \begin{math}\Psi(I)\end{math}(perceptual strength). The exponent (dependent on stimulation freq) determines growth rate of the perceived magnitude, ranges from 0.35 to 0.86 for vibrotactiles. Perceived intensity is a function of freq and amplitude of vibration (also affecting perceived pitch).
     \item \emph{How good are users at judging timing of vibrotactile cues?}
-    \begin{itemize}
-        \item tactile perception is generally considered to have high temporal acuity
-        \item vibrotactile temporal resolution research cites a humans ability to distinguish successive pulses with a time gap as small as 5 ms (12000 BPM)
-        \begin{itemize}
-            \item this resolution is better than vision (25ms) but slightly worse than physiological experiments into the peripheral auditory system which cites a theoretical best case scenario of approximately 2 ms \cite{fishbach2001auditory} \cite{parsons2006neurobiology}
-        \end{itemize}
-    \end{itemize}
-    \item \emph{Can Vibrotactile cues elicit any other perceptual effects?}
-    \begin{itemize}
-        \item below 3 Hz considered slow kinesthetic motion
-        \item between 10-70Hz is the sensation of rough motion or fluttering
-        \item between 100-300Hz is the sensation of smooth vibration
-        \item subjective quality of a vibrotactile stimulus can be controlled by modifying the envelope of the stimulus amplitude
-    \end{itemize}
+Tactile perception is generally considered to have high temporal acuity.
+Vibrotactile temporal resolution research cites a humans ability to distinguish successive pulses with a time gap as small as 5 ms (12000 BPM). This resolution is better than vision (25ms) but slightly worse than physiological experiments into the peripheral auditory system which cites a theoretical best case scenario of approximately 2 ms \cite{fishbach2001auditory} \cite{parsons2006neurobiology}
+    \item \emph{Can Vibrotactile cues elicit any other perceptual effects?} Below 3 Hz is considered slow kinesthetic motion. Between 10-70Hz is the sensation of rough motion or fluttering and between 100-300Hz is the sensation of smooth vibration. Subjective quality of a vibrotactile stimulus can be controlled by modifying the envelope of the stimulus amplitude.
 \end{enumerate}
 
 \subsection{Vibrotactiles}
@@ -115,15 +100,16 @@ The exploration of touch actuation led to the evaluation of available vibrotacti
 \end{enumerate}
 
 \subsubsection{Vibrotactile Constraints}
--create consistent mechanical coupling between actuator vibrations and users skin
--slight changes to such a system drastically affect users ability to feel and comprehend the rendered signals.
--for fixed actuator size/activation level, magnitude of created vibrations is inversely proportional to the mass of the object (minimize overall weight of device)
--small high-BW accelerometer to measure vibration output performance
--when the application involves a large object, a wearable device, and/or multiple stimulation sites, the optimal vibrotactile rendering paradigm is to vibrate one or more small zones.
-
-For example, the localization accuracy of 250-Hz vibrotactile stimuli around the waist was 74\% with 12 equidistant tactile actuators (tactors), 92\% with eight tactors, and 97\% with six tactors 		
-
-
+\begin{enumerate}
+    \item Create consistent mechanical coupling between actuator vibrations and users skin
+    \item Slight changes to such a system drastically affect users ability to feel and comprehend the rendered signals.
+    \item For fixed actuator size/activation level, magnitude of created vibrations is inversely proportional to the mass of the object.
+    \item High bandwidth accelerometer can be used to measure vibration output performance. \cite{ignoto2017development}
+    \item When the application involves a large object, a wearable device, and/or multiple stimulation sites, the optimal vibrotactile rendering paradigm is to vibrate one or more small zones. 
+    \begin{itemize}
+    \item For example, in a tactile display application the localization accuracy of 250-Hz vibrotactile stimuli around the waist was 74\% with 12 equidistant tactile actuators (tactors), 92\% with eight tactors, and 97\% with six tactors.\cite{choi2013vibrotactile}	
+    \end{itemize}
+\end{enumerate}
 
 \section{Design requirements}
 
@@ -139,10 +125,37 @@ required are quite low, based on the tempi of slow walking to running gaits
 \todo[inline]{add HESM design to bio for citations}
 
 \section{Initial Prototypes}
-In order ot capture the sensation defined in the design requirements, a series of prototypes were rapidly developed.
+In order to capture the sensation defined in the design requirements, a series of prototypes were rapidly developed.
 
 \subsection{Solenoid bracelet}
-Initial introspection towards capturing this squeeze and release sensation led to the rapid prototyping of a simple solenoid bracelet. 
+Initial introspection towards capturing the squeeze and release sensation led to the rapid prototyping of a simple solenoid bracelet. 
+\subsubsection{Parts List}
+\begin{enumerate}
+    \item Adafruit Pro Trinket 5V 16MHz
+    \item N-channel MOSFET
+    \item 1N4004 diode
+    \item mini push-pull solenoid
+\end{enumerate}
+\subsubsection{Assembly}
+The design was inspired and assembled per Adafruit's specification \cite{Solenoid}. 
+The base of an N-channel MOSFET was connected through a 1K resistor to a digital i/o pin on the trinket \ref{SolenoidSchematic}. The collector was connected through the solenoid and diode in parallel to Vcc running at 5V.
+\begin{figure}[H]
+    \includegraphics[width=\linewidth,height=\textheight,keepaspectratio]{Solenoid_Schematic}
+    \caption{Solenoid Schematic}
+    \label{SolenoidSchematic}
+\end{figure}
+\subsubsection{Method}
+    As a voltage is applied the slug in the middle of the solenoid is pulled into the center of the coil. The actuation pulls a taught wristband attached to the chasis of the solenoid and as the voltage drops the solenoid retracts releasing tension in the wristband, shown in \ref{SolenoidProto}.
+    
+    \begin{wrapfigure}[5]{r}{0.5\textwidth}
+        \centering
+        \caption{Solenoid Wristband Prototype}
+        \includegraphics[width=.5\linewidth,height=.5\textheight,keepaspectratio]
+        {SolenoidProto}
+        \label{SolenoidProto}
+    \end{wrapfigure}
+    
+    This was controlled in the Arduino IDE through a simple PMW signal with increasing duty cycle which output through the digital I/O. The delay was hard coded proportional to the desired BPM.
 
 \subsubsection{Single vibrotactile}
 
