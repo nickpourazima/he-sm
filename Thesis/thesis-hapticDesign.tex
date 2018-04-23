@@ -9,36 +9,46 @@ The skin is lined with an array of sensory receptors which respond to mechanical
 Sensitivity to a tactile stimulus grows with the area in contact with the skin and also improves with the stimulus duration until it is saturated. When pressure is continuous an effect called \textit{haptic masking} or the \textit{summation effect} is possible. The \textit{pacinian corpuscles} become saturated with the concentrated stimulus such that the brain ignores these messages with a mechanical filtering system which lowers the perception threshold in order to focus on other important happenings. If this was not the case, a person could for example feel the pressure exerted by wearing clothing \cite{choi2013vibrotactile}. This phenomena is important to consider when dealing with haptic placement. As mentioned in \ref{tactileModality}, when the vibrotactiles were placed over a larger area span the results closely matched the auditory modality.
 
 \subsection{Haptic Considerations}
-Can the user feel it?
-For vibrotactile stimuli perceptibility is strongly dependent on the frequency of vibration. The minimum threshold is observed to be between 150-300Hz and can cover an area smaller than 0.1 micrometer. The absolute thresholds are dependent on factors such as body site, contact area, stimulus duration, stimulus waveform, contact force, skin temperature, presence of other masking stimuli, and age.
+The following questions arise based on extensive research done by Choi and Kuchenbecker \cite{choi2013vibrotactile} and are crucial concepts underpinning the creation a meaningful haptic.
+\begin{enumerate}
+    \item \emph{Can the user feel it?}
+Vibrotactile stimuli perceptibility is strongly dependent on the frequency of vibration. The minimum threshold is observed to be between 150-300Hz and can cover an area smaller than 0.1 micrometer. The absolute thresholds are dependent on factors such as body site, contact area, stimulus duration, stimulus waveform, contact force, skin temperature, presence of other masking stimuli, and age.
 
-Can the user distinguish between the different vibrotactile cues being displayed?
+    \item \emph{Can the user distinguish between the different vibrotactile cues being displayed?}
 This is quantified by the discrimination or \textit{difference threshold} also called the \textit{Just Noticeable Difference} (JND). It is defined as the smallest amount a stimulus intensity much change to produce a noteable change in sensory experience. The JND is measured as a \textit{Weber fraction}:
 ${\Delta}$I/I = k or the ratio of difference threshold to the reference level.
 Research into experimental psychology has deemed a 20-30\% difference in amplitude or frequency is necessary for robust discrimination between vibrotactile stimuli in practical applications.
 
-How strong does a certain vibrotactile cue feel to the user?
-Steven's power law: (picture)
--when a stimulus intensity I is above its absolute threshold, human perceives its magnitude as phi(I) (perceptual strength)
--exponent (dependent on stimulation freq) determines growth rate of the perceived magnitude, ranges from 0.35 to 0.86 for vibrotactiles.
--perceived intensity is a function of freq and amplitude of vibration (also affecting percieved pitch)
--similar to Fletcher Munsen curves need to ref equal sensation contours that describe how amplitude and frequenct must vary to yield the same perceived intensity
-
-How good are users at judging timing of vibrotactile cues?
--tactile perception is generally considered to have high temporal (time related) acuity (sharpness)
--we can distinguish successive pulses with a time gap as small as 5 ms (12000 BPM)
--better than vision (25ms) but worse than auditory (0.01 ms)
-
-Can Vibrotactile cues elicit any other perceptual effects?
--below 3 Hz considered slow kinesthetic motion
--10-70Hz = rough motion or fluttering
--100-300Hz = smooth vibration
--subjective quality of a vibrotactile stimulus can be controlled by modifying the envelope of the stimulus amplitude
--ex: AM (amplitude modulation) multiplying a low f sin w/ high freq can be useful to control subjective impression and discriminability of output
-
+    \item \emph{How strong does a certain vibrotactile cue feel to the user?}
+\textit{Steven's power law} describes the relationship between the magnitude of a physical stimulus and its perceived intensity or strength. See Figure \ref{fig:StevensPowerLaw}
+\begin{figure}[H]
+    \includegraphics[width=\linewidth,height=\textheight,keepaspectratio]{Steven's_Power_Law}
+    \label{fig:StevensPowerLaw}
+\end{figure}
+    \begin{itemize}
+        \item when a stimulus intensity \textit{I} is above its absolute threshold, humans perceives its magnitude as \begin{math}\Psi(I)\end{math}(perceptual strength)
+        \item the exponent (dependent on stimulation freq) determines growth rate of the perceived magnitude, ranges from 0.35 to 0.86 for vibrotactiles
+        \item perceived intensity is a function of freq and amplitude of vibration (also affecting perceived pitch)
+    \end{itemize}
+    \item \emph{How good are users at judging timing of vibrotactile cues?}
+    \begin{itemize}
+        \item tactile perception is generally considered to have high temporal acuity
+        \item vibrotactile temporal resolution research cites a humans ability to distinguish successive pulses with a time gap as small as 5 ms (12000 BPM)
+        \begin{itemize}
+            \item this resolution is better than vision (25ms) but slightly worse than physiological experiments into the peripheral auditory system which cites a theoretical best case scenario of approximately 2 ms \cite{fishbach2001auditory}
+        \end{itemize}
+    \end{itemize}
+    \item \emph{Can Vibrotactile cues elicit any other perceptual effects?}
+    \begin{itemize}
+        \item below 3 Hz considered slow kinesthetic motion
+        \item between 10-70Hz is the sensation of rough motion or fluttering
+        \item between 100-300Hz is the sensation of smooth vibration
+        \item subjective quality of a vibrotactile stimulus can be controlled by modifying the envelope of the stimulus amplitude
+    \end{itemize}
+\end{enumerate}
 
 \subsection{Vibrotactiles}
-The exploration of touch actuation led to the evaluation of available vibrotactiles. The following is a breakdown summarizing a cost and benefits analysis to inform design perspective.
+The exploration of touch actuation led to the evaluation of available vibrotactiles. The following is a thorough breakdown to inform design perspective.
 \begin{enumerate}
     \item Linear electromagetic actuators
     \begin{itemize}
@@ -74,7 +84,34 @@ The exploration of touch actuation led to the evaluation of available vibrotacti
         \item intrinsic spin-up time could cause delay at the start of the cue
         \item internal static friction can prevent motor from rotating when the applied voltage is very small
     \end{itemize}
-
+    \item Nonelectromagnetic Actuators - Piezoelectric effect
+    \begin{itemize}
+        \item respond to inputs very quickly and can output arbitrary waveforms
+        \item typically require input on the order of 100V
+        \item high stiffness of skin creates a need for relatively heavy vibrotactile actuator
+        \item most don't have power to move the skin without pushing off a cumbersome mechanical ground
+    \end{itemize}
+    \item EAP (electroactive polymer) actuators
+    \begin{itemize}
+        \item uses elastomers rather than ceramics
+        \item can achieve larger deformations for lower drive voltages
+    \end{itemize}
+    \item SMA (shape memory allow) actuators
+    \begin{itemize}
+        \item remembers original shape
+        \item mechanical properties altered in response to temp changes
+        \item slow response time, large hystoresis, high energy consumption
+    \end{itemize}
+    \item Pneumatic systems
+    \begin{itemize}
+        \item compact, light
+        \item require high-pressure air source
+        \item struggle to output high-frequency signals
+    \end{itemize}
+    \item Forced impact
+    \begin{itemize}
+        \item TacHammer - new technology, specs unknown, hard to acquire
+    \end{itemize}
 \end{enumerate}
 
 \subsubsection{Vibrotactile Constraints}
