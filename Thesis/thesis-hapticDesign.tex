@@ -137,17 +137,17 @@ Initial introspection towards capturing the squeeze and release sensation led to
     \item mini push-pull solenoid
 \end{enumerate}
 \subsubsection{Assembly}
-The design was inspired and assembled per Adafruit's specification \cite{Solenoid}. 
-The base of an N-channel MOSFET was connected through a 1K resistor to a digital i/o pin on the trinket \ref{SolenoidSchematic}. The collector was connected through the solenoid and diode in parallel to Vcc running at 5V.
+The design was inspired and assembled per \textit{Adafruit} specification \cite{Solenoid}. 
+The base of an N-channel MOSFET was connected through a 1K resistor to a digital i/o pin on the trinket per Figure \ref{SolenoidSchematic}. The collector was connected through the solenoid and diode in parallel to Vcc running at 5V.
 \begin{figure}[H]
     \includegraphics[width=\linewidth,height=\textheight,keepaspectratio]{Solenoid_Schematic}
     \caption{Solenoid Schematic}
     \label{SolenoidSchematic}
 \end{figure}
 \subsubsection{Method}
-    As a voltage is applied the slug in the middle of the solenoid is pulled into the center of the coil. The actuation pulls a taught wristband attached to the chasis of the solenoid and as the voltage drops the solenoid retracts releasing tension in the wristband, shown in \ref{SolenoidProto}.
+    As a voltage is applied the slug in the middle of the solenoid is pulled into the center of the coil. The actuation pulls a taught wristband attached to the chasis of the solenoid and as the voltage drops the solenoid retracts releasing tension in the wristband, shown in Figure \ref{SolenoidProto}.
     
-    \begin{wrapfigure}[5]{r}{0.5\textwidth}
+    \begin{wrapfigure}[15]{R}{.5\textwidth}
         \centering
         \caption{Solenoid Wristband Prototype}
         \includegraphics[width=.5\linewidth,height=.5\textheight,keepaspectratio]
@@ -155,14 +155,71 @@ The base of an N-channel MOSFET was connected through a 1K resistor to a digital
         \label{SolenoidProto}
     \end{wrapfigure}
     
-    This was controlled in the Arduino IDE through a simple PMW signal with increasing duty cycle which output through the digital I/O. The delay was hard coded proportional to the desired BPM.
+    This was controlled in the \textit{Arduino IDE} through a simple PMW signal with increasing duty cycle which output through the digital I/O. The delay was hard coded proportional to the desired BPM.
 
-\subsubsection{Single vibrotactile}
+\subsubsection{Outcome}
+
+Due to the linear relationship between current draw and pull force, the solenoid required high current and significant voltage thus isolation from the microcontroller was ideal. The necessary rigidity of the band was a cause of discomfort and the lack of positioning options was a detriment to musicians who relied on availability of their hand. Additionally, heat dissipation was at times unsafe and unbearable since the chasis was in direct contact with the skin. Though it captured the tension and release sensation well, there seemed to be a lack of clarity with regards to communication of whether each push pull iteration was a beat length or if a single contraction was the downbeat (i.e. eighth note pulse rather than quarter note). Coupled with the bulky nature of the solenoid chasis, high power requirements and excessive heat dissipation, the solenoid prototype was quickly abandoned.
+\subsection{Single vibrotactile}
+
+The subsequent prototype iteration was the first involving a vibrotactile motor. Since the goal was to run everything off of a single board, the voltage constraint was limited to the 5V maximum provided by the \textit{Adafruit Pro Trinket} spec. An ERM motor was chosen for its working voltage range of 2-5V and minimal coin cell form factor (10mm diameter). Like the solenoid, higher applied voltage yield more current draw but stronger vibration. At 5V, a single motor draws 100mA. The specification was 1100 at 5V which roughly translates to 183Hz. Though not quite at the ideal 250Hz range optimal for skin sensitivity, this was deemed close enough.
+
+To realize the spectrum of capability for vibrotactile sensation (beyond pulse width modulation of the signal) a haptic motor controller with a pre-installed library of effects was acquired. 
+
+The goal of this design was to test the ERM sensation on a portable wearable. The MCU was altered from the Pro Trinket to the Flora which ran at 3.3V and had less digital I/O pins, but supported external connectivity and took up less surface area.
+
+\subsubsection{Parts List}
+\begin{enumerate}
+    \item Vibrating mini motor disc
+    \item Adafruit DRV2605L Haptic Motor Controller
+    \item Flora Wearable Bluefruit LE Module
+    \item Flora Wearable electronic platform
+    \item LiPo Battery - 3.7v 1100mAh
+\end{enumerate}
+\subsubsection{Assembly}
+    First, the ERM leads were soldered to the DRV2605 haptic motor controller and connected via I2C protocol to the complimentary pins on the Flora (SCL,SDA).
+    To experiment with wirelessly triggering the vibrotactile, the Bluefruit low energy module was added and the send and receive (Tx/Rx) pins were connected as referenced in Figure \ref{Proto2}. Last, the battery was connected via the built-in terminal clip.
+
+
+    \begin{figure}[H]
+        \includegraphics[width=\linewidth,height=\textheight,keepaspectratio]{Proto2_bb}
+        \caption{Prototype 2 - Single vibrotactile, wireless connectivity}
+        \label{Proto2}
+    \end{figure}
+
+\subsubsection{Method}
+    Once the hardware was setup, the haptic library was iterated through. The optimal sensation chosen was a queue of two chained effects according to the \underline{DRV2605 datasheet}:
+    \begin{itemize}
+        \item 83 - Transition Ramp Up Long Smooth 2 - 0 to 100\%
+        \item 71 - Transition Ramp Down Long Smooth 2 - 100\% to 0
+    \end{itemize}
+
+    Within the Arduino IDE the Bluefruit library and dependencies were imported configured via UART. The connectivity was validated via the publicly available Bluefruit LE application on an external Android device.
+
+    The code was written such upon setup and BT initialization, the main loop was constantly listening for updates over UART. The app would send integer values representing the desired BPM to the connected haptic wearable. Once received the new bpm value was parsed into a period value in milliseconds via equation \ref{eq:period}
+
+    \begin{equation}
+        \label{eq:period}
+        period = \frac{60,000}{bpm}
+    \end{equation}
+
+    Since the highest operational bpm defined would be 180, the shortest period would be an interval of 333.33 ms. This value divided in half gave the maximum allowed ramp up time for the motor. The new period value was fed into a state machine which set the on and off state of the motor based on a timer from half the calculated period.
+
+    \subsubsection{Outcome}
+    The singular ERM was a valid starting point but the downfall of this prototype was it's inability to fully command the wearers attention.
+
+    The next iteration needed to operate at higher voltage to get a stronger vibration. 
 
 \section{Vibrotactile Haptic Array}
 
 \subsection{Hardware}
 
+\begin{figure}[H]
+    \includegraphics[width=\linewidth,height=\textheight,keepaspectratio]
+    {FinalProto_bb}
+    \caption{Final prototype wiring mockup}
+    \label{FinalProto}
+\end{figure}
 
 \subsection{Software}
 
