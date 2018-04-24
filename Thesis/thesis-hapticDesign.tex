@@ -178,8 +178,7 @@ The goal of this design was to test the ERM sensation on a portable wearable. Th
 \end{enumerate}
 \subsubsection{Assembly}
     First, the ERM leads were soldered to the DRV2605 haptic motor controller and connected via I2C protocol to the complimentary pins on the Flora (SCL,SDA).
-    To experiment with wirelessly triggering the vibrotactile, the Bluefruit low energy module was added and the send and receive (Tx/Rx) pins were connected as referenced in Figure \ref{Proto2}. Last, the battery was connected via the built-in terminal clip.
-
+    To experiment with wirelessly triggering the vibrotactile, the bluetooth low energy module (BLE)was added and the send and receive (Tx/Rx) pins were connected as referenced in Figure \ref{Proto2}. The battery was connected via the built-in terminal clip and last the entire prototype was fitted into the space of a sports wristband with the vibrotactile on the inside touching the skin.
 
     \begin{figure}[H]
         \includegraphics[width=\linewidth,height=\textheight,keepaspectratio]{Proto2_bb}
@@ -188,27 +187,25 @@ The goal of this design was to test the ERM sensation on a portable wearable. Th
     \end{figure}
 
 \subsubsection{Method}
-    Once the hardware was setup, the haptic library was iterated through. The optimal sensation chosen was a queue of two chained effects according to the \underline{DRV2605 datasheet}:
+    Once the hardware was setup, the haptic library was iterated through for selection of the most influencial effect. The optimal sensation chosen was a queue of two chained effects according to the \underline{DRV2605 datasheet}:
     \begin{itemize}
         \item 83 - Transition Ramp Up Long Smooth 2 - 0 to 100\%
         \item 71 - Transition Ramp Down Long Smooth 2 - 100\% to 0
     \end{itemize}
 
-    Within the Arduino IDE the Bluefruit library and dependencies were imported configured via UART. The connectivity was validated via the publicly available Bluefruit LE application on an external Android device.
-
-    The code was written such upon setup and BT initialization, the main loop was constantly listening for updates over UART. The app would send integer values representing the desired BPM to the connected haptic wearable. Once received the new bpm value was parsed into a period value in milliseconds via equation \ref{eq:period}
+    Within the Arduino IDE the Bluefruit library and dependencies were imported and the bluetooth low energy connection configured via UART. On the client side, the connectivity was validated via the publicly available Bluefruit application on an external Android device. The app would sent integer values representing the desired BPM to the connected haptic wearable. The code was written such upon setup and BT pairing, the main loop was constantly listening for sent packets. Once received, the new bpm value was parsed into a period value in milliseconds via equation \ref{eq:period}
 
     \begin{equation}
         \label{eq:period}
         period = \frac{60,000}{bpm}
     \end{equation}
 
-    Since the highest operational bpm defined would be 180, the shortest period would be an interval of 333.33 ms. This value divided in half gave the maximum allowed ramp up time for the motor. The new period value was fed into a state machine which set the on and off state of the motor based on a timer from half the calculated period.
+    Since the highest operational bpm specified was 180, the shortest period would be an interval of 333.33 ms. This value divided in half gave the maximum allowed ramp up time for the motor, approximately 150ms. The new period value was fed into a state machine which set the on and off state of the motor based on a timer from half the calculated period as well as the 150ms off state.
 
     \subsubsection{Outcome}
-    The singular ERM was a valid starting point but the downfall of this prototype was it's inability to fully command the wearers attention.
+    The singular ERM prototype granted key insight into the capability of a vibrotactile to create the desired awareness and fill the interstitial space. Though it was found to be lacking the ability to fully command the wearers attention. The next iteration needed to operate at higher voltage to get a stronger vibration. It was also deemed necessary to increase the number of vibrotactiles to work in an array format in complete synchronicity to explicitly communicate the necessary ramp up and decay sensation. Though the haptic motor controller was a critical evaluation tool for selecting the vibration effect, it was crucial for the final prototype to be able to turn on the motors at full voltage as quick as possible in order to minimize ramp up time. Spacing out the motors would also optimize ramp up time in allowing a motor the time to fully spin back down while the adjacent was spinning up.
 
-    The next iteration needed to operate at higher voltage to get a stronger vibration. 
+    Furthermore, the \textit{delay()} function added in the BLE section of code was causing the haptic to drift slightly in tempo beyond five minutes of runtime due to the programmatic halting and resumption of dependent timers. The next prototype would have to move away from the delay function which halted program execution.
 
 \section{Vibrotactile Haptic Array}
 
