@@ -203,13 +203,40 @@ The goal of this design was to test the ERM sensation on a portable wearable. Th
     Since the highest operational bpm specified was 180, the shortest period would be an interval of 333.33 ms. This value divided in half gave the maximum allowed ramp up time for the motor, approximately 150ms. The new period value was fed into a state machine which set the on and off state of the motor based on a timer from half the calculated period as well as the 150ms off state.
 
     \subsubsection{Outcome}
-    The singular ERM prototype granted key insight into the capability of a vibrotactile to create the desired awareness and fill the interstitial space. Though it was found to be lacking the ability to fully command the wearers attention. The next iteration needed to operate at higher voltage to get a stronger vibration. It was also deemed necessary to increase the number of vibrotactiles to work in an array format in complete synchronicity to explicitly communicate the necessary ramp up and decay sensation. Though the haptic motor controller was a critical evaluation tool for selecting the vibration effect, it was crucial for the final prototype to be able to turn on the motors at full voltage as quick as possible in order to minimize ramp up time. Spacing out the motors would also optimize ramp up time in allowing a motor the time to fully spin back down while the adjacent was spinning up.
+    The singular ERM prototype granted key insight into the capability of a vibrotactile to create the desired awareness and fill the interstitial space; though it was found to be lacking the ability to fully command the wearers attention. This was primarily due to the fact that it was driven by a 3.3V board which inhibited the vibrational strength. The next iteration needed to operate at higher voltage to get a stronger vibration. It was also deemed necessary to increase the number of vibrotactiles to work in an array format in complete synchronicity to explicitly communicate the necessary ramp up and decay sensation. 
+    
+    Though the haptic motor controller was a critical evaluation tool for selecting the vibration effect, it was crucial for the final prototype to be able to turn on the motors at full voltage as quick as possible in order to minimize ramp up time. Spacing out the motors would also optimize ramp up time in allowing a motor the time to fully spin back down while the adjacent was spinning up.
 
     Furthermore, the \textit{delay()} function added in the BLE section of code was causing the haptic to drift slightly in tempo beyond five minutes of runtime due to the programmatic halting and resumption of dependent timers. The next prototype would have to move away from the delay function which halted program execution.
 
 \section{Vibrotactile Haptic Array}
-
+The final prototype was an array of four vibrotactiles. Several hardware advancements were implemented in order to solve design challenges which arose as discussed in Section \ref{sec:hapticDesignChallenges}. The overall process is detailed below.
 \subsection{Hardware}
+The main board was reverted back to that used in the solenoid prototype, the 5V 16MHz \textit{Adafruit Pro Trinket} in order to provide maximum possible voltage to the motors. On the downside, this board did not have build in serial communication so an FTDI to USB cable was necessary in order to communicate with the device. Bluetooth connectivity was abandoned to minimize latency. 
+\subsubsection{Parts List}
+\begin{table}[H]
+    \centering
+    \resizebox{\columnwidth}{!}{%
+    \begin{tabular}{lll}
+    Part Type & Properties & Quantity \\ \hline
+    Electrolytic Capacitor & capacitance 68µF; package 0405 {[}SMD, electrolytic{]}; voltage 16V & 1 \\
+    Electrolytic Capacitor & capacitance 10µF; package 200 mil {[}THT, electrolytic{]}; voltage 25V & 4 \\
+    Ceramic Capacitor & capacitance 100nF; package 100 mil {[}THT, multilayer{]}; voltage 6.3V & 1 \\
+    Diode & package diode-1n4001; variant pth & 4 \\
+    Vibration Motor & vibration motor 11000 RPM 5VDC & 4 \\
+    Adafruit Pro Trinket 5V 16MHz & variant variant 1; part \# Adafruit \#2000 & 1 \\
+    2N7000 FET N-Channel & package TO92; type n-channel; part \# 2N7000 & 4 \\
+    220Ω Resistor & tolerance ±5\%; package 0805 {[}SMD{]}; resistance 220Ω & 5 \\
+    10kΩ Resistor & tolerance ±5\%; package 0603 {[}SMD{]}; resistance 10kΩ & 1 \\
+    FTDI to USB & Adafruit FTDI Serial TTL­232 USB Cable {[}ADA70{]} & 1 \\
+    Shrink wrap & Heat Shrink Pack & 1
+    \end{tabular}%
+    }
+    \caption{Vibrotactile Haptic Array Parts List}
+    \label{Vibrotactile Haptic Array Parts List}
+\end{table}
+
+Talk about the design choice for the caps and diodes here
 
 \begin{figure}[H]
     \includegraphics[width=\linewidth,height=\textheight,keepaspectratio]
@@ -220,13 +247,11 @@ The goal of this design was to test the ERM sensation on a portable wearable. Th
 
 \subsection{Software}
 
-\section{Design Challenges}
+\section{Design Challenges} \label{sec:hapticDesignChallenges}
 
 Motor noise
 
 Managing power dips
-
-
 
 Debounce for tap tempo
 
