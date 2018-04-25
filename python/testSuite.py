@@ -9,18 +9,22 @@
 
 #TO-DO
     # CRUCIAL
-    # calculate/plot asynchrony automatically
+    # calculate/plot asynchrony, mean asynchrony, and standard deviation
+    # add test as label in column
+    # convert tsv to csv and pandas data frame
     # filter timestamps to show millis/micros precision
 
     #LOW PRIORITY
     # comments/clean up code
     # captureGUI to 3.6 pull request --> not a priority
+
 import webbrowser
 import serial
 import plotly
 from plotly.graph_objs import Scatter, Layout
 import plotly.tools as tls
 import plotly.plotly as py
+import plotly.graph_objs as go
 import time
 import os
 import tkinter as tk
@@ -34,6 +38,7 @@ import matplotlib.dates as md
 mpl.use('TkAgg')
 import matplotlib.pyplot as plt
 plt.style.use('ggplot')
+from matplotlib.ticker import FormatStrFormatter
 import seaborn as sns
 from functools import partial
 from random import shuffle
@@ -43,7 +48,7 @@ from threading import Thread
 from tabulate import tabulate
 
 #SERIAL VARS
-TAP_SERIAL_PORT = '/dev/tty.usbmodem1421'
+TAP_SERIAL_PORT = '/dev/tty.usbmodem14111'
 TAP_BAUD = 115200
 TIMEOUT = 0.25
 
@@ -345,6 +350,12 @@ else:
     print ("No serial connected...")
     sys.exit()
 
+df = {
+    'Test':             [],
+    'TrueOnset':       [],                
+    'TapOnset':        [],
+    'Asynchrony':       []
+}
 class mainGUI(tk.Tk):
 
     def __init__(self, *args, **kwargs):
@@ -466,8 +477,10 @@ def haptic(steady,mode,tempo,timer,increment=1):
             hapticSerial.write((str(newTempo)+ CRLF).encode())
             bpmChange.append([None,None,None,str(newTempo),None,None])
 
-        hapticData2.append([timestamp.now(),elapsed,reading,None,None,None])
+        # hapticData2.append([timestamp.now(),elapsed,reading,None,None,None])
         hapticData.append([timestamp.now()])
+        df['TrueOnset'].append([pd.Timestamp.now()])
+        df['Test'].append(t0) 
         if(elapsed >= timer):
             hapticSerial.write((OFF+CRLF).encode())
             closeFile = True
@@ -485,12 +498,15 @@ def playback(audio_file):
     # mixer.music.fadeout(20500)
     while mixer.music.get_busy():
         elapsed = time.time()-start
-    audioData2.append([startTime,elapsed,None,None,None])
+    # audioData2.append([startTime,elapsed,None,None,None])
     audioData.append([startTime])
     onset = list(audioOnsets.get(t0))
     for item in onset:
-        audioData2.append([startTime+datetime.timedelta(0,item),None,item,None,None])
+        # audioData2.append([startTime+datetime.timedelta(0,item),None,item,None,None])
         audioData.append([startTime+datetime.timedelta(0,item)])
+        df['TrueOnset'].append([pd.Timestamp.now()])
+        df['Test'].append(t0)
+        # trueOnset.append(pd.Timestamp.now()+pd.Timedelta(0,item))
     closeFile = True
 
 def playBeep():
@@ -505,7 +521,7 @@ def playBeep():
         pass
     time.sleep(1)
     startRead = True
-    print ("Starting...")
+    # print ("Starting...")
 
 def interpret_output_discrete(r):
 
@@ -554,9 +570,10 @@ def getTap():
             # Now continue to work with this
             if len(s)==(PACKET_LENGTH-1) and s[-1]=="E": # if we have the correct ending also
                 onset = interpret_output_discrete(s)
-                tapData3.append([timestamp.now(),None,None,None,elapsed,onset])
-                tapData2.append([timestamp.now(),None,None,elapsed,onset])
+                # tapData3.append([timestamp.now(),None,None,None,elapsed,onset])
+                # tapData2.append([timestamp.now(),None,None,elapsed,onset])
                 tapData.append([timestamp.now()])
+                df['TapOnset'].append([pd.Timestamp.now()])
         if closeFile:
             closeFile = False
             startRead = False
@@ -570,26 +587,25 @@ def saveOutput(testType):
     completeName = os.path.join(currentPath,filename)
     dumpfile = open(completeName+'.tsv','w')
 
-    # FILTER OUT TIME TO MICROSECONDS
-    # for line in audioData:
-    #     line.strftime('%Y-%m-%d %H:%M:%S.%f')[17:]
-    # for line in hapticData:
-    #     line.strftime('%Y-%m-%d %H:%M:%S.%f')[17:]
-    # for line in tapData:
-    #     line.strftime('%Y-%m-%d %H:%M:%S.%f')[17:]
     a = np.array(audioData)
     b = np.array(hapticData)
     c = np.array(tapData)
-    
+    # fig,ax = plt.subplots()
+    # ax.yaxis.set_major_formatter(FormatStrFormatter('%.5f')
+
     if(testType=='haptic'):
-        combo = hapticData2+tapData3+bpmChange
-        dataTable = tabulate(combo,headers=['Timestamp','Haptic Elapsed Time','Haptic Onset','BPM Change','Tap Elapsed Time','Tap Onset'])
+        # combo = hapticData2+tapData3+bpmChange
+        # dataTable = tabulate(combo,headers=['Timestamp','Haptic Elapsed Time','Haptic Onset','BPM Change','Tap Elapsed Time','Tap Onset'])
+        # if(len(b)!=len(c)):
+            
         plt.plot(b,'bs')
         plt.plot(c,'o-')
 
     if(testType=='audio'):
-        combo = audioData2+tapData2
-        dataTable = tabulate(combo,headers=['Timestamp','Audio Elapsed Time','Audio Onset','Tap Elapsed Time','Tap Onset'])
+        # combo = audioData2+tapData2
+        # if(len(a)!=len(c)):
+            
+        # dataTable = tabulate(combo,headers=['Timestamp','Audio Elapsed Time','Audio Onset','Tap Elapsed Time','Tap Onset'])
         plt.plot(a,'bs')
         plt.plot(c,'o-')
 
@@ -602,9 +618,14 @@ def saveOutput(testType):
     fig1.savefig(completeName+'.png',bbox_inches='tight')
     plotly.tools.set_credentials_file(username='afaintillusion', api_key='yDV9rWN1OEY9kfS3VIqV')
     plotly_fig=tls.mpl_to_plotly(fig1)
+    # plotly_fig['data'][0].update({'name':'True Onset'})
+    # plotly_fig['data'][1].update({'name':'Tap Onset'})
+    # plotly_fig['layout'].update(yaxis=dict(title = 'Time', tickformat=".8f"))
+    # plotly_fig['layout']['showlegend'] = True
     plotly.offline.plot(plotly_fig,filename=(completeName+'.html'))
-    dumpfile.write(dataTable+"\n")
-    dumpfile.close()
+    # dumpfile.write(dataTable+"\n")
+    # dumpfile.close()
+
 
 def main():
     #practice mode
@@ -637,10 +658,15 @@ def main():
         t3.start()
         t2.join()
         t3.join()
-        saveOutput(testType)
+
+        # saveOutput(testType)
         # MINIMIZE TEST DEBUG TIME
         counter+=1
         if counter ==1:
+            data = pd.DataFrame(dict([ (k,pd.Series(v)) for k,v in df.items() ]))
+            # dF['Asynchrony']=dF.TapOnset.sub(dF.TrueOnset,fill_value='error',axis=0)
+            # data["Asynchrony"] = data["TapOnset"].subtract(data["TrueOnset"], fill_value=0)
+            print(data)
             sys.exit()
     # summaryName = os.path.join(currentPath,(userName+' Summary '+time.asctime()))
     # summaryFile = open(summaryName,'w')
@@ -676,7 +702,7 @@ def main():
     # print (tabulate(combo,headers=['Timestamp','Haptic Elapsed Time','Haptic Onset','Tap Elapsed Time','Tap Onset']))
     
     print("FINISHED")
-    webbrowser.open('https://goo.gl/forms/LR5y4uy5fg86QcDW2',new=2,autoraise=True)
+    # webbrowser.open('https://goo.gl/forms/LR5y4uy5fg86QcDW2',new=2,autoraise=True)
 
 
 if __name__ == "__main__":
