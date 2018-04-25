@@ -252,17 +252,25 @@ A 1N4001 diode was placed in parallel with the motor from the 5V Vcc node to the
 
 The digital pins 5,6,9,10 (denoted with yellow and grey wires in Figure \ref{FinalProto}) output a pulse-width modulated signal to be used as triggers, or control switches, for the transistors. In order to limit the current that the digital output must source and to protect the transistor gate, a 220 Ohm resistor was connected across the digital I/O pin and the gate of the 2N7000 for each pin.
 
+The voltage across the rails (Vcc and ground) was viewed on a Rohde \& Schwarz RTO 2004 oscilloscope. The analyzed waveform showed some unfavorable dips primarily when all motors were running due to the high current draw from the ERMs in addition to some ringing (overshoot). Capacitors were added to act as buffers from the power source to the motors, in doing so they helped provide immediate current to the motors when the PWM input signal engaged the transistor and the motor would go from an off state to an immediate on state drawing high amounts of current. Large electrolytic capacitors are known for their ability to supply high currents for a few milliseconds, more so than a battery or in the haptic wearables case, USB power. These were added across Vcc and ground nearest to the Trinket as well as across each of the node rails nearest to the motors.
+
+\begin{figure}[H]
+    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]
+    {FinalProto_schem}
+    \caption{Final prototype abstracted schematic}
+    \label{FinalProtoSchem}
+\end{figure}
+
 As an additional manual tap tempo option for the user to experiment with, a push-button was added and connected to the only interrupt capable pin on the Trinket, PIN 3. An RC combination was chosen to act as a low-pass filter to protect against debounce scenarios.
 
-\subsection{Software}
-
-\section{Design Challenges} \label{sec:hapticDesignChallenges}
-
+\subsubsection{Design Challenges} \label{sec:hapticDesignChallenges}
 Motor noise
 
 Managing power dips
 
 Debounce for tap tempo
+
+\subsection{Software}
 
 \section{Optimization}
 
