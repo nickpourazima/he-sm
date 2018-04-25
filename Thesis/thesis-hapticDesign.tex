@@ -212,7 +212,7 @@ The goal of this design was to test the ERM sensation on a portable wearable. Th
 \section{Vibrotactile Haptic Array}
 The final prototype was an array of four vibrotactiles. Several hardware advancements were implemented in order to solve design challenges which arose as discussed in Section \ref{sec:hapticDesignChallenges}. The overall process is detailed below.
 \subsection{Hardware}
-The main board was reverted back to that used in the solenoid prototype, the 5V 16MHz \textit{Adafruit Pro Trinket} in order to provide maximum possible voltage to the motors. On the downside, this board did not have build in serial communication so an FTDI to USB cable was necessary in order to communicate with the device. Bluetooth connectivity was abandoned to minimize latency. 
+The main board was reverted back to that used in the solenoid prototype, the 5V 16MHz \textit{Adafruit Pro Trinket}, in order to provide maximum possible voltage to the motors. This board did not have build in serial communication so an FTDI to USB cable was necessary in order to communicate with the device. Bluetooth connectivity was abandoned to minimize latency. 
 \subsubsection{Parts List}
 \begin{table}[H]
     \centering
@@ -236,7 +236,13 @@ The main board was reverted back to that used in the solenoid prototype, the 5V 
     \label{Vibrotactile Haptic Array Parts List}
 \end{table}
 
-Talk about the design choice for the caps and diodes here
+\subsubsection{Assembly}
+Since the digital I/O of the Trinket could only source 20mA, four N-channel 2N7000 transistors were chosen to act as switches and current isolators for controlling power to the motors. These are labelled (N) in Figure \ref{FinalProto}
+
+Each motor was connected from the power source (5V Vcc), to the drain of the transistor. When the transistor received a signal past its bias voltage of 0.8V it was switched on. This allowed the drain-source channel to be opened and an onrush of current to flow from Vcc to the motors and through to ground.
+
+A 1N4001 diode was placed in parallel with the motor from the 5V Vcc node to the drain of the N-channel 2N7000 to protect the transistor by shorting out the onrush of back current emitted from the motor during immediate shutoff. The motor will act as an inductor; with a sudden change in current an equivalent voltage is created to keep that current flowing short term which would fry the transistor if the diode was not in place to short out this negative voltage spike. 
+
 
 \begin{figure}[H]
     \includegraphics[width=\linewidth,height=\textheight,keepaspectratio]
@@ -244,6 +250,12 @@ Talk about the design choice for the caps and diodes here
     \caption{Final prototype wiring mockup}
     \label{FinalProto}
 \end{figure}
+
+The digital pins 5,6,9,10 (denoted with yellow and grey wires in Figure \ref{FinalProto}) output a pulse-width modulated signal to be used as triggers, or control switches, for the transistors. In order to limit the current that the digital output must source and to protect the transistor gate, a 220 Ohm resistor was connected across the digital I/O pin and the gate of the 2N7000 for each pin.
+
+As an additional manual tap tempo a push-button was added and connected to the only interrupt capable pin on the Trinket, PIN 3.
+
+An RC combination was chosen to act as a low-pass filter to protect against debounce scenarios.
 
 \subsection{Software}
 
