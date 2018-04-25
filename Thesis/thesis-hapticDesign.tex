@@ -263,18 +263,8 @@ The voltage across the rails (Vcc and ground) was viewed on a Rohde \& Schwarz R
 
 As an additional manual tap tempo option for the user to experiment with, a push-button was added and connected to the only interrupt capable pin on the Trinket, PIN 3. An RC combination was chosen to act as a low-pass filter to protect against debounce scenarios.
 
-\subsubsection{Design Challenges} \label{sec:hapticDesignChallenges}
-Motor noise
-
-Managing power dips
-
-Debounce for tap tempo
-
 \subsection{Software}
 
-\section{Optimization}
 
 \subsection{Future Implementation}
-Though much effort went into providing an important framework for the haptic to operate smoothly from a hardware standpoint, the most important progress with the final prototype was the solidification of software framework. With the integration of delay independent state-machines performing synchronous tasks, haptic mode selection, and precise bpm control, the vibrotactile haptic could enter the next phases of development. This includes the addition of BLE capability, as in the single vibrotactile prototype, such that commands can be issued over a paired interface such as an app on a smartphone. Also, future work will focus on a custom PCB such that the form factor is minimized and independent node abstraction of each vibrotactile could be realized. This would allow wearers capability to place a programmable array anywhere on their body enabling wide surface area dispersion.
-
-Experiment with other vibrotactiles such as tachammer and LNA's
+Though much effort went into providing an important framework for the haptic to operate smoothly from a hardware standpoint, the most important progress with the final prototype was the solidification of the software framework. With the integration of delay independent state-machines performing synchronous tasks, haptic mode selection, and precise bpm control, the vibrotactile haptic could enter the next phases of development. This includes the addition of BLE capability, as in the single vibrotactile prototype, such that commands can be issued over a paired interface such as an app on a smartphone. Also, future work will focus on a custom PCB such that the form factor is minimized and independent node abstraction of each vibrotactile could be realized. This would allow wearers capability to place a programmable array anywhere on their body enabling wide surface area dispersion. Lastly, experimentation with other vibrotactiles such as the TacHammer and LNA's would provide deeper insight to haptic sensation.
