@@ -500,7 +500,7 @@ def playback(audio_file):
         elapsed = time.time()-start
     # audioData2.append([startTime,elapsed,None,None,None])
     audioData.append([startTime])
-    df['TrueOnset'].append(startTime)
+    # df['TrueOnset'].append(startTime)
     onset = list(audioOnsets.get(t0))
     for item in onset:
         # audioData2.append([startTime+datetime.timedelta(0,item),None,item,None,None])
@@ -666,9 +666,20 @@ def main():
         if counter ==1:
             data = pd.DataFrame(dict([ (k,pd.Series(v)) for k,v in df.items() ]))
             # data['Asynchrony'] = pd.to_timedelta(data['TapOnset']-data['TrueOnset'],unit='ms')
-            data['Asynchrony'] = (data['TapOnset']-data['TrueOnset'])   #/np.timedelta64(1, 'm')*60
+            
+            # data['Asynchrony'] = (data['TapOnset']-data['TrueOnset'])   #/np.timedelta64(1, 'm')*60
+            # data = data.dropna(axis=0, how='any')
+
+            # New today
+            # data.groupby('TrueOnset')['TapOnset'].rank()
+            data['que']=np.where((data['TapOnset']-data['TrueOnset'])>(0.5*(data['TrueOnset'].shift(-1)-data['TrueOnset'])),data['TapOnset'].shift(1),data['TapOnset'])
+            data['Asynchrony'] = (data['que']-data['TrueOnset'])
             data = data.dropna(axis=0, how='any')
+            # conditions = (data['TapOnset']-data['TrueOnset'])>(0.5*(data['TrueOnset'].shift(-1)-data['TrueOnset']))&(data['TrueOnset'].shift(-1)-data['TapOnset'])<(0.5*(data['TrueOnset'].shift(-1)-data['TrueOnset']))
+            # choices = data['TapOnset'].shift(-1)
+            # data['new']=np.select(conditions,choices,default=np.nan)
             print(data)
+            plt.plot(data['que'],'x')
             plt.plot(data['TapOnset'],'o-')
             plt.plot(data['TrueOnset'],'bs')
             # plt.plot(data['Asynchrony'],'x')
