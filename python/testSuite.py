@@ -479,7 +479,7 @@ def haptic(steady,mode,tempo,timer,increment=1):
 
         # hapticData2.append([timestamp.now(),elapsed,reading,None,None,None])
         hapticData.append([timestamp.now()])
-        df['TrueOnset'].append([pd.Timestamp.now()])
+        df['TrueOnset'].append(pd.Timestamp.now())
         df['Test'].append(t0) 
         if(elapsed >= timer):
             hapticSerial.write((OFF+CRLF).encode())
@@ -500,11 +500,12 @@ def playback(audio_file):
         elapsed = time.time()-start
     # audioData2.append([startTime,elapsed,None,None,None])
     audioData.append([startTime])
+    df['TrueOnset'].append(startTime)
     onset = list(audioOnsets.get(t0))
     for item in onset:
         # audioData2.append([startTime+datetime.timedelta(0,item),None,item,None,None])
         audioData.append([startTime+datetime.timedelta(0,item)])
-        df['TrueOnset'].append([pd.Timestamp.now()])
+        df['TrueOnset'].append(startTime+datetime.timedelta(0,item))
         df['Test'].append(t0)
         # trueOnset.append(pd.Timestamp.now()+pd.Timedelta(0,item))
     closeFile = True
@@ -573,7 +574,7 @@ def getTap():
                 # tapData3.append([timestamp.now(),None,None,None,elapsed,onset])
                 # tapData2.append([timestamp.now(),None,None,elapsed,onset])
                 tapData.append([timestamp.now()])
-                df['TapOnset'].append([pd.Timestamp.now()])
+                df['TapOnset'].append(pd.Timestamp.now())
         if closeFile:
             closeFile = False
             startRead = False
@@ -664,9 +665,17 @@ def main():
         counter+=1
         if counter ==1:
             data = pd.DataFrame(dict([ (k,pd.Series(v)) for k,v in df.items() ]))
-            # dF['Asynchrony']=dF.TapOnset.sub(dF.TrueOnset,fill_value='error',axis=0)
-            # data["Asynchrony"] = data["TapOnset"].subtract(data["TrueOnset"], fill_value=0)
+            # data['Asynchrony'] = pd.to_timedelta(data['TapOnset']-data['TrueOnset'],unit='ms')
+            data['Asynchrony'] = (data['TapOnset']-data['TrueOnset'])   #/np.timedelta64(1, 'm')*60
+            data = data.dropna(axis=0, how='any')
             print(data)
+            plt.plot(data['TapOnset'],'o-')
+            plt.plot(data['TrueOnset'],'bs')
+            # plt.plot(data['Asynchrony'],'x')
+            fig1=plt.gcf()
+            plotly.tools.set_credentials_file(username='afaintillusion', api_key='yDV9rWN1OEY9kfS3VIqV')
+            plotly_fig=tls.mpl_to_plotly(fig1)
+            plotly.offline.plot(plotly_fig,filename=('test'+'.html'))
             sys.exit()
     # summaryName = os.path.join(currentPath,(userName+' Summary '+time.asctime()))
     # summaryFile = open(summaryName,'w')
