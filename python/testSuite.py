@@ -78,15 +78,9 @@ startRead = False
 t0 = ''
 userName = ""
 timestamp = dt.datetime
-audioData = []
-audioData2 = []
-hapticData = []
-hapticData2 = []
-tapData = []
-tapData2 = []
-tapData3 = []
 bpmChange = []
 currentPath = ''
+fadeoutTimer=5000
 
 instructions = (
     "The series of upcoming tests seek to measure your ability to synchronize to a varying beat across the modalities of touch and sound."+CRLF+CRLF+
@@ -458,7 +452,7 @@ def haptic(steady,mode,tempo,timer,increment=1):
     while readyFlag:
         end = time.time()
         elapsed = end - start
-        reading = hapticSerial.readline().decode('utf-8')
+        # reading = hapticSerial.readline().decode('utf-8')
 
         # time.sleep((60000/newTempo)/1000)
         if(not steady and elapsed <= timer/4):
@@ -477,9 +471,6 @@ def haptic(steady,mode,tempo,timer,increment=1):
             newTempo = newTempo-increment
             hapticSerial.write((str(newTempo)+ CRLF).encode())
             bpmChange.append([None,None,None,str(newTempo),None,None])
-
-        # hapticData2.append([timestamp.now(),elapsed,reading,None,None,None])
-        hapticData.append([timestamp.now()])
         df['True Onset'].append(pd.Timestamp.now())
         df['Test'].append(t0) 
         if(elapsed >= timer):
@@ -495,60 +486,28 @@ def playback(audio_file):
     mixer.music.set_volume(0.4)
     mixer.music.play()
     startTime = timestamp.now()
-    start = time.time()
     # mixer.music.fadeout(20500)
     while mixer.music.get_busy():
-        elapsed = time.time()-start
-    # audioData2.append([startTime,elapsed,None,None,None])
-    audioData.append([startTime])
-    # df['TrueOnset'].append(startTime)
+        # elapsed = time.time()-start
+        pass
     onset = list(audioOnsets.get(t0))
     for item in onset:
-        # audioData2.append([startTime+datetime.timedelta(0,item),None,item,None,None])
-        audioData.append([startTime+dt.timedelta(0,item)])
         df['True Onset'].append(startTime+dt.timedelta(0,item))
         df['Test'].append(t0)
-        # trueOnset.append(pd.Timestamp.now()+pd.Timedelta(0,item))
     closeFile = True
 
-def playBeep():
+def playBeep(fadeoutTimer):
     global startRead
     mixer.pre_init(44100, -16, 2, 2048)
     mixer.init()
     mixer.music.load(audioFile[32])
     mixer.music.set_volume(0.05)
     mixer.music.play()
-    mixer.music.fadeout(5000)
+    mixer.music.fadeout(fadeoutTimer)
     while mixer.music.get_busy():
         pass
     time.sleep(1)
     startRead = True
-    # print ("Starting...")
-
-def interpret_output_discrete(r):
-
-    # Interpret the raw (binary) output that we got from Arduino.
-
-    #Packet
-    #|---------+---+---------+----------+-------------+---|
-    #| Byte    | 1 | 2,3     | 4,5      | 6,7         | 8 |
-    #| Content | B | [onset] | [offset] | [max force] | E |
-    #|---------+---+---------+----------+-------------+---|
-    
-    #Where [t] = N for oNset, F for oFfset
-    #and [time] is the timestamp (in msec)
-
-
-    # Here we interpret the packet that we received from Arduino.
-    # Note that the first element of the packet (B in our case) has been omitted here.
-    tap_onset  = ord(r[0])+256*ord(r[1])
-    tap_offset = ord(r[2])+256*ord(r[3])
-    maxforce   = ord(r[4])+256*ord(r[5])
-    
-    # Make a formatted output
-    # output = "%i %i %i"%(tap_onset,tap_offset,maxforce)
-
-    return tap_onset
 
 def getTap():
     global closeFile,startRead
@@ -556,10 +515,7 @@ def getTap():
     if startRead:
         tapSerial.reset_input_buffer()
         readyFlag = True
-        start = time.time()
     while readyFlag:
-        end = time.time()
-        elapsed = end - start
         # Ok, let's read one byte
         r = tapSerial.read(1)
         if bytes.decode(r)=="B": # This could be the beginning of a packet from arduino
@@ -571,64 +527,13 @@ def getTap():
             s = str(r,'latin-1')
             # Now continue to work with this
             if len(s)==(PACKET_LENGTH-1) and s[-1]=="E": # if we have the correct ending also
-                onset = interpret_output_discrete(s)
-                # tapData3.append([timestamp.now(),None,None,None,elapsed,onset])
-                # tapData2.append([timestamp.now(),None,None,elapsed,onset])
-                tapData.append([timestamp.now()])
                 df['Tap Onset'].append(pd.Timestamp.now())
         if closeFile:
             closeFile = False
             startRead = False
             break
 
-def saveOutput(testType):
-    if not (os.path.isdir('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)):
-        os.makedirs('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)
-    currentPath = '/Users/nickpourazima/GitHub/he-sm/TestOutput/'+str(userName)
-    filename = (userName+' '+t0+' '+time.asctime()) # get the filename we are supposed to output to
-    completeName = os.path.join(currentPath,filename)
-    dumpfile = open(completeName+'.tsv','w')
-
-    a = np.array(audioData)
-    b = np.array(hapticData)
-    c = np.array(tapData)
-    # fig,ax = plt.subplots()
-    # ax.yaxis.set_major_formatter(FormatStrFormatter('%.5f')
-
-    if(testType=='haptic'):
-        # combo = hapticData2+tapData3+bpmChange
-        # dataTable = tabulate(combo,headers=['Timestamp','Haptic Elapsed Time','Haptic Onset','BPM Change','Tap Elapsed Time','Tap Onset'])
-        # if(len(b)!=len(c)):
-            
-        plt.plot(b,'bs')
-        plt.plot(c,'o-')
-
-    if(testType=='audio'):
-        # combo = audioData2+tapData2
-        # if(len(a)!=len(c)):
-            
-        # dataTable = tabulate(combo,headers=['Timestamp','Audio Elapsed Time','Audio Onset','Tap Elapsed Time','Tap Onset'])
-        plt.plot(a,'bs')
-        plt.plot(c,'o-')
-
-    plt.title(t0)
-    plt.ylabel('Timestamp')
-    plt.xlabel('Onset')
-    fig1=plt.gcf()
-    # plt.show()
-    # plt.draw()
-    fig1.savefig(completeName+'.png',bbox_inches='tight')
-    plotly.tools.set_credentials_file(username='afaintillusion', api_key='yDV9rWN1OEY9kfS3VIqV')
-    plotly_fig=tls.mpl_to_plotly(fig1)
-    # plotly_fig['data'][0].update({'name':'True Onset'})
-    # plotly_fig['data'][1].update({'name':'Tap Onset'})
-    # plotly_fig['layout'].update(yaxis=dict(title = 'Time', tickformat=".8f"))
-    # plotly_fig['layout']['showlegend'] = True
-    plotly.offline.plot(plotly_fig,filename=(completeName+'.html'))
-    # dumpfile.write(dataTable+"\n")
-    # dumpfile.close()
-
-def newSaveOutput():
+def saveOutput():
     if not (os.path.isdir('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)):
         os.makedirs('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)
     currentPath = '/Users/nickpourazima/GitHub/he-sm/TestOutput/'+str(userName)
@@ -641,16 +546,12 @@ def newSaveOutput():
     data['Sanitized Tap Onset']=np.where((data['Tap Onset']-data['True Onset'])>(0.5*(data['True Onset'].shift(-1)-data['True Onset'])),data['Tap Onset'].shift(1),data['Tap Onset'])
     data['Asynchrony'] = (data['Tap Onset']-data['True Onset']).dt.total_seconds()
     data['Sanitized Asynchrony'] = (data['Sanitized Tap Onset']-data['True Onset']).dt.total_seconds()
-    data = data.dropna(axis=0, how='any')
-    # data['Asynchrony Mean']= data['Asynchrony'].mean()
-    # data['Asynchrony STD']= data['Asynchrony'].std()
-    # data['Sanitized Asynchrony Mean']=data.loc[:,'Sanitized Asynchrony'].mean()
-    # data['Sanitized Asynchrony STD']= data.loc[:,'Sanitized Asynchrony'].std()
+    
     print(data)
     data.to_csv(completeName+'.csv')
-    # conditions = (data['TapOnset']-data['TrueOnset'])>(0.5*(data['TrueOnset'].shift(-1)-data['TrueOnset']))&(data['TrueOnset'].shift(-1)-data['TapOnset'])<(0.5*(data['TrueOnset'].shift(-1)-data['TrueOnset']))
-    # choices = data['TapOnset'].shift(-1)
-    # data['new']=np.select(conditions,choices,default=np.nan)
+    data = data.dropna(axis=0, how='any')
+    data.to_csv(completeName+' NaN_Omit'+'.csv')    
+    # PLOTTING
     plt.title('Time vs. Onsets')
     plt.plot(data['Sanitized Tap Onset'],'g^')
     plt.plot(data['Tap Onset'],'ro--')
@@ -670,6 +571,28 @@ def main():
     global t0
     
     #practice mode
+    # TESTING SINGLE AUDIO TEST CASE
+    # t0 = 'A1a1'
+    # t1 = Thread(target=playBeep)
+    # t1.start()
+    # t1.join()
+    # t2 = Thread(target=playback, args = [audioTestCases.get('A1a1')])
+    # t3 = Thread(target=getTap)
+    # t2.start()
+    # t3.start()
+    # t2.join()
+    # t3.join()
+ 
+    # TESTING SINGLE HAPTIC TEST CASE
+    # t1 = Thread(target=playBeep)
+    # t1.start()
+    # t1.join()
+    # t2 = Thread(target=haptic, args = hapticTestCases.get('H2b1'))
+    # t3 = Thread(target=getTap)
+    # t2.start()
+    # t3.start()
+    # t2.join()
+    # t3.join()
 
     #run through test cases (randomly)
     hapticKeys = list(hapticTestCases.keys())
@@ -685,14 +608,12 @@ def main():
     counter = 0
     for key in allKeys:
         t0 = key
-        t1 = Thread(target=playBeep)
+        t1 = Thread(target=playBeep, args=(fadeoutTimer,))
         t1.start()
         if(t0[0]=='H'):
             t2 = Thread(target = haptic, args = hapticTestCases.get(key))
-            testType = 'haptic'
         elif(t0[0]=='A'):
             t2 = Thread(target = playback, args = [audioTestCases.get(key)])
-            testType = 'audio'
         t3 = Thread(target= getTap)
         t1.join()
         t2.start()
@@ -704,44 +625,14 @@ def main():
 
         # MINIMIZE TEST DEBUG TIME
         counter+=1
-        if counter ==3:
-            newSaveOutput() 
-            sys.exit()
-    # summaryName = os.path.join(currentPath,(userName+' Summary '+time.asctime()))
-    # summaryFile = open(summaryName,'w')
-    # summaryFile.write(tabulate(allKeys,headers=['Test Run Order']))
-    # summaryFile.close()
+        if counter ==1:
+            saveOutput()
+            break 
+            # sys.exit()
 
-    # TESTING SINGLE AUDIO TEST CASE
-    # t0 = 'A1a1'
-    # t1 = Thread(target=playBeep)
-    # t1.start()
-    # t1.join()
-    # t2 = Thread(target=playback, args = [audioTestCases.get('A1a1')])
-    # t3 = Thread(target=getTap)
-    # t2.start()
-    # t3.start()
-    # t2.join()
-    # t3.join()
-    # combo = audioData+tapData
-    # print (tabulate(combo,headers=['Timestamp','Audio Elapsed Time','Audio Onset','Tap Elapsed Time','Tap Onset']))
-    
-
-    # TESTING SINGLE HAPTIC TEST CASE
-    # t1 = Thread(target=playBeep)
-    # t1.start()
-    # t1.join()
-    # t2 = Thread(target=haptic, args = hapticTestCases.get('H2b1'))
-    # t3 = Thread(target=getTap)
-    # t2.start()
-    # t3.start()
-    # t2.join()
-    # t3.join()
-    # combo = hapticData+tapData
-    # print (tabulate(combo,headers=['Timestamp','Haptic Elapsed Time','Haptic Onset','Tap Elapsed Time','Tap Onset']))
     
     print("FINISHED")
-    # webbrowser.open('https://goo.gl/forms/LR5y4uy5fg86QcDW2',new=2,autoraise=True)
+    webbrowser.open('https://goo.gl/forms/LR5y4uy5fg86QcDW2',new=2,autoraise=True)
 
 
 if __name__ == "__main__":
