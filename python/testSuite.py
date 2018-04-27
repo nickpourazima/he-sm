@@ -29,7 +29,7 @@ import time
 import os
 import tkinter as tk
 import sys
-import datetime
+import datetime as dt
 from datetime import timedelta
 import numpy as np
 import pandas as pd
@@ -77,7 +77,7 @@ closeFile = False
 startRead = False
 t0 = ''
 userName = ""
-timestamp = datetime.datetime
+timestamp = dt.datetime
 audioData = []
 audioData2 = []
 hapticData = []
@@ -89,13 +89,14 @@ bpmChange = []
 currentPath = ''
 
 instructions = (
-    "The series of upcoming tests seek to measure your ability to synchronize to a varying beat across the modalities of touch and sound."
-    +CRLF+"You will hear a series of either audio or haptic (touch) based trials. Each are varying in duration."+CRLF+ 
-    "Preceeding the start of every test is a 5 second beep. Once the test starts please try your best to tap to the presented down beat."+CRLF+
-    "For the music based tests, tap on every note."+CRLF+
-    "For some of the haptic tests, you will hear a continous pulse which moves down and then back up, the downbeat is the pulse felt first."+CRLF+
+    "The series of upcoming tests seek to measure your ability to synchronize to a varying beat across the modalities of touch and sound."+CRLF+CRLF+
     "Place the wearable haptic sleeve on the limb of your choice and designate either your non-dominant or dominant hand to tap on the pad."+CRLF+
-    "When you are ready advance to the next page and click Start to begin the first test."
+    "You will hear a series of either audio or haptic (touch) based trials. Each are varying in duration."+CRLF+ 
+    "Preceeding the start of every test is a long 5 second beep. Once the test starts please try your best to tap to the presented down beat."+CRLF+
+    "For the music based tests, tap on every note."+CRLF+
+    "For some of the haptic tests, you will feel a pulse moving down and then back up, the downbeat is the pulse felt first, closest to your shoulder."+CRLF+
+    "There will be a practice period which samples each test type, you will then hear 3 short beeps and the real test will commence."+CRLF+CRLF+
+    "When you are ready advance to the next page and click Start to begin the practice test."
     )
 audioFile =[
     '/Users/nickpourazima/GitHub/he-sm/AudioFiles/click_44.1_16bit_20sec_45bpm.wav',
@@ -352,8 +353,8 @@ else:
 
 df = {
     'Test':             [],
-    'TrueOnset':       [],                
-    'TapOnset':        [],
+    'True Onset':       [],                
+    'Tap Onset':        [],
     'Asynchrony':       []
 }
 class mainGUI(tk.Tk):
@@ -479,7 +480,7 @@ def haptic(steady,mode,tempo,timer,increment=1):
 
         # hapticData2.append([timestamp.now(),elapsed,reading,None,None,None])
         hapticData.append([timestamp.now()])
-        df['TrueOnset'].append(pd.Timestamp.now())
+        df['True Onset'].append(pd.Timestamp.now())
         df['Test'].append(t0) 
         if(elapsed >= timer):
             hapticSerial.write((OFF+CRLF).encode())
@@ -504,8 +505,8 @@ def playback(audio_file):
     onset = list(audioOnsets.get(t0))
     for item in onset:
         # audioData2.append([startTime+datetime.timedelta(0,item),None,item,None,None])
-        audioData.append([startTime+datetime.timedelta(0,item)])
-        df['TrueOnset'].append(startTime+datetime.timedelta(0,item))
+        audioData.append([startTime+dt.timedelta(0,item)])
+        df['True Onset'].append(startTime+dt.timedelta(0,item))
         df['Test'].append(t0)
         # trueOnset.append(pd.Timestamp.now()+pd.Timedelta(0,item))
     closeFile = True
@@ -574,7 +575,7 @@ def getTap():
                 # tapData3.append([timestamp.now(),None,None,None,elapsed,onset])
                 # tapData2.append([timestamp.now(),None,None,elapsed,onset])
                 tapData.append([timestamp.now()])
-                df['TapOnset'].append(pd.Timestamp.now())
+                df['Tap Onset'].append(pd.Timestamp.now())
         if closeFile:
             closeFile = False
             startRead = False
@@ -627,10 +628,49 @@ def saveOutput(testType):
     # dumpfile.write(dataTable+"\n")
     # dumpfile.close()
 
+def newSaveOutput():
+    if not (os.path.isdir('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)):
+        os.makedirs('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)
+    currentPath = '/Users/nickpourazima/GitHub/he-sm/TestOutput/'+str(userName)
+    filename = (userName+' '+time.asctime()) # get the filename we are supposed to output to
+    completeName = os.path.join(currentPath,filename)
+    
+    data = pd.DataFrame(dict([ (k,pd.Series(v)) for k,v in df.items() ]))
+
+    # New today
+    data['Sanitized Tap Onset']=np.where((data['Tap Onset']-data['True Onset'])>(0.5*(data['True Onset'].shift(-1)-data['True Onset'])),data['Tap Onset'].shift(1),data['Tap Onset'])
+    data['Asynchrony'] = (data['Tap Onset']-data['True Onset']).dt.total_seconds()
+    data['Sanitized Asynchrony'] = (data['Sanitized Tap Onset']-data['True Onset']).dt.total_seconds()
+    data = data.dropna(axis=0, how='any')
+    # data['Asynchrony Mean']= data['Asynchrony'].mean()
+    # data['Asynchrony STD']= data['Asynchrony'].std()
+    # data['Sanitized Asynchrony Mean']=data.loc[:,'Sanitized Asynchrony'].mean()
+    # data['Sanitized Asynchrony STD']= data.loc[:,'Sanitized Asynchrony'].std()
+    print(data)
+    data.to_csv(completeName+'.csv')
+    # conditions = (data['TapOnset']-data['TrueOnset'])>(0.5*(data['TrueOnset'].shift(-1)-data['TrueOnset']))&(data['TrueOnset'].shift(-1)-data['TapOnset'])<(0.5*(data['TrueOnset'].shift(-1)-data['TrueOnset']))
+    # choices = data['TapOnset'].shift(-1)
+    # data['new']=np.select(conditions,choices,default=np.nan)
+    plt.title('Time vs. Onsets')
+    plt.plot(data['Sanitized Tap Onset'],'g^')
+    plt.plot(data['Tap Onset'],'ro--')
+    plt.plot(data['True Onset'],'bs')
+    fig1=plt.gcf()
+    fig1.savefig(completeName+'.png',bbox_inches='tight')
+    plotly.tools.set_credentials_file(username='afaintillusion', api_key='yDV9rWN1OEY9kfS3VIqV')
+    plotly_fig=tls.mpl_to_plotly(fig1)
+    plotly_fig['data'][0].update({'name':'Sanitized Tap Onset'})
+    plotly_fig['data'][1].update({'name':'Tap Onset'})
+    plotly_fig['data'][2].update({'name':'True Onset'})
+    plotly_fig['layout'].update(yaxis=dict(title = 'Time', tickformat=".8f"))
+    plotly_fig['layout']['showlegend'] = True
+    plotly.offline.plot(plotly_fig,filename=(completeName+'.html'))
 
 def main():
-    #practice mode
     global t0
+    
+    #practice mode
+
     #run through test cases (randomly)
     hapticKeys = list(hapticTestCases.keys())
     shuffle(hapticKeys)
@@ -641,7 +681,7 @@ def main():
     # ========= ALL TESTS ==========
     allKeys = hapticKeys + audioKeys
     shuffle(allKeys)
-    print(allKeys)
+    # print(allKeys)
     counter = 0
     for key in allKeys:
         t0 = key
@@ -661,32 +701,11 @@ def main():
         t3.join()
 
         # saveOutput(testType)
+
         # MINIMIZE TEST DEBUG TIME
         counter+=1
-        if counter ==1:
-            data = pd.DataFrame(dict([ (k,pd.Series(v)) for k,v in df.items() ]))
-            # data['Asynchrony'] = pd.to_timedelta(data['TapOnset']-data['TrueOnset'],unit='ms')
-            
-            # data['Asynchrony'] = (data['TapOnset']-data['TrueOnset'])   #/np.timedelta64(1, 'm')*60
-            # data = data.dropna(axis=0, how='any')
-
-            # New today
-            # data.groupby('TrueOnset')['TapOnset'].rank()
-            data['que']=np.where((data['TapOnset']-data['TrueOnset'])>(0.5*(data['TrueOnset'].shift(-1)-data['TrueOnset'])),data['TapOnset'].shift(1),data['TapOnset'])
-            data['Asynchrony'] = (data['que']-data['TrueOnset'])
-            data = data.dropna(axis=0, how='any')
-            # conditions = (data['TapOnset']-data['TrueOnset'])>(0.5*(data['TrueOnset'].shift(-1)-data['TrueOnset']))&(data['TrueOnset'].shift(-1)-data['TapOnset'])<(0.5*(data['TrueOnset'].shift(-1)-data['TrueOnset']))
-            # choices = data['TapOnset'].shift(-1)
-            # data['new']=np.select(conditions,choices,default=np.nan)
-            print(data)
-            plt.plot(data['que'],'x')
-            plt.plot(data['TapOnset'],'o-')
-            plt.plot(data['TrueOnset'],'bs')
-            # plt.plot(data['Asynchrony'],'x')
-            fig1=plt.gcf()
-            plotly.tools.set_credentials_file(username='afaintillusion', api_key='yDV9rWN1OEY9kfS3VIqV')
-            plotly_fig=tls.mpl_to_plotly(fig1)
-            plotly.offline.plot(plotly_fig,filename=('test'+'.html'))
+        if counter ==3:
+            newSaveOutput() 
             sys.exit()
     # summaryName = os.path.join(currentPath,(userName+' Summary '+time.asctime()))
     # summaryFile = open(summaryName,'w')
