@@ -77,6 +77,7 @@ closeFile = False
 startRead = False
 t0 = ''
 userName = ""
+userID = 0
 timestamp = dt.datetime
 bpmChange = []
 currentPath = ''
@@ -301,7 +302,14 @@ hapticTestCases = {
     'H2b3': (False,CONTINOUS,BPM3,15,3),
     'H2b4': (False,CONTINOUS,BPM4,15,1)
 }
-
+practiceTests = {
+    'P1H1a1' : (True,DISCRETE,BPM1,10),
+    'P2H1b1' : (True,CONTINOUS,BPM1,10),
+    'P3H1b3' : (True,CONTINOUS,BPM3,10),
+    'P4A1a1' : audioFile[0],
+    'P5A1b1' : audioFile[4],
+    'P6A2a1' : audioFile[8]
+}
 audioTestCases = {
     'A1a1': audioFile[0],
     'A1a2': audioFile[1],
@@ -347,6 +355,7 @@ else:
 
 df = {
     'Test':             [],
+    'User ID':          [],
     'True Onset':       [],                
     'Tap Onset':        [],
     'Asynchrony':       []
@@ -452,9 +461,7 @@ def haptic(steady,mode,tempo,timer,increment=1):
     while readyFlag:
         end = time.time()
         elapsed = end - start
-        # reading = hapticSerial.readline().decode('utf-8')
-
-        # time.sleep((60000/newTempo)/1000)
+        hapticSerial.readline().decode('utf-8')
         if(not steady and elapsed <= timer/4):
             newTempo = newTempo+increment
             hapticSerial.write((str(newTempo)+ CRLF).encode())
@@ -472,6 +479,7 @@ def haptic(steady,mode,tempo,timer,increment=1):
             hapticSerial.write((str(newTempo)+ CRLF).encode())
             bpmChange.append([None,None,None,str(newTempo),None,None])
         df['True Onset'].append(pd.Timestamp.now())
+        df['User ID'].append(userID) 
         df['Test'].append(t0) 
         if(elapsed >= timer):
             hapticSerial.write((OFF+CRLF).encode())
@@ -490,9 +498,14 @@ def playback(audio_file):
     while mixer.music.get_busy():
         # elapsed = time.time()-start
         pass
-    onset = list(audioOnsets.get(t0))
+    if(t0[0] == 'P'):
+        key = t0[2:6]
+        onset = list(audioOnsets.get(key))
+    else:
+        onset = list(audioOnsets.get(t0))
     for item in onset:
         df['True Onset'].append(startTime+dt.timedelta(0,item))
+        df['User ID'].append(userID) 
         df['Test'].append(t0)
     closeFile = True
 
@@ -543,10 +556,12 @@ def saveOutput():
     data = pd.DataFrame(dict([ (k,pd.Series(v)) for k,v in df.items() ]))
 
     # New today
+    data['Tap Onset']=data['Tap Onset']
+    data['True Onset']=data['True Onset']
     data['Sanitized Tap Onset']=np.where((data['Tap Onset']-data['True Onset'])>(0.5*(data['True Onset'].shift(-1)-data['True Onset'])),data['Tap Onset'].shift(1),data['Tap Onset'])
     data['Asynchrony'] = (data['Tap Onset']-data['True Onset']).dt.total_seconds()
     data['Sanitized Asynchrony'] = (data['Sanitized Tap Onset']-data['True Onset']).dt.total_seconds()
-    
+
     print(data)
     data.to_csv(completeName+'.csv')
     data = data.dropna(axis=0, how='any')
@@ -568,43 +583,47 @@ def saveOutput():
     plotly.offline.plot(plotly_fig,filename=(completeName+'.html'))
 
 def main():
-    global t0
-    
+    global t0,userID,fadeoutTimer
+    for c in userName:
+        userID +=int(ord(c))
     #practice mode
-    # TESTING SINGLE AUDIO TEST CASE
-    # t0 = 'A1a1'
-    # t1 = Thread(target=playBeep)
-    # t1.start()
-    # t1.join()
-    # t2 = Thread(target=playback, args = [audioTestCases.get('A1a1')])
-    # t3 = Thread(target=getTap)
-    # t2.start()
-    # t3.start()
-    # t2.join()
-    # t3.join()
- 
-    # TESTING SINGLE HAPTIC TEST CASE
-    # t1 = Thread(target=playBeep)
-    # t1.start()
-    # t1.join()
-    # t2 = Thread(target=haptic, args = hapticTestCases.get('H2b1'))
-    # t3 = Thread(target=getTap)
-    # t2.start()
-    # t3.start()
-    # t2.join()
-    # t3.join()
+    practiceKeys = list(practiceTests.keys())
+    for item in practiceKeys:
+        t0 = item
+        t1 = Thread(target=playBeep,args=(fadeoutTimer,))
+        t1.start()
+        if(t0[2]=='H'):
+            t2 = Thread(target=haptic,args=practiceTests.get(item))
+        elif(t0[2]=='A'):
+            t2 = Thread(target=playback,args = [practiceTests.get(item)])
+        t3 = Thread(target = getTap)
+        t1.join()
+        t2.start()
+        t3.start()
+        t2.join()
+        t3.join()
+    fadeoutTimer = 1000
+    t4 = Thread(target=playBeep,args=(fadeoutTimer,))
+    t5 = Thread(target=playBeep,args=(fadeoutTimer,))
+    t6 = Thread(target=playBeep,args=(fadeoutTimer,))
+    t4.start()
+    t4.join()
+    t5.start()
+    t5.join()
+    t6.start()
+    t6.join()
 
-    #run through test cases (randomly)
+    # ========= ALL TESTS ==========
+    # run through test cases (randomly)
     hapticKeys = list(hapticTestCases.keys())
     shuffle(hapticKeys)
 
     audioKeys = list(audioTestCases.keys())
     shuffle(audioKeys)
 
-    # ========= ALL TESTS ==========
     allKeys = hapticKeys + audioKeys
     shuffle(allKeys)
-    # print(allKeys)
+    
     counter = 0
     for key in allKeys:
         t0 = key
@@ -621,19 +640,13 @@ def main():
         t2.join()
         t3.join()
 
-        # saveOutput(testType)
-
         # MINIMIZE TEST DEBUG TIME
         counter+=1
         if counter ==1:
             saveOutput()
             break 
-            # sys.exit()
-
-    
-    print("FINISHED")
-    webbrowser.open('https://goo.gl/forms/LR5y4uy5fg86QcDW2',new=2,autoraise=True)
-
+    # saveOutput()
+    # webbrowser.open('https://goo.gl/forms/LR5y4uy5fg86QcDW2',new=2,autoraise=True)
 
 if __name__ == "__main__":
     app = mainGUI()
