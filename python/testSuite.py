@@ -68,7 +68,7 @@ CONTINOUS = '2'
 CRLF = '\r\n'
 
 #GUI VARS
-LARGE_FONT= ("Verdana", 12)
+LARGE_FONT= ("Verdana", 18)
 
 #Get Tap / Write File VARS
 PACKET_LENGTH = 8
@@ -84,14 +84,32 @@ currentPath = ''
 fadeoutTimer=5000
 
 instructions = (
-    "The series of upcoming tests seek to measure your ability to synchronize to a varying beat across the modalities of touch and sound."+CRLF+CRLF+
-    "Place the wearable haptic sleeve on the limb of your choice and designate either your non-dominant or dominant hand to tap on the pad."+CRLF+
-    "You will hear a series of either audio or haptic (touch) based trials. Each are varying in duration."+CRLF+ 
-    "Preceeding the start of every test is a long 5 second beep. Once the test starts please try your best to tap to the presented down beat."+CRLF+
-    "For the music based tests, tap on every note."+CRLF+
-    "For some of the haptic tests, you will feel a pulse moving down and then back up, the downbeat is the pulse felt first, closest to your shoulder."+CRLF+
-    "There will be a practice period which samples each test type, you will then hear 3 short beeps and the real test will commence."+CRLF+CRLF+
+    "The following tests measure your ability to synchronize to a varying beat across the modalities of touch and sound and will take approximately 15 minutes to complete."
+    +CRLF+CRLF+CRLF+
+    "Place the wearable haptic sleeve on the limb of your choice and designate either your non-dominant or dominant hand to tap on the pad."
+    +CRLF+
+    "You will hear/feel a series of audio or haptic (touch) based trials." 
+    +CRLF+
+    "Each are varying in duration and tempo."
+    +CRLF+ 
+    "At the start of every test is a 3 second long beep."
+    +CRLF+
+    "Once the test starts please try your best to firmly tap on the pad to the presented beat."
+    +CRLF+
+    "For the music based tests, tap on every note."
+    +CRLF+CRLF+
+    "For some of the haptic tests, you will feel a pulse moving down and then back up, the beat is the pulse felt first, closest to your shoulder."
+    +CRLF+
+    "There will be a practice period of 6 tests which sample a few of the test types."
+    +CRLF+
+    "You will then hear 3 short beeps and the real test will commence."
+    +CRLF+CRLF+CRLF+
     "When you are ready advance to the next page and click Start to begin the practice test."
+    +CRLF+
+    "At the end of the test a survey will popup in the browser, please fill it out."
+    +CRLF+CRLF+CRLF+
+    "Thank you for your participation!"
+    +CRLF+CRLF+CRLF+CRLF
     )
 audioFile =[
     '/Users/nickpourazima/GitHub/he-sm/AudioFiles/click_44.1_16bit_20sec_45bpm.wav',
@@ -431,10 +449,15 @@ class InstructionPage(tk.Frame):
 class TestPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        self.label = tk.Label(self, text="GET READY", font=LARGE_FONT)
+        self.label = tk.Label(self, text="Get ready!"
+        +CRLF+
+        "Remember, the first 6 tests are practice." 
+        +CRLF+
+        "Afterwards, you will hear 3 (1 second) beeps indicating that the real test will begin."
+        +CRLF, font=LARGE_FONT)
         self.label.pack(pady=10,padx=10)
         # self.flash()
-        button1 = tk.Button(self,text="Start",command=self.quit)
+        button1 = tk.Button(self,text="Start Practice Test",command=self.quit)
         button1.pack()
 
     def flash(self):
@@ -623,8 +646,8 @@ def main():
 
     allKeys = hapticKeys + audioKeys
     shuffle(allKeys)
-    
-    counter = 0
+    fadeoutTimer = 3000
+    # counter = 0
     for key in allKeys:
         t0 = key
         t1 = Thread(target=playBeep, args=(fadeoutTimer,))
@@ -641,12 +664,12 @@ def main():
         t3.join()
 
         # MINIMIZE TEST DEBUG TIME
-        counter+=1
-        if counter ==1:
-            saveOutput()
-            break 
-    # saveOutput()
-    # webbrowser.open('https://goo.gl/forms/LR5y4uy5fg86QcDW2',new=2,autoraise=True)
+        # counter+=1
+        # if counter ==1:
+        #     saveOutput()
+        #     break 
+    saveOutput()
+    webbrowser.open('https://goo.gl/forms/LR5y4uy5fg86QcDW2',new=2,autoraise=True)
 
 if __name__ == "__main__":
     app = mainGUI()
