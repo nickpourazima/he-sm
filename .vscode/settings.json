@@ -51,5 +51,7 @@
         "typescript",
         "typescriptreact",
         "yml"
-    ]
+    ],
+    "python.autoComplete.addBrackets": true,
+    "python.autoComplete.extraPaths": ["/usr/local/lib/python3.6/"],
 }

@@ -570,63 +570,70 @@ def getTap():
             startRead = False
             break
 
-def saveOutput():
+def dataAnalysis():
+    rawData = pd.DataFrame(dict([ (k,pd.Series(v)) for k,v in df.items() ]))
+    
+    rawData['Asynchrony'] = (rawData['Tap Onset']-rawData['True Onset'])/np.timedelta64(1, 'ms')
+    rawData['IOI'] = (rawData['True Onset'].shift(-1)-rawData['True Onset'])
+    rawData['Max'] = (pd.to_timedelta((rawData['IOI'])*.5,unit='ms')+(rawData['True Onset']))
+    rawData['Min'] = (pd.to_timedelta((rawData['IOI'].shift(1))*.5,unit='ms')+(rawData['True Onset'].shift(1)))
+
+    # # SANITIZE
+
+    conditions = [
+        ((rawData['Tap Onset'].shift(5) >= rawData['Min']) & (rawData['Tap Onset'].shift(5) < rawData['Max'])),
+        ((rawData['Tap Onset'].shift(4) >= rawData['Min']) & (rawData['Tap Onset'].shift(4) < rawData['Max'])),
+        ((rawData['Tap Onset'].shift(3) >= rawData['Min']) & (rawData['Tap Onset'].shift(3) < rawData['Max'])),
+        ((rawData['Tap Onset'].shift(2) >= rawData['Min']) & (rawData['Tap Onset'].shift(2) < rawData['Max'])),
+        ((rawData['Tap Onset'].shift(1) >= rawData['Min']) & (rawData['Tap Onset'].shift(1) < rawData['Max'])),
+        ((rawData['Tap Onset'] >= rawData['Min']) & (rawData['Tap Onset'] < rawData['Max'])),
+        ((rawData['Tap Onset'].shift(-1) >= rawData['Min']) & (rawData['Tap Onset'].shift(-1) < rawData['Max'])),
+        ((rawData['Tap Onset'].shift(-2) >= rawData['Min']) & (rawData['Tap Onset'].shift(-2) < rawData['Max'])),
+        ((rawData['Tap Onset'].shift(-3) >= rawData['Min']) & (rawData['Tap Onset'].shift(-3) < rawData['Max'])),
+        ((rawData['Tap Onset'].shift(-4) >= rawData['Min']) & (rawData['Tap Onset'].shift(-4) < rawData['Max'])),
+        ((rawData['Tap Onset'].shift(-5) >= rawData['Min']) & (rawData['Tap Onset'].shift(-5) < rawData['Max']))
+        ]
+    choices = [rawData['Tap Onset'].shift(5),rawData['Tap Onset'].shift(4),rawData['Tap Onset'].shift(3),rawData['Tap Onset'].shift(2),rawData['Tap Onset'].shift(1),rawData['Tap Onset'],rawData['Tap Onset'].shift(-1),rawData['Tap Onset'].shift(-2),rawData['Tap Onset'].shift(-3),rawData['Tap Onset'].shift(-4),rawData['Tap Onset'].shift(-5)]
+    rawData['Sanitized Tap Onset'] = np.select(conditions,choices,default = np.timedelta64('NaT'))
+    rawData['Sanitized Asynchrony'] = (rawData['Sanitized Tap Onset']-rawData['True Onset'])/np.timedelta64(1, 'ms')
+    #  ==================
+    # smean=[]
+    # s_standard_Dev=[]
+    # mean=[]
+    # standard_Dev=[]
+    # tests = []
+    # smean.append(rawData['Sanitized Asynchrony'].mean())
+    # s_standard_Dev.append(rawData['Sanitized Asynchrony'].std())
+    # mean.append(rawData['Asynchrony'].mean())
+    # standard_Dev.append(rawData['Asynchrony'].std())
+    # tests.append(t0)
+    # stats =pd.DataFrame({
+    #         'Mean Asynchrony': mean,
+    #         'Sanitized Mean Asynchrony': smean,
+    #         'Std Dev Asynchrony': standard_Dev,
+    #         'Sanitized Std Dev Asynchrony': s_standard_Dev,
+    #         'Test Case': tests,
+    #         'User ID': userID
+    #     },index=[0])
+
+    rawData['Sanitized Mean Asynchrony'] = rawData.groupby('Test')['Sanitized Asynchrony'].transform('mean')
+    rawData['Sanitized Std Dev Asynchrony']=rawData.groupby('Test')['Sanitized Asynchrony'].transform('std')
+    
+    rawData['Mean Asynchrony'] = rawData.groupby('Test')['Asynchrony'].transform('mean')
+    rawData['Std Dev Asynchrony']=rawData.groupby('Test')['Asynchrony'].transform('std')
+    # rawData.dropna(subset="True Onset")
+
     if not (os.path.isdir('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)):
         os.makedirs('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)
     currentPath = '/Users/nickpourazima/GitHub/he-sm/TestOutput/'+str(userName)
     filename = (userName+' '+time.asctime()) # get the filename we are supposed to output to
     completeName = os.path.join(currentPath,filename)
-    
-    rawData = pd.DataFrame(dict([ (k,pd.Series(v)) for k,v in df.items() ]))
-
-    rawData['Asynchrony'] = (rawData['Tap Onset']-rawData['True Onset'])/np.timedelta64(1, 'ms')
-    rawData['IOI'] = (rawData['True Onset'].shift(-1)-rawData['True Onset'])
-    rawData['Max'] = (pd.to_timedelta((rawData['IOI'])*.5,unit='ms')+(rawData['True Onset']))
-    rawData['Min'] = (pd.to_timedelta((rawData['IOI'].shift(1))*.5,unit='ms')+(rawData['True Onset'].shift(1)))
-    
-    # rawData['Sanitized Tap Onset']=rawData['Tap Onset'].apply(lambda x: x['Tap Onset'] if x['Tap Onset'] < x['Max'] & x['Tap Onset'] >= x['Min'] else x['Tap Onset'].shift(-1))
-    def test(row):
-        if row['Tap Onset'] < row['Max'] and row['Tap Onset'] > row['Min']:
-            return row['Tap Onset']
-        else:
-            return np.datetime64('NaT')
-
-    rawData['Sanitized Tap Onset']= rawData.apply(test,axis=1)
-    
-    # rawData['Sanitized Tap Onset'] = rawData.where(rawData['Tap Onset'],(rawData['Tap Onset']<=((0.5*(rawData['True Onset'].shift(1)-rawData['True Onset']))+rawData['True Onset'])) | (rawData['Tap Onset']>=(rawData['True Onset'].shift(-1)+(0.5*(rawData['True Onset']-rawData['True Onset'].shift(-1))))), rawData['Tap Onset'],np.datetime64('NaT'))
-
-    # mask1=np.logical_and(
-        # rawData['Tap Onset'] < ( (0.5 * (rawData['True Onset'].shift(-1)-rawData['True Onset'])) + rawData['True Onset'] ),
-        # (rawData['Tap Onset'] >= (rawData['True Onset'].shift(1)+(0.5*(rawData['True Onset']-rawData['True Onset'].shift(1))))))
-
-    # mask2=np.logical_or(rawData['Tap Onset'].shift(-1)<=((0.5*(rawData['True Onset'].shift(-1)-rawData['True Onset']))+rawData['True Onset']),(rawData['Tap Onset'].shift(-1)>=(rawData['True Onset'].shift(1)+(0.5*(rawData['True Onset']-rawData['True Onset'].shift(1))))))
-
-    # rawData['Sanitized Tap Onset']=np.where(mask1,rawData['Tap Onset'],(np.where(mask2,rawData['Tap Onset'].shift(-1),np.datetime64('NaT'))))
-
-    # rawData['Sanitized Tap Onset']=np.where(mask1,rawData['Tap Onset'],np.datetime64('NaT'))
-     
-    rawData['Sanitized Asynchrony'] = (rawData['Sanitized Tap Onset']-rawData['True Onset'])/np.timedelta64(1, 'ms')
-    smean = rawData['Sanitized Asynchrony'].mean()
-    s_standard_Dev = rawData['Sanitized Asynchrony'].std()
-    mean = rawData['Asynchrony'].mean()
-    standard_Dev = rawData['Asynchrony'].std()
-    stats = pd.DataFrame(
-        {
-            'Mean Asynchrony': mean,
-            'Sanitized Mean Asynchrony': smean,
-            'Std Dev Asynchrony': standard_Dev,
-            'Sanitized Std Dev Asynchrony': s_standard_Dev,
-            'Test Case': t0
-        }, index=[0]
-        )
-
-    print(rawData)
-    stats.to_csv(completeName+' stats'+'.csv')
+    # stats.to_csv(completeName+' stats'+'.csv')
     rawData.to_csv(completeName+' raw'+'.csv')
  
     # rawData = rawData.dropna(axis=0, how='any')
     # rawData.to_csv(completeName+' NaN_Omit'+'.csv')    
-    # PLOTTING
+    # # PLOTTING
     plt.title('Time vs. Onsets')
     plt.plot(rawData['Sanitized Tap Onset'],'g^')
     plt.plot(rawData['Tap Onset'],'ro--')
@@ -635,15 +642,15 @@ def saveOutput():
     fig1.savefig(completeName+'.png',bbox_inches='tight')
     plotly.tools.set_credentials_file(username='afaintillusion', api_key='yDV9rWN1OEY9kfS3VIqV')
     plotly_fig=tls.mpl_to_plotly(fig1)
-    plotly_fig['rawData'][0].update({'name':'Sanitized Tap Onset'})
-    plotly_fig['rawData'][1].update({'name':'Tap Onset'})
-    plotly_fig['rawData'][2].update({'name':'True Onset'})
+    # plotly_fig['rawData'][0].update({'name':'Sanitized Tap Onset'})
+    # plotly_fig['rawData'][1].update({'name':'Tap Onset'})
+    # plotly_fig['rawData'][2].update({'name':'True Onset'})
     plotly_fig['layout'].update(yaxis=dict(title = 'Time', tickformat=".8f"))
     plotly_fig['layout']['showlegend'] = True
     plotly.offline.plot(plotly_fig,filename=(completeName+'.html'))
 
 def main():
-    global t0,userID,fadeoutTimer
+    global t0,userID,fadeoutTimer,allKeys
     for c in userName:
         userID +=int(ord(c))
     
@@ -707,11 +714,12 @@ def main():
 
         # MINIMIZE TEST DEBUG TIME
         counter+=1
-        if counter ==1:
-            saveOutput()
-            sys.exit()
-    saveOutput()
-    webbrowser.open('https://goo.gl/forms/LR5y4uy5fg86QcDW2',new=2,autoraise=True)
+        
+        if counter ==2:
+            dataAnalysis()
+            break
+    # dataAnalysis()
+    # webbrowser.open('https://goo.gl/forms/LR5y4uy5fg86QcDW2',new=2,autoraise=True)
 
 if __name__ == "__main__":
     app = mainGUI()
@@ -721,4 +729,3 @@ if __name__ == "__main__":
         main()
     else:
         "Main was not run, please debug"
-    
