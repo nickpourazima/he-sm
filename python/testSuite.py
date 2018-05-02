@@ -11,7 +11,7 @@
     # CRUCIAL
     # calculate/plot asynchrony, mean asynchrony, and standard deviation
     # add test as label in column
-    # convert tsv to csv and pandas data frame
+    # convert tsv to csv and pandas rawData frame
     # filter timestamps to show millis/micros precision
 
     #LOW PRIORITY
@@ -27,6 +27,7 @@ import plotly.plotly as py
 import plotly.graph_objs as go
 import time
 import os
+import random
 import tkinter as tk
 import sys
 import datetime as dt
@@ -48,7 +49,7 @@ from threading import Thread
 from tabulate import tabulate
 
 #SERIAL VARS
-TAP_SERIAL_PORT = '/dev/tty.usbmodem14111'
+TAP_SERIAL_PORT = '/dev/tty.usbmodem14141'
 TAP_BAUD = 115200
 TIMEOUT = 0.25
 
@@ -511,14 +512,15 @@ def haptic(steady,mode,tempo,timer,increment=1):
 
 def playback(audio_file):
     global closeFile
-    mixer.pre_init(44100, -16, 2, 2048)
+    mixer.pre_init(44100, -16, 2, 64)
     mixer.init()
     mixer.music.load(audio_file)
     mixer.music.set_volume(0.4)
     mixer.music.play()
-    startTime = timestamp.now()
+    startTime = pd.Timestamp.now()
     # mixer.music.fadeout(20500)
     while mixer.music.get_busy():
+        print("PLAYING MUSIC"+CRLF)
         # elapsed = time.time()-start
         pass
     if(t0[0] == 'P'):
@@ -534,7 +536,7 @@ def playback(audio_file):
 
 def playBeep(fadeoutTimer):
     global startRead
-    mixer.pre_init(44100, -16, 2, 2048)
+    mixer.pre_init(44100, -16, 2, 64)
     mixer.init()
     mixer.music.load(audioFile[32])
     mixer.music.set_volume(0.05)
@@ -542,7 +544,6 @@ def playBeep(fadeoutTimer):
     mixer.music.fadeout(fadeoutTimer)
     while mixer.music.get_busy():
         pass
-    time.sleep(1)
     startRead = True
 
 def getTap():
@@ -576,31 +577,67 @@ def saveOutput():
     filename = (userName+' '+time.asctime()) # get the filename we are supposed to output to
     completeName = os.path.join(currentPath,filename)
     
-    data = pd.DataFrame(dict([ (k,pd.Series(v)) for k,v in df.items() ]))
+    rawData = pd.DataFrame(dict([ (k,pd.Series(v)) for k,v in df.items() ]))
 
-    # New today
-    data['Tap Onset']=data['Tap Onset']
-    data['True Onset']=data['True Onset']
-    data['Sanitized Tap Onset']=np.where((data['Tap Onset']-data['True Onset'])>(0.5*(data['True Onset'].shift(-1)-data['True Onset'])),data['Tap Onset'].shift(1),data['Tap Onset'])
-    data['Asynchrony'] = (data['Tap Onset']-data['True Onset']).dt.total_seconds()
-    data['Sanitized Asynchrony'] = (data['Sanitized Tap Onset']-data['True Onset']).dt.total_seconds()
+    rawData['Asynchrony'] = (rawData['Tap Onset']-rawData['True Onset'])/np.timedelta64(1, 'ms')
+    rawData['IOI'] = (rawData['True Onset'].shift(-1)-rawData['True Onset'])
+    rawData['Max'] = (pd.to_timedelta((rawData['IOI'])*.5,unit='ms')+(rawData['True Onset']))
+    rawData['Min'] = (pd.to_timedelta((rawData['IOI'].shift(1))*.5,unit='ms')+(rawData['True Onset'].shift(1)))
+    
+    # rawData['Sanitized Tap Onset']=rawData['Tap Onset'].apply(lambda x: x['Tap Onset'] if x['Tap Onset'] < x['Max'] & x['Tap Onset'] >= x['Min'] else x['Tap Onset'].shift(-1))
+    def test(row):
+        if row['Tap Onset'] < row['Max'] and row['Tap Onset'] > row['Min']:
+            return row['Tap Onset']
+        else:
+            return np.datetime64('NaT')
 
-    print(data)
-    data.to_csv(completeName+'.csv')
-    data = data.dropna(axis=0, how='any')
-    data.to_csv(completeName+' NaN_Omit'+'.csv')    
+    rawData['Sanitized Tap Onset']= rawData.apply(test,axis=1)
+    
+    # rawData['Sanitized Tap Onset'] = rawData.where(rawData['Tap Onset'],(rawData['Tap Onset']<=((0.5*(rawData['True Onset'].shift(1)-rawData['True Onset']))+rawData['True Onset'])) | (rawData['Tap Onset']>=(rawData['True Onset'].shift(-1)+(0.5*(rawData['True Onset']-rawData['True Onset'].shift(-1))))), rawData['Tap Onset'],np.datetime64('NaT'))
+
+    # mask1=np.logical_and(
+        # rawData['Tap Onset'] < ( (0.5 * (rawData['True Onset'].shift(-1)-rawData['True Onset'])) + rawData['True Onset'] ),
+        # (rawData['Tap Onset'] >= (rawData['True Onset'].shift(1)+(0.5*(rawData['True Onset']-rawData['True Onset'].shift(1))))))
+
+    # mask2=np.logical_or(rawData['Tap Onset'].shift(-1)<=((0.5*(rawData['True Onset'].shift(-1)-rawData['True Onset']))+rawData['True Onset']),(rawData['Tap Onset'].shift(-1)>=(rawData['True Onset'].shift(1)+(0.5*(rawData['True Onset']-rawData['True Onset'].shift(1))))))
+
+    # rawData['Sanitized Tap Onset']=np.where(mask1,rawData['Tap Onset'],(np.where(mask2,rawData['Tap Onset'].shift(-1),np.datetime64('NaT'))))
+
+    # rawData['Sanitized Tap Onset']=np.where(mask1,rawData['Tap Onset'],np.datetime64('NaT'))
+     
+    rawData['Sanitized Asynchrony'] = (rawData['Sanitized Tap Onset']-rawData['True Onset'])/np.timedelta64(1, 'ms')
+    smean = rawData['Sanitized Asynchrony'].mean()
+    s_standard_Dev = rawData['Sanitized Asynchrony'].std()
+    mean = rawData['Asynchrony'].mean()
+    standard_Dev = rawData['Asynchrony'].std()
+    stats = pd.DataFrame(
+        {
+            'Mean Asynchrony': mean,
+            'Sanitized Mean Asynchrony': smean,
+            'Std Dev Asynchrony': standard_Dev,
+            'Sanitized Std Dev Asynchrony': s_standard_Dev,
+            'Test Case': t0
+        }, index=[0]
+        )
+
+    print(rawData)
+    stats.to_csv(completeName+' stats'+'.csv')
+    rawData.to_csv(completeName+' raw'+'.csv')
+ 
+    # rawData = rawData.dropna(axis=0, how='any')
+    # rawData.to_csv(completeName+' NaN_Omit'+'.csv')    
     # PLOTTING
     plt.title('Time vs. Onsets')
-    plt.plot(data['Sanitized Tap Onset'],'g^')
-    plt.plot(data['Tap Onset'],'ro--')
-    plt.plot(data['True Onset'],'bs')
+    plt.plot(rawData['Sanitized Tap Onset'],'g^')
+    plt.plot(rawData['Tap Onset'],'ro--')
+    plt.plot(rawData['True Onset'],'bs')
     fig1=plt.gcf()
     fig1.savefig(completeName+'.png',bbox_inches='tight')
     plotly.tools.set_credentials_file(username='afaintillusion', api_key='yDV9rWN1OEY9kfS3VIqV')
     plotly_fig=tls.mpl_to_plotly(fig1)
-    plotly_fig['data'][0].update({'name':'Sanitized Tap Onset'})
-    plotly_fig['data'][1].update({'name':'Tap Onset'})
-    plotly_fig['data'][2].update({'name':'True Onset'})
+    plotly_fig['rawData'][0].update({'name':'Sanitized Tap Onset'})
+    plotly_fig['rawData'][1].update({'name':'Tap Onset'})
+    plotly_fig['rawData'][2].update({'name':'True Onset'})
     plotly_fig['layout'].update(yaxis=dict(title = 'Time', tickformat=".8f"))
     plotly_fig['layout']['showlegend'] = True
     plotly.offline.plot(plotly_fig,filename=(completeName+'.html'))
@@ -609,45 +646,50 @@ def main():
     global t0,userID,fadeoutTimer
     for c in userName:
         userID +=int(ord(c))
-    #practice mode
-    practiceKeys = list(practiceTests.keys())
-    for item in practiceKeys:
-        t0 = item
-        t1 = Thread(target=playBeep,args=(fadeoutTimer,))
-        t1.start()
-        if(t0[2]=='H'):
-            t2 = Thread(target=haptic,args=practiceTests.get(item))
-        elif(t0[2]=='A'):
-            t2 = Thread(target=playback,args = [practiceTests.get(item)])
-        t3 = Thread(target = getTap)
-        t1.join()
-        t2.start()
-        t3.start()
-        t2.join()
-        t3.join()
-    fadeoutTimer = 1000
-    t4 = Thread(target=playBeep,args=(fadeoutTimer,))
-    t5 = Thread(target=playBeep,args=(fadeoutTimer,))
-    t6 = Thread(target=playBeep,args=(fadeoutTimer,))
-    t4.start()
-    t4.join()
-    t5.start()
-    t5.join()
-    t6.start()
-    t6.join()
+    
+    
+    # =========== Practice Mode =============
+    # practiceKeys = list(practiceTests.keys())
+    # for item in practiceKeys:
+    #     t0 = item
+    #     t1 = Thread(target=playBeep,args=(fadeoutTimer,))
+    #     t1.start()
+    #     if(t0[2]=='H'):
+    #         t2 = Thread(target=haptic,args=practiceTests.get(item))
+    #     elif(t0[2]=='A'):
+    #         t2 = Thread(target=playback,args = [practiceTests.get(item)])
+    #     t3 = Thread(target = getTap)
+    #     t1.join()
+    #     t2.start()
+    #     t3.start()
+    #     t2.join()
+    #     t3.join()
+    # fadeoutTimer = 1000
+    # t4 = Thread(target=playBeep,args=(fadeoutTimer,))
+    # t5 = Thread(target=playBeep,args=(fadeoutTimer,))
+    # t6 = Thread(target=playBeep,args=(fadeoutTimer,))
+    # t4.start()
+    # t4.join()
+    # t5.start()
+    # t5.join()
+    # t6.start()
+    # t6.join()
 
     # ========= ALL TESTS ==========
     # run through test cases (randomly)
+    random.seed(10)
     hapticKeys = list(hapticTestCases.keys())
     shuffle(hapticKeys)
 
-    audioKeys = list(audioTestCases.keys())
-    shuffle(audioKeys)
-
-    allKeys = hapticKeys + audioKeys
+    # audioKeys = list(audioTestCases.keys())
+    # shuffle(audioKeys)
+    # print(audioKeys)
+    # allKeys = hapticKeys + audioKeys
+    allKeys = hapticKeys
     shuffle(allKeys)
     fadeoutTimer = 3000
-    # counter = 0
+    
+    counter = 0
     for key in allKeys:
         t0 = key
         t1 = Thread(target=playBeep, args=(fadeoutTimer,))
@@ -664,10 +706,10 @@ def main():
         t3.join()
 
         # MINIMIZE TEST DEBUG TIME
-        # counter+=1
-        # if counter ==1:
-        #     saveOutput()
-        #     break 
+        counter+=1
+        if counter ==1:
+            saveOutput()
+            sys.exit()
     saveOutput()
     webbrowser.open('https://goo.gl/forms/LR5y4uy5fg86QcDW2',new=2,autoraise=True)
 
