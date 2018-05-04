@@ -4,92 +4,96 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
-BPM1	../python/testSuite.py	/^BPM1 = '45'$/;"	kind:variable	line:62
-BPM2	../python/testSuite.py	/^BPM2 = '90'$/;"	kind:variable	line:63
-BPM3	../python/testSuite.py	/^BPM3 = '135'$/;"	kind:variable	line:64
-BPM4	../python/testSuite.py	/^BPM4 = '180'$/;"	kind:variable	line:65
-CONTINOUS	../python/testSuite.py	/^CONTINOUS = '2'$/;"	kind:variable	line:70
-CRLF	../python/testSuite.py	/^CRLF = '\\r\\n'$/;"	kind:variable	line:71
-DISCRETE	../python/testSuite.py	/^DISCRETE = '1'$/;"	kind:variable	line:69
-FormatStrFormatter	../python/testSuite.py	/^from matplotlib.ticker import FormatStrFormatter$/;"	kind:namespace	line:44
-HAPTIC_BAUD	../python/testSuite.py	/^HAPTIC_BAUD = 115200$/;"	kind:variable	line:59
-HAPTIC_SERIAL_PORT	../python/testSuite.py	/^HAPTIC_SERIAL_PORT = '\/dev\/tty.usbserial-A907CAHB'$/;"	kind:variable	line:58
+BPM1	../python/testSuite.py	/^BPM1 = '45'$/;"	kind:variable	line:60
+BPM2	../python/testSuite.py	/^BPM2 = '90'$/;"	kind:variable	line:61
+BPM3	../python/testSuite.py	/^BPM3 = '135'$/;"	kind:variable	line:62
+BPM4	../python/testSuite.py	/^BPM4 = '180'$/;"	kind:variable	line:63
+CONTINOUS	../python/testSuite.py	/^CONTINOUS = '2'$/;"	kind:variable	line:68
+CRLF	../python/testSuite.py	/^CRLF = '\\r\\n'$/;"	kind:variable	line:69
+DISCRETE	../python/testSuite.py	/^DISCRETE = '1'$/;"	kind:variable	line:67
+FormatStrFormatter	../python/testSuite.py	/^from matplotlib.ticker import FormatStrFormatter$/;"	kind:namespace	line:42
+HAPTIC_BAUD	../python/testSuite.py	/^HAPTIC_BAUD = 115200$/;"	kind:variable	line:57
+HAPTIC_SERIAL_PORT	../python/testSuite.py	/^HAPTIC_SERIAL_PORT = '\/dev\/tty.usbserial-A907CAHB'$/;"	kind:variable	line:56
 IPython	../python/plotTest.py	/^import numpy, scipy, matplotlib.pyplot as plt, IPython.display as ipd$/;"	kind:namespace	line:4
-InstructionPage	../python/testSuite.py	/^class InstructionPage(tk.Frame):$/;"	kind:class	line:433
-LARGE_FONT	../python/testSuite.py	/^LARGE_FONT= ("Verdana", 18)$/;"	kind:variable	line:74
-Layout	../python/testSuite.py	/^from plotly.graph_objs import Layout, Scatter$/;"	kind:namespace	line:45
+InstructionPage	../python/testSuite.py	/^class InstructionPage(tk.Frame):$/;"	kind:class	line:437
+LARGE_FONT	../python/testSuite.py	/^LARGE_FONT = ("Verdana", 18)$/;"	kind:variable	line:72
+Layout	../python/testSuite.py	/^from plotly.graph_objs import Scatter, Layout$/;"	kind:namespace	line:23
 LoadFileDialog	../python/captureGui.py	/^from tkinter.filedialog import asksaveasfilename,LoadFileDialog,SaveFileDialog$/;"	kind:namespace	line:19
 MAX_LINES	../python/captureGui.py	/^MAX_LINES = 42$/;"	kind:variable	line:43
-OFF	../python/testSuite.py	/^OFF = '0'$/;"	kind:variable	line:68
-PACKET_LENGTH	../python/testSuite.py	/^PACKET_LENGTH = 8$/;"	kind:variable	line:77
+OFF	../python/testSuite.py	/^OFF = '0'$/;"	kind:variable	line:66
+PACKET_LENGTH	../python/testSuite.py	/^PACKET_LENGTH = 8$/;"	kind:variable	line:75
 Reporter	../python/captureGui.py	/^class Reporter:$/;"	kind:class	line:46
 SaveFileDialog	../python/captureGui.py	/^from tkinter.filedialog import asksaveasfilename,LoadFileDialog,SaveFileDialog$/;"	kind:namespace	line:19
-Scatter	../python/testSuite.py	/^from plotly.graph_objs import Layout, Scatter$/;"	kind:namespace	line:45
-StartPage	../python/testSuite.py	/^class StartPage(tk.Frame):$/;"	kind:class	line:412
-TAP_BAUD	../python/testSuite.py	/^TAP_BAUD = 115200$/;"	kind:variable	line:55
-TAP_SERIAL_PORT	../python/testSuite.py	/^TAP_SERIAL_PORT = '\/dev\/tty.usbmodem14211'$/;"	kind:variable	line:54
-TIMEOUT	../python/testSuite.py	/^TIMEOUT = 0.25$/;"	kind:variable	line:56
-TestPage	../python/testSuite.py	/^class TestPage(tk.Frame):$/;"	kind:class	line:453
-Thread	../python/testSuite.py	/^from threading import Thread$/;"	kind:namespace	line:31
+Scatter	../python/testSuite.py	/^from plotly.graph_objs import Scatter, Layout$/;"	kind:namespace	line:23
+StartPage	../python/testSuite.py	/^class StartPage(tk.Frame):$/;"	kind:class	line:415
+TAP_BAUD	../python/testSuite.py	/^TAP_BAUD = 115200$/;"	kind:variable	line:53
+TAP_SERIAL_PORT	../python/testSuite.py	/^TAP_SERIAL_PORT = '\/dev\/tty.usbmodem14141'$/;"	kind:variable	line:52
+TIMEOUT	../python/testSuite.py	/^TIMEOUT = 0.25$/;"	kind:variable	line:54
+TestPage	../python/testSuite.py	/^class TestPage(tk.Frame):$/;"	kind:class	line:457
+Thread	../python/testSuite.py	/^from threading import Thread$/;"	kind:namespace	line:48
 __init__	../python/captureGui.py	/^    def __init__(self):$/;"	kind:member	line:50
-__init__	../python/testSuite.py	/^    def __init__(self, *args, **kwargs):$/;"	kind:member	line:386
-__init__	../python/testSuite.py	/^    def __init__(self, parent, controller):$/;"	kind:member	line:414
-__init__	../python/testSuite.py	/^    def __init__(self, parent, controller):$/;"	kind:member	line:435
-__init__	../python/testSuite.py	/^    def __init__(self, parent, controller):$/;"	kind:member	line:454
-advance	../python/testSuite.py	/^    def advance(self):$/;"	kind:member	line:426
-advance	../python/testSuite.py	/^    def advance(self):$/;"	kind:member	line:447
-app	../python/testSuite.py	/^    app = mainGUI()$/;"	kind:variable	line:681
+__init__	../python/testSuite.py	/^    def __init__(self, *args, **kwargs):$/;"	kind:member	line:387
+__init__	../python/testSuite.py	/^    def __init__(self, parent, controller):$/;"	kind:member	line:417
+__init__	../python/testSuite.py	/^    def __init__(self, parent, controller):$/;"	kind:member	line:439
+__init__	../python/testSuite.py	/^    def __init__(self, parent, controller):$/;"	kind:member	line:458
+advance	../python/testSuite.py	/^    def advance(self):$/;"	kind:member	line:429
+advance	../python/testSuite.py	/^    def advance(self):$/;"	kind:member	line:451
+app	../python/testSuite.py	/^    app = mainGUI()$/;"	kind:variable	line:779
 askSaveFile	../python/captureGui.py	/^def askSaveFile():$/;"	kind:function	line:204
 asksaveasfilename	../python/captureGui.py	/^from tkinter.filedialog import asksaveasfilename,LoadFileDialog,SaveFileDialog$/;"	kind:namespace	line:19
-audioFile	../python/testSuite.py	/^audioFile =[$/;"	kind:variable	line:117
-audioOnsets	../python/testSuite.py	/^audioOnsets = defaultdict(list)$/;"	kind:variable	line:152
-audioOnsets	../python/testSuite.py	/^audioOnsets = {$/;"	kind:variable	line:153
-audioTestCases	../python/testSuite.py	/^audioTestCases = {$/;"	kind:variable	line:334
+audioFile	../python/testSuite.py	/^audioFile = [$/;"	kind:variable	line:116
+audioOnsets	../python/testSuite.py	/^audioOnsets = defaultdict(list)$/;"	kind:variable	line:151
+audioOnsets	../python/testSuite.py	/^audioOnsets = {$/;"	kind:variable	line:152
+audioTestCases	../python/testSuite.py	/^audioTestCases = {$/;"	kind:variable	line:333
 baudrate_continuous	../python/captureGui.py	/^baudrate_continuous = 115200  # for the continuous data setting (load the corresponding Arduino script)$/;"	kind:variable	line:38
 baudrate_discrete	../python/captureGui.py	/^baudrate_discrete   = 9600    # for the discrete data setting (load the corresponding Arduino script)$/;"	kind:variable	line:37
-bpmChange	../python/testSuite.py	/^bpmChange = []$/;"	kind:variable	line:85
+bpmChange	../python/testSuite.py	/^bpmChange = []$/;"	kind:variable	line:83
 build_gui	../python/captureGui.py	/^def build_gui():$/;"	kind:function	line:378
 captureGui.py	../python/captureGui.py	1;"	kind:file	line:1
-closeFile	../python/testSuite.py	/^closeFile = False$/;"	kind:variable	line:79
-currentPath	../python/testSuite.py	/^currentPath = ''$/;"	kind:variable	line:86
-defaultdict	../python/testSuite.py	/^from collections import defaultdict$/;"	kind:namespace	line:27
+closeFile	../python/testSuite.py	/^closeFile = False$/;"	kind:variable	line:77
+currentPath	../python/testSuite.py	/^currentPath = ''$/;"	kind:variable	line:84
+dataAnalysis	../python/testSuite.py	/^def dataAnalysis(count):$/;"	kind:function	line:593
+defaultdict	../python/testSuite.py	/^from collections import defaultdict$/;"	kind:namespace	line:47
+delta	../python/testSuite.py	/^delta = []$/;"	kind:variable	line:86
 determine_dump_interval	../python/captureGui.py	/^    def determine_dump_interval(self):$/;"	kind:member	line:120
-df	../python/testSuite.py	/^df = {$/;"	kind:variable	line:377
+df	../python/testSuite.py	/^df = {$/;"	kind:variable	line:376
 display	../python/plotTest.py	/^import librosa, librosa.display$/;"	kind:namespace	line:5
 doCapture	../python/captureGui.py	/^def doCapture():$/;"	kind:function	line:330
 download_samples	../python/stanford_mir.py	/^def download_samples(collection='drum_samples_train', download=True):$/;"	kind:function	line:85
-dt	../python/testSuite.py	/^import datetime as dt$/;"	kind:namespace	line:21
+dt	../python/testSuite.py	/^import datetime as dt$/;"	kind:namespace	line:33
 errno	../python/stanford_mir.py	/^import errno$/;"	kind:namespace	line:1
 extract_features	../python/stanford_mir.py	/^def extract_features(signal, features):$/;"	kind:function	line:24
-fadeoutTimer	../python/testSuite.py	/^fadeoutTimer=5000$/;"	kind:variable	line:87
+fadeoutTimer	../python/testSuite.py	/^fadeoutTimer = 5000$/;"	kind:variable	line:85
 filedialog	../python/captureGui.py	/^from tkinter import filedialog, messagebox$/;"	kind:namespace	line:18
-flash	../python/testSuite.py	/^    def flash(self):$/;"	kind:member	line:467
-getTap	../python/testSuite.py	/^def getTap():$/;"	kind:function	line:554
+flash	../python/testSuite.py	/^    def flash(self):$/;"	kind:member	line:472
+getTap	../python/testSuite.py	/^def getTap():$/;"	kind:function	line:566
 get_features	../python/stanford_mir.py	/^def get_features(collection='drum_samples_train',$/;"	kind:function	line:34
 get_ipython	../python/plotTest.py	/^from IPython import get_ipython$/;"	kind:namespace	line:1
-go	../python/testSuite.py	/^import plotly.graph_objs as go$/;"	kind:namespace	line:39
-haptic	../python/testSuite.py	/^def haptic(steady,mode,tempo,timer,increment=1):$/;"	kind:function	line:473
-hapticSerial	../python/testSuite.py	/^    hapticSerial = serial.Serial(HAPTIC_SERIAL_PORT, HAPTIC_BAUD)$/;"	kind:variable	line:371
-hapticTestCases	../python/testSuite.py	/^hapticTestCases = {$/;"	kind:variable	line:308
+glob	../python/testSuite.py	/^import glob$/;"	kind:namespace	line:29
+go	../python/testSuite.py	/^import plotly.graph_objs as go$/;"	kind:namespace	line:26
+haptic	../python/testSuite.py	/^def haptic(steady, mode, tempo, timer, increment=1):$/;"	kind:function	line:479
+hapticSerial	../python/testSuite.py	/^    hapticSerial = serial.Serial(HAPTIC_SERIAL_PORT, HAPTIC_BAUD)$/;"	kind:variable	line:370
+hapticTestCases	../python/testSuite.py	/^hapticTestCases = {$/;"	kind:variable	line:307
 init	../python/plotTest.py	/^import stanford_mir; stanford_mir.init()$/;"	kind:namespace	line:6
 init	../python/stanford_mir.py	/^def init():$/;"	kind:function	line:10
-instructions	../python/testSuite.py	/^instructions = ($/;"	kind:variable	line:89
+instructions	../python/testSuite.py	/^instructions = ($/;"	kind:variable	line:88
 interpret_output_continuous	../python/captureGui.py	/^def interpret_output_continuous(r):$/;"	kind:function	line:171
 interpret_output_discrete	../python/captureGui.py	/^def interpret_output_discrete(r):$/;"	kind:function	line:145
 ipd	../python/plotTest.py	/^import numpy, scipy, matplotlib.pyplot as plt, IPython.display as ipd$/;"	kind:namespace	line:4
 librosa	../python/plotTest.py	/^import librosa, librosa.display$/;"	kind:namespace	line:5
 librosa	../python/stanford_mir.py	/^import librosa$/;"	kind:namespace	line:2
-main	../python/testSuite.py	/^def main():$/;"	kind:function	line:614
-mainGUI	../python/testSuite.py	/^class mainGUI(tk.Tk):$/;"	kind:class	line:384
+main	../python/testSuite.py	/^def main():$/;"	kind:function	line:706
+mainGUI	../python/testSuite.py	/^class mainGUI(tk.Tk):$/;"	kind:class	line:385
 matplotlib	../python/plotTest.py	/^import numpy, scipy, matplotlib.pyplot as plt, IPython.display as ipd$/;"	kind:namespace	line:4
 matplotlib	../python/stanford_mir.py	/^import matplotlib, matplotlib.pyplot as plt$/;"	kind:namespace	line:3
-matplotlib	../python/testSuite.py	/^import matplotlib.dates as md$/;"	kind:namespace	line:34
-matplotlib	../python/testSuite.py	/^import matplotlib.pyplot as plt$/;"	kind:namespace	line:35
-md	../python/testSuite.py	/^import matplotlib.dates as md$/;"	kind:namespace	line:34
+matplotlib	../python/testSuite.py	/^import matplotlib.dates as md$/;"	kind:namespace	line:38
+matplotlib	../python/testSuite.py	/^import matplotlib.pyplot as plt$/;"	kind:namespace	line:40
+md	../python/testSuite.py	/^import matplotlib.dates as md$/;"	kind:namespace	line:38
 messagebox	../python/captureGui.py	/^from tkinter import filedialog, messagebox$/;"	kind:namespace	line:18
-mpl	../python/testSuite.py	/^import matplotlib as mpl$/;"	kind:namespace	line:33
+mixer	../python/testSuite.py	/^from pygame import mixer$/;"	kind:namespace	line:46
+mpl	../python/testSuite.py	/^import matplotlib as mpl$/;"	kind:namespace	line:37
 msg	../python/captureGui.py	/^    msg = "An error occurred while importing the pySerial module.\\n\\nGo to https:\/\/pypi.python.org\/pypi\/pyserial to install the module,\\nor refer to our manual for help.\\n\\nThe program will now quit."$/;"	kind:variable	line:30
-np	../python/testSuite.py	/^import numpy as np$/;"	kind:namespace	line:36
+np	../python/testSuite.py	/^import numpy as np$/;"	kind:namespace	line:35
 numpy	../python/plotTest.py	/^import numpy, scipy, matplotlib.pyplot as plt, IPython.display as ipd$/;"	kind:namespace	line:4
 numpy	../python/stanford_mir.py	/^import numpy$/;"	kind:namespace	line:4
 onset_frames	../python/plotTest.py	/^onset_frames = librosa.onset.onset_detect(x, sr=sr)$/;"	kind:variable	line:15
@@ -98,60 +102,59 @@ os	../python/captureGui.py	/^import os$/;"	kind:namespace	line:22
 os	../python/captureGui.py	/^import os.path $/;"	kind:namespace	line:14
 os	../python/stanford_mir.py	/^import os$/;"	kind:namespace	line:5
 os	../python/stanford_mir.py	/^import os.path$/;"	kind:namespace	line:6
-os	../python/testSuite.py	/^import os$/;"	kind:namespace	line:22
-partial	../python/testSuite.py	/^from functools import partial$/;"	kind:namespace	line:29
+os	../python/testSuite.py	/^import os$/;"	kind:namespace	line:28
+partial	../python/testSuite.py	/^from functools import partial$/;"	kind:namespace	line:44
 path	../python/captureGui.py	/^import os.path $/;"	kind:namespace	line:14
 path	../python/stanford_mir.py	/^import os.path$/;"	kind:namespace	line:6
-pd	../python/testSuite.py	/^import pandas as pd$/;"	kind:namespace	line:37
+pd	../python/testSuite.py	/^import pandas as pd$/;"	kind:namespace	line:36
 platform	../python/captureGui.py	/^import platform$/;"	kind:namespace	line:21
-playBeep	../python/testSuite.py	/^def playBeep(fadeoutTimer):$/;"	kind:function	line:540
-playback	../python/testSuite.py	/^def playback(audio_file):$/;"	kind:function	line:516
+playBeep	../python/testSuite.py	/^def playBeep(fadeoutTimer):$/;"	kind:function	line:552
+playback	../python/testSuite.py	/^def playback(audio_file):$/;"	kind:function	line:523
 plotTest.py	../python/plotTest.py	1;"	kind:file	line:1
-plotly	../python/testSuite.py	/^import plotly$/;"	kind:namespace	line:38
-plotly	../python/testSuite.py	/^import plotly.graph_objs as go$/;"	kind:namespace	line:39
-plotly	../python/testSuite.py	/^import plotly.plotly as py$/;"	kind:namespace	line:40
-plotly	../python/testSuite.py	/^import plotly.tools as tls$/;"	kind:namespace	line:41
+plotly	../python/testSuite.py	/^import plotly$/;"	kind:namespace	line:22
+plotly	../python/testSuite.py	/^import plotly.graph_objs as go$/;"	kind:namespace	line:26
+plotly	../python/testSuite.py	/^import plotly.plotly as py$/;"	kind:namespace	line:25
+plotly	../python/testSuite.py	/^import plotly.tools as tls$/;"	kind:namespace	line:24
 plt	../python/plotTest.py	/^import numpy, scipy, matplotlib.pyplot as plt, IPython.display as ipd$/;"	kind:namespace	line:4
 plt	../python/stanford_mir.py	/^import matplotlib, matplotlib.pyplot as plt$/;"	kind:namespace	line:3
-plt	../python/testSuite.py	/^import matplotlib.pyplot as plt$/;"	kind:namespace	line:35
-practiceTests	../python/testSuite.py	/^practiceTests = {$/;"	kind:variable	line:326
-py	../python/testSuite.py	/^import plotly.plotly as py$/;"	kind:namespace	line:40
-pygame	../python/testSuite.py	/^import pygame$/;"	kind:namespace	line:46
+plt	../python/testSuite.py	/^import matplotlib.pyplot as plt$/;"	kind:namespace	line:40
+practiceTests	../python/testSuite.py	/^practiceTests = {$/;"	kind:variable	line:325
+py	../python/testSuite.py	/^import plotly.plotly as py$/;"	kind:namespace	line:25
+random	../python/testSuite.py	/^import random$/;"	kind:namespace	line:30
 refresh_buttons	../python/captureGui.py	/^    def refresh_buttons(*args):$/;"	kind:function	line:493
 report	../python/captureGui.py	/^    def report(self,message):$/;"	kind:member	line:54
 request	../python/stanford_mir.py	/^import urllib.request$/;"	kind:namespace	line:8
 runCapture	../python/captureGui.py	/^def runCapture():$/;"	kind:function	line:235
-saveOutput	../python/testSuite.py	/^def saveOutput():$/;"	kind:function	line:578
 scipy	../python/plotTest.py	/^import numpy, scipy, matplotlib.pyplot as plt, IPython.display as ipd$/;"	kind:namespace	line:4
 serial	../python/captureGui.py	/^    import serial$/;"	kind:namespace	line:28
-serial	../python/testSuite.py	/^import serial$/;"	kind:namespace	line:43
+serial	../python/testSuite.py	/^import serial$/;"	kind:namespace	line:21
 settextreceiver	../python/captureGui.py	/^    def settextreceiver(self,textreceiver):$/;"	kind:member	line:73
-show_frame	../python/testSuite.py	/^    def show_frame(self, cont):$/;"	kind:member	line:408
-shuffle	../python/testSuite.py	/^from random import shuffle$/;"	kind:namespace	line:30
+show_frame	../python/testSuite.py	/^    def show_frame(self, cont):$/;"	kind:member	line:409
+shuffle	../python/testSuite.py	/^from random import shuffle$/;"	kind:namespace	line:45
 sklearn	../python/stanford_mir.py	/^import sklearn$/;"	kind:namespace	line:7
-sns	../python/testSuite.py	/^import seaborn as sns$/;"	kind:namespace	line:42
+sns	../python/testSuite.py	/^import seaborn as sns$/;"	kind:namespace	line:43
 stanford_mir	../python/plotTest.py	/^import stanford_mir; stanford_mir.init()$/;"	kind:namespace	line:6
 stanford_mir.py	../python/stanford_mir.py	1;"	kind:file	line:1
-startFlag	../python/testSuite.py	/^startFlag = False$/;"	kind:variable	line:78
+startFlag	../python/testSuite.py	/^startFlag = False$/;"	kind:variable	line:76
 startNew	../python/captureGui.py	/^    def startNew(self):$/;"	kind:member	line:76
-startRead	../python/testSuite.py	/^startRead = False$/;"	kind:variable	line:80
+startRead	../python/testSuite.py	/^startRead = False$/;"	kind:variable	line:78
 stopCapture	../python/captureGui.py	/^def stopCapture():$/;"	kind:function	line:222
 sys	../python/captureGui.py	/^import sys$/;"	kind:namespace	line:25
-sys	../python/testSuite.py	/^import sys$/;"	kind:namespace	line:23
-t0	../python/testSuite.py	/^t0 = ''$/;"	kind:variable	line:81
-tabulate	../python/testSuite.py	/^from tabulate import tabulate$/;"	kind:namespace	line:48
-tapSerial	../python/testSuite.py	/^    tapSerial = serial.Serial(TAP_SERIAL_PORT,TAP_BAUD,timeout=TIMEOUT)$/;"	kind:variable	line:372
+sys	../python/testSuite.py	/^import sys$/;"	kind:namespace	line:32
+t0	../python/testSuite.py	/^t0 = ''$/;"	kind:variable	line:79
+tabulate	../python/testSuite.py	/^from tabulate import tabulate$/;"	kind:namespace	line:49
+tapSerial	../python/testSuite.py	/^    tapSerial = serial.Serial(TAP_SERIAL_PORT, TAP_BAUD, timeout=TIMEOUT)$/;"	kind:variable	line:371
 testSuite.py	../python/testSuite.py	1;"	kind:file	line:1
 threading	../python/captureGui.py	/^import threading$/;"	kind:namespace	line:12
 time	../python/captureGui.py	/^import time$/;"	kind:namespace	line:36
-time	../python/testSuite.py	/^import time$/;"	kind:namespace	line:24
-timedelta	../python/testSuite.py	/^from datetime import timedelta$/;"	kind:namespace	line:28
-timestamp	../python/testSuite.py	/^timestamp = dt.datetime$/;"	kind:variable	line:84
-tk	../python/testSuite.py	/^import tkinter as tk$/;"	kind:namespace	line:25
+time	../python/testSuite.py	/^import time$/;"	kind:namespace	line:27
+timedelta	../python/testSuite.py	/^from datetime import timedelta$/;"	kind:namespace	line:34
+timestamp	../python/testSuite.py	/^timestamp = dt.datetime$/;"	kind:variable	line:82
+tk	../python/testSuite.py	/^import tkinter as tk$/;"	kind:namespace	line:31
 tkinter	../python/captureGui.py	/^import tkinter$/;"	kind:namespace	line:16
-tls	../python/testSuite.py	/^import plotly.tools as tls$/;"	kind:namespace	line:41
+tls	../python/testSuite.py	/^import plotly.tools as tls$/;"	kind:namespace	line:24
 updateButtons	../python/captureGui.py	/^    def updateButtons(self):$/;"	kind:member	line:80
 urllib	../python/stanford_mir.py	/^import urllib.request$/;"	kind:namespace	line:8
-userID	../python/testSuite.py	/^userID = 0$/;"	kind:variable	line:83
-userName	../python/testSuite.py	/^userName = ""$/;"	kind:variable	line:82
-webbrowser	../python/testSuite.py	/^import webbrowser$/;"	kind:namespace	line:26
+userID	../python/testSuite.py	/^userID = 0$/;"	kind:variable	line:81
+userName	../python/testSuite.py	/^userName = ""$/;"	kind:variable	line:80
+webbrowser	../python/testSuite.py	/^import webbrowser$/;"	kind:namespace	line:20
