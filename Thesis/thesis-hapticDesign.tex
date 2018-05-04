@@ -264,6 +264,23 @@ The voltage across the rails (Vcc and ground) was viewed on a Rohde \& Schwarz R
 As an additional manual tap tempo option for the user to experiment with, a push-button was added and connected to the only interrupt capable pin on the Trinket, PIN 3. An RC combination was chosen to act as a low-pass filter to protect against debounce scenarios.
 
 \subsection{Software}
+The code was written in the Arduino IDE which utilizes C++. 
+
+Outside of the tap tempo hardware push button, the main control flow was through serial communication over FTDI. The device communicated at 115200 baud and a small method was written to read the serial buffer and parse the incoming bytes into integers.
+The first input was a setter to store the current operation mode with 1 being the Discrete (Instantaneous) Mode and 2 Continuous.
+Afterwards, any other number (thresholded from 20 to 220) would be stored as the bpm.
+
+The period was calculated using formula \ref{eq:period}
+
+The main control flow was two state machines which were independent of delay. Depending on mode selection it would send digitalWrite commands to each motor within the set time period.
+Though the AnalogWrite functionality built into the Arduino IDE could PWM the signal and potentially control the motor just below its turn on state, the transistors would not allow this due to their rapid speed and turn on voltage and the motors would be always vibrating.
+
+The first state started a millisecond precision timer. In discrete mode the second state wrote all digitalIO pins HIGH for a quarter of the period. A half on/off implementation was considered but determined to be not as efficient in communicating rapid pulses since the ramp down time overlapped with the next on period. During this state a flag was printed over serial to be read in later indicating when the test software could timestamp the onset.
+
+The state machine in continuous mode functioned similarly but was divided into 4 ramp-up states and 4 ramp-down states. Each state held its vibrotactile high for 1/9 (.11s) of the period but lingered on the fourth vibrotactile slightly longer (.22s) to convey the pinnacle of the beat. This state also sent the onset trigger.
+
+
+
 
 
 \subsection{Future Implementation}

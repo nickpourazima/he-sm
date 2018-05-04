@@ -9,7 +9,6 @@
 
 # TO-DO
 # CRUCIAL
-# extend haptic first beat duration for added prominance
 # test on yourself
 # get HW more presentable
 
@@ -95,15 +94,15 @@ instructions = (
     + CRLF +
     "At the start of every test is a 3 second long beep."
     + CRLF +
-    "Once the test starts please try your best to firmly tap on the pad to the presented beat."
+    "Once the test starts please try your best to firmly and quickly tap on the pad to the presented beat."
     + CRLF +
     "For the music based tests, tap on every note."
     + CRLF+CRLF +
-    "For some of the haptic tests, you will feel a pulse moving down and then back up, the beat is the pulse felt first, closest to your shoulder."
+    "For the continuous haptic tests, you will feel a pulse moving down and then back up, the beat is the pulse felt at the bottom, closest to your hand."
     + CRLF +
-    "There will be a practice period of 6 tests which sample a few of the test types."
+    "There will be a practice period of 8 tests which sample a few of the test types."
     + CRLF +
-    "You will then hear 3 short beeps and the real test will commence."
+    "You will then hear 3 short beeps and one long beep indicating that the real test will commence."
     + CRLF+CRLF+CRLF +
     "When you are ready advance to the next page and click Start to begin the practice test."
     + CRLF +
@@ -323,11 +322,13 @@ hapticTestCases = {
 }
 practiceTests = {
     'P1H1a1': (True, DISCRETE, BPM1, 10),
-    'P2H1b1': (True, CONTINOUS, BPM1, 10),
-    'P3H1b3': (True, CONTINOUS, BPM3, 10),
-    'P4A1a1': audioFile[0],
-    'P5A1b1': audioFile[4],
-    'P6A2a1': audioFile[8]
+    'P2H1a2': (True, DISCRETE, BPM2, 10),
+    'P3H1b1': (True, CONTINOUS, BPM1, 10),
+    'P4H1b2': (True, CONTINOUS, BPM2, 10),
+    'P5H1b3': (True, CONTINOUS, BPM3, 10),
+    'P6A1a2': audioFile[1],
+    'P7A1b1': audioFile[4],
+    'P8A2a1': audioFile[8]
 }
 audioTestCases = {
     'A1a1': audioFile[0],
@@ -458,14 +459,14 @@ class TestPage(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.label = tk.Label(self, text="Get ready!"
                               + CRLF +
-                              "Remember, the first 6 tests are practice."
+                              "Remember, the first 8 tests are practice."
                               + CRLF +
                               "Afterwards, you will hear 3 (1 second) beeps indicating that the real test will begin."
                               + CRLF, font=LARGE_FONT)
         self.label.pack(pady=10, padx=10)
         # self.flash()
         button1 = tk.Button(
-            self, text="Start Practice Test", command=self.quit)
+            self, text="Start Test", command=self.quit)
         button1.pack()
 
     def flash(self):
@@ -493,7 +494,7 @@ def haptic(steady, mode, tempo, timer, increment=1):
     while readyFlag:
         end = time.time()
         elapsed = end - start
-        isOnset = hapticSerial.readline()#.decode('utf-8')
+        isOnset = hapticSerial.readline()  # .decode('utf-8')
         if(isOnset == b'onset\r\n'):
             df['True Onset'].append(pd.Timestamp.now())
         if(not steady and elapsed <= timer/4):
@@ -662,7 +663,7 @@ def dataAnalysis(count):
     completeName = os.path.join(currentPath, filename)
 
     rawData.to_csv(completeName+'.csv')
-    
+
     # ========== PLOTTING ============
     plt.title('Time vs. Onsets')
     plt.plot(rawData['Sanitized Tap Onset'], 'g^')
@@ -683,14 +684,14 @@ def dataAnalysis(count):
     # Re-initialize dataframe and dictionary for next test iteration
     rawData = pd.DataFrame()
     df = {
-    'Test':             [],
-    'User ID':          [],
-    'True Onset':       [],
-    'Tap Onset':        [],
-    'Asynchrony':       []
+        'Test':             [],
+        'User ID':          [],
+        'True Onset':       [],
+        'Tap Onset':        [],
+        'Asynchrony':       []
     }
 
-    if count == 2:
+    if count == 56:
         all_files = glob.iglob(os.path.join(currentPath, "*.csv"))
         summary = pd.concat((pd.read_csv(f, skipinitialspace=True)
                              for f in all_files), ignore_index=True)
@@ -700,84 +701,80 @@ def dataAnalysis(count):
 
 
 def main():
-    global t0, userID, fadeoutTimer, allKeys
-    counter = 1
-    for c in userName:
-        userID += int(ord(c))
-
-    # =========== Practice Mode =============
-    # practiceKeys = list(practiceTests.keys())
-    # for item in practiceKeys:
-    #     t0 = item
-    #     t1 = Thread(target=playBeep, args=(fadeoutTimer,))
-    #     t1.start()
-    #     if(t0[2] == 'H'):
-    #         t2 = Thread(target=haptic, args=practiceTests.get(item))
-    #     elif(t0[2] == 'A'):
-    #         t2 = Thread(target=playback, args=[practiceTests.get(item)])
-    #     t3 = Thread(target=getTap)
-    #     t1.join()
-    #     t2.start()
-    #     t3.start()
-    #     t2.join()
-    #     t3.join()
-    #     dataAnalysis(counter)
-    #     counter += 1
-    # fadeoutTimer = 1000
-    # t4 = Thread(target=playBeep, args=(fadeoutTimer,))
-    # t5 = Thread(target=playBeep, args=(fadeoutTimer,))
-    # t6 = Thread(target=playBeep, args=(fadeoutTimer,))
-    # t4.start()
-    # t4.join()
-    # t5.start()
-    # t5.join()
-    # t6.start()
-    # t6.join()
-
-    # ========= ALL TESTS ==========
-    # run through test cases (randomly)
-
-    random.seed(10)
-    hapticKeys = list(hapticTestCases.keys())
-    shuffle(hapticKeys)
-    audioKeys = list(audioTestCases.keys())
-    shuffle(audioKeys)
-    allKeys = hapticKeys #+ audioKeys
-    shuffle(allKeys)
-    print(allKeys)
-    fadeoutTimer = 3000
-
-    for key in allKeys:
-        t0 = key
-        t1 = Thread(target=playBeep, args=(fadeoutTimer,))
-        t1.start()
-        if(t0[0] == 'H'):
-            t2 = Thread(target=haptic, args=hapticTestCases.get(key))
-        elif(t0[0] == 'A'):
-            t2 = Thread(target=playback, args=[audioTestCases.get(key)])
-        t3 = Thread(target=getTap)
-        t1.join()
-        t2.start()
-        t3.start()
-        t2.join()
-        t3.join()
-        dataAnalysis(counter)
-
-        counter += 1
-        if counter == 3:
-            #     # print(delta)
-            break
-
-    # dataAnalysis()
-    webbrowser.open('https://goo.gl/forms/LR5y4uy5fg86QcDW2',
-                    new=2, autoraise=True)
-
-
-if __name__ == "__main__":
     app = mainGUI()
     app.title("Audible & Haptic Test Suite (Author: Nick Pourazima - CMU 18')")
     app.mainloop()
     if(startFlag):
-        main()
-    else:
-        "Main was not run, please debug"
+        global t0, userID, fadeoutTimer, allKeys
+        counter = 1
+        for c in userName:
+            userID += int(ord(c))
+
+        # =========== Practice Mode =============
+        practiceKeys = list(practiceTests.keys())
+        for item in practiceKeys:
+            t0 = item
+            t1 = Thread(target=playBeep, args=(fadeoutTimer,))
+            t1.start()
+            if(t0[2] == 'H'):
+                t2 = Thread(target=haptic, args=practiceTests.get(item))
+            elif(t0[2] == 'A'):
+                t2 = Thread(target=playback, args=[practiceTests.get(item)])
+            t3 = Thread(target=getTap)
+            t1.join()
+            t2.start()
+            t3.start()
+            t2.join()
+            t3.join()
+            dataAnalysis(counter)
+            counter += 1
+        fadeoutTimer = 1000
+        t4 = Thread(target=playBeep, args=(fadeoutTimer,))
+        t5 = Thread(target=playBeep, args=(fadeoutTimer,))
+        t6 = Thread(target=playBeep, args=(fadeoutTimer,))
+        t4.start()
+        t4.join()
+        t5.start()
+        t5.join()
+        t6.start()
+        t6.join()
+
+        # ========= ALL TESTS ==========
+        # run through test cases (randomly)
+
+        random.seed(10)
+        hapticKeys = list(hapticTestCases.keys())
+        shuffle(hapticKeys)
+        audioKeys = list(audioTestCases.keys())
+        shuffle(audioKeys)
+        allKeys = hapticKeys + audioKeys
+        shuffle(allKeys)
+        print(allKeys)
+        fadeoutTimer = 3000
+
+        for key in allKeys:
+            t0 = key
+            t1 = Thread(target=playBeep, args=(fadeoutTimer,))
+            t1.start()
+            if(t0[0] == 'H'):
+                t2 = Thread(target=haptic, args=hapticTestCases.get(key))
+            elif(t0[0] == 'A'):
+                t2 = Thread(target=playback, args=[audioTestCases.get(key)])
+            t3 = Thread(target=getTap)
+            t1.join()
+            t2.start()
+            t3.start()
+            t2.join()
+            t3.join()
+            dataAnalysis(counter)
+
+            counter += 1
+            # if counter == 6:
+            #     #     # print(delta)
+            #     break
+
+        webbrowser.open('https://goo.gl/forms/LR5y4uy5fg86QcDW2',
+                        new=2, autoraise=True)
+
+if __name__ == "__main__":
+    main()
