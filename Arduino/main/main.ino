@@ -184,7 +184,7 @@ void go(){
           if(start){
             average = avg;
             startTime=millis();
-            Serial.println(startTime);
+//            Serial.println(startTime);
             newState++;
           }
           break;
@@ -196,6 +196,7 @@ void go(){
           // digitalWrite(ledPin,HIGH);
           if((millis()-startTime) >= ((average * 1)/4)){
             newState++;
+            Serial.println("onset");
           }
           break;
         case OFF:
@@ -218,65 +219,66 @@ void go(){
           if(start){
             average = avg;
             startTime=millis();
-            Serial.println(startTime); 
+//            Serial.println(startTime); 
             state++;
           }
           break;
         case RAMPUP_STEP_1:
           digitalWrite(vibPins[0],HIGH);
           // digitalWrite(ledPin,HIGH);
-          if((millis()-startTime) >= ((average * 1)/7)){
+          if((millis()-startTime) >= ((average * 1)/9)){
             state++;
           }
           break;
         case RAMPUP_STEP_2:
           digitalWrite(vibPins[0],LOW);
           digitalWrite(vibPins[1],HIGH);
-          if((millis()-startTime) >= ((average * 2)/7)){
+          if((millis()-startTime) >= ((average * 2)/9)){
             state++;
           }
           break;
         case RAMPUP_STEP_3:
           digitalWrite(vibPins[1],LOW);
           digitalWrite(vibPins[2],HIGH);
-          if((millis()-startTime) >= ((average * 3)/7)){
+          if((millis()-startTime) >= ((average * 3)/9)){
             state++;
+            Serial.println("onset");
           }
           break;
         case RAMPUP_STEP_4:
           digitalWrite(vibPins[2],LOW);
           digitalWrite(vibPins[3],HIGH);
-          if((millis()-startTime) >= ((average * 4)/7)){
+          if((millis()-startTime) >= ((average * 5)/9)){
             state++;
           }
           break;
         case RAMPDOWN_STEP_5:
           digitalWrite(vibPins[3],LOW);
           digitalWrite(vibPins[2],HIGH);
-          if((millis()-startTime) >= ((average * 5)/7)){
+          if((millis()-startTime) >= ((average * 6)/9)){
             state++;
           }
           break;
         case RAMPDOWN_STEP_6:
           digitalWrite(vibPins[2],LOW);
           digitalWrite(vibPins[1],HIGH);
-          if((millis()-startTime) >= ((average * 6)/7)){
+          if((millis()-startTime) >= ((average * 7)/9)){
             state++;
           }
           break;
         case RAMPDOWN_STEP_7:
           digitalWrite(vibPins[1],LOW);
-          // digitalWrite(vibPins[0],HIGH);
-          if((millis()-startTime) >= ((average * 7)/7)){
-            state=0;
+           digitalWrite(vibPins[0],HIGH);
+          if((millis()-startTime) >= ((average * 8)/9)){
+            state++;
           }
           break;
-        // case END:
-        //   // digitalWrite(vibPins[0],LOW);
-        //   // digitalWrite(ledPin,LOW);
-        //   if((millis()-startTime) >= average){
-        //     state=0; 
-        //   }
+         case END:
+            digitalWrite(vibPins[0],LOW);
+//            digitalWrite(ledPin,LOW);
+           if((millis()-startTime) >= average){
+             state=0; 
+           }
           break;
         default:
           break;

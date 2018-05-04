@@ -4,13 +4,12 @@
 #   Contact: npourazima@gmail.com
 #   Date: ~Spring 2018
 #   Description:
-#       Master contoller for haptic (Pro Trinket) and FSR tap hardware (Arduino Uno).
+#       Master test suite contol for haptic (Pro Trinket 5V 16MHz) and FSR tap hardware (Arduino Uno).
 #       Synchronizes timing via multi-threaded operations. Outputs test cases for analysis.
 
 # TO-DO
 # CRUCIAL
-# debug audio onset error
-# solidify sanitization
+# extend haptic first beat duration for added prominance
 # test on yourself
 # get HW more presentable
 
@@ -477,7 +476,7 @@ class TestPage(tk.Frame):
 
 
 def haptic(steady, mode, tempo, timer, increment=1):
-    global closeFile, startRead
+    global closeFile, startRead, df
     readyFlag = False
 
     if startRead:
@@ -494,7 +493,9 @@ def haptic(steady, mode, tempo, timer, increment=1):
     while readyFlag:
         end = time.time()
         elapsed = end - start
-        hapticSerial.readline().decode('utf-8')
+        isOnset = hapticSerial.readline()#.decode('utf-8')
+        if(isOnset == b'onset\r\n'):
+            df['True Onset'].append(pd.Timestamp.now())
         if(not steady and elapsed <= timer/4):
             newTempo = newTempo+increment
             hapticSerial.write((str(newTempo) + CRLF).encode())
@@ -511,7 +512,7 @@ def haptic(steady, mode, tempo, timer, increment=1):
             newTempo = newTempo-increment
             hapticSerial.write((str(newTempo) + CRLF).encode())
             bpmChange.append([None, None, None, str(newTempo), None, None])
-        df['True Onset'].append(pd.Timestamp.now())
+
         df['User ID'].append(userID)
         df['Test'].append(t0)
         if(elapsed >= timer):
@@ -521,7 +522,7 @@ def haptic(steady, mode, tempo, timer, increment=1):
 
 
 def playback(audio_file):
-    global closeFile
+    global closeFile, df
     mixer.pre_init(44100, -16, 2, 64)
     mixer.init()
     mixer.music.load(audio_file)
@@ -559,7 +560,7 @@ def playBeep(fadeoutTimer):
 
 
 def getTap():
-    global closeFile, startRead
+    global closeFile, startRead, df
     readyFlag = False
     if startRead:
         tapSerial.reset_input_buffer()
@@ -586,6 +587,7 @@ def getTap():
 
 
 def dataAnalysis(count):
+    global df
     rawData = pd.DataFrame(dict([(k, pd.Series(v)) for k, v in df.items()]))
     rawData = rawData.drop_duplicates(subset=['True Onset'], keep=False)
     rawData['Asynchrony'] = (rawData['Tap Onset'] -
@@ -660,8 +662,7 @@ def dataAnalysis(count):
     completeName = os.path.join(currentPath, filename)
 
     rawData.to_csv(completeName+'.csv')
-    rawData.to_excel(completeName+'.xlsx')
-
+    
     # ========== PLOTTING ============
     plt.title('Time vs. Onsets')
     plt.plot(rawData['Sanitized Tap Onset'], 'g^')
@@ -671,19 +672,23 @@ def dataAnalysis(count):
     fig1.savefig(completeName+'.png', bbox_inches='tight')
     plotly.tools.set_credentials_file(
         username='afaintillusion', api_key='yDV9rWN1OEY9kfS3VIqV')
-
     plotly_fig = tls.mpl_to_plotly(fig1)
-
     # plotly_fig['rawData'][0].update({'name':'Sanitized Tap Onset'})
     # plotly_fig['rawData'][1].update({'name':'Tap Onset'})
     # plotly_fig['rawData'][2].update({'name':'True Onset'})
-    # plotly_fig['layout'].update(yaxis=dict(title='Time', tickformat=".8f"))
-    # plotly_fig['layout']['showlegend'] = True
+    plotly_fig['layout'].update(yaxis=dict(title='Time', tickformat=".3f"))
+    plotly_fig['layout']['showlegend'] = True
     plotly.offline.plot(plotly_fig, filename=(completeName+'.html'))
 
+    # Re-initialize dataframe and dictionary for next test iteration
     rawData = pd.DataFrame()
-    print(rawData)
-    # rawData = rawData.drop(rawData.loc[:, :], inplace=True)
+    df = {
+    'Test':             [],
+    'User ID':          [],
+    'True Onset':       [],
+    'Tap Onset':        [],
+    'Asynchrony':       []
+    }
 
     if count == 2:
         all_files = glob.iglob(os.path.join(currentPath, "*.csv"))
@@ -737,7 +742,7 @@ def main():
     shuffle(hapticKeys)
     audioKeys = list(audioTestCases.keys())
     shuffle(audioKeys)
-    allKeys = hapticKeys + audioKeys
+    allKeys = hapticKeys #+ audioKeys
     shuffle(allKeys)
     print(allKeys)
     fadeoutTimer = 3000
