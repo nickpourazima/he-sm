@@ -48,7 +48,7 @@ from threading import Thread
 from tabulate import tabulate
 
 # SERIAL VARS
-TAP_SERIAL_PORT = '/dev/tty.usbmodem14111'
+TAP_SERIAL_PORT = '/dev/tty.usbmodem14141'
 TAP_BAUD = 115200
 TIMEOUT = 0.25
 
@@ -98,7 +98,9 @@ instructions = (
     + CRLF +
     "For the music based tests, tap on every note."
     + CRLF+CRLF +
-    "For the continuous haptic tests, you will feel a pulse moving down and then back up, the beat is the pulse felt at the bottom, closest to your hand."
+    "For the continuous haptic tests, you will feel a pulse moving down and then back up."
+    + CRLF +
+    "The beat is the pulse felt at the bottom, closest to your hand."
     + CRLF +
     "There will be a practice period of 8 tests which sample a few of the test types."
     + CRLF +
@@ -642,7 +644,7 @@ def dataAnalysis(count):
         ((rawData['Tap Onset'].shift(-4) >= rawData['Min']) &
          (rawData['Tap Onset'].shift(-4) < rawData['Max'])),
         ((rawData['Tap Onset'].shift(-5) >= rawData['Min'])
-         & (rawData['Tap Onset'].shift(-5) < rawData['Max']))
+         & (rawData['Tap Onset'].shift(-5) < rawData['Max'])),
         ((rawData['Tap Onset'].shift(-6) >= rawData['Min']) &
          (rawData['Tap Onset'].shift(-6) < rawData['Max'])),
         ((rawData['Tap Onset'].shift(-7) >= rawData['Min']) &
@@ -732,33 +734,33 @@ def main():
             userID += int(ord(c))
 
         # =========== Practice Mode =============
-        # practiceKeys = list(practiceTests.keys())
-        # for item in practiceKeys:
-        #     t0 = item
-        #     t1 = Thread(target=playBeep, args=(fadeoutTimer,))
-        #     t1.start()
-        #     if(t0[2] == 'H'):
-        #         t2 = Thread(target=haptic, args=practiceTests.get(item))
-        #     elif(t0[2] == 'A'):
-        #         t2 = Thread(target=playback, args=[practiceTests.get(item)])
-        #     t3 = Thread(target=getTap)
-        #     t1.join()
-        #     t2.start()
-        #     t3.start()
-        #     t2.join()
-        #     t3.join()
-        #     dataAnalysis(counter)
-        #     counter += 1
-        # fadeoutTimer = 1000
-        # t4 = Thread(target=playBeep, args=(fadeoutTimer,))
-        # t5 = Thread(target=playBeep, args=(fadeoutTimer,))
-        # t6 = Thread(target=playBeep, args=(fadeoutTimer,))
-        # t4.start()
-        # t4.join()
-        # t5.start()
-        # t5.join()
-        # t6.start()
-        # t6.join()
+        practiceKeys = list(practiceTests.keys())
+        for item in practiceKeys:
+            t0 = item
+            t1 = Thread(target=playBeep, args=(fadeoutTimer,))
+            t1.start()
+            if(t0[2] == 'H'):
+                t2 = Thread(target=haptic, args=practiceTests.get(item))
+            elif(t0[2] == 'A'):
+                t2 = Thread(target=playback, args=[practiceTests.get(item)])
+            t3 = Thread(target=getTap)
+            t1.join()
+            t2.start()
+            t3.start()
+            t2.join()
+            t3.join()
+            dataAnalysis(counter)
+            counter += 1
+        fadeoutTimer = 1000
+        t4 = Thread(target=playBeep, args=(fadeoutTimer,))
+        t5 = Thread(target=playBeep, args=(fadeoutTimer,))
+        t6 = Thread(target=playBeep, args=(fadeoutTimer,))
+        t4.start()
+        t4.join()
+        t5.start()
+        t5.join()
+        t6.start()
+        t6.join()
 
         # ========= ALL TESTS ==========
         # run through test cases (randomly)
@@ -768,7 +770,7 @@ def main():
         shuffle(hapticKeys)
         audioKeys = list(audioTestCases.keys())
         shuffle(audioKeys)
-        allKeys = hapticKeys #+ audioKeys
+        allKeys = hapticKeys + audioKeys
         shuffle(allKeys)
         print(allKeys)
         fadeoutTimer = 3000
@@ -790,9 +792,9 @@ def main():
             dataAnalysis(counter)
 
             counter += 1
-            if counter == 6:
-                #     # print(delta)
-                sys.exit()
+            # if counter == 6:
+            #     #     # print(delta)
+            #     sys.exit()
 
         webbrowser.open('https://goo.gl/forms/LR5y4uy5fg86QcDW2',
                         new=2, autoraise=True)
