@@ -48,7 +48,7 @@ from threading import Thread
 from tabulate import tabulate
 
 # SERIAL VARS
-TAP_SERIAL_PORT = '/dev/tty.usbmodem14141'
+TAP_SERIAL_PORT = '/dev/tty.usbmodem14111'
 TAP_BAUD = 115200
 TIMEOUT = 0.25
 
@@ -611,6 +611,16 @@ def dataAnalysis(count):
     #     rawData['Sanitized Tap Onset'] = np.select(conditions,choices,default=np.timedelta64('NaT'))
 
     conditions = [
+        ((rawData['Tap Onset'].shift(10) >= rawData['Min']) &
+         (rawData['Tap Onset'].shift(10) < rawData['Max'])),
+        ((rawData['Tap Onset'].shift(9) >= rawData['Min']) &
+         (rawData['Tap Onset'].shift(9) < rawData['Max'])),
+        ((rawData['Tap Onset'].shift(8) >= rawData['Min']) &
+         (rawData['Tap Onset'].shift(8) < rawData['Max'])),
+        ((rawData['Tap Onset'].shift(7) >= rawData['Min']) &
+         (rawData['Tap Onset'].shift(7) < rawData['Max'])),
+        ((rawData['Tap Onset'].shift(6) >= rawData['Min']) &
+         (rawData['Tap Onset'].shift(6) < rawData['Max'])),
         ((rawData['Tap Onset'].shift(5) >= rawData['Min']) &
          (rawData['Tap Onset'].shift(5) < rawData['Max'])),
         ((rawData['Tap Onset'].shift(4) >= rawData['Min']) &
@@ -633,9 +643,20 @@ def dataAnalysis(count):
          (rawData['Tap Onset'].shift(-4) < rawData['Max'])),
         ((rawData['Tap Onset'].shift(-5) >= rawData['Min'])
          & (rawData['Tap Onset'].shift(-5) < rawData['Max']))
+        ((rawData['Tap Onset'].shift(-6) >= rawData['Min']) &
+         (rawData['Tap Onset'].shift(-6) < rawData['Max'])),
+        ((rawData['Tap Onset'].shift(-7) >= rawData['Min']) &
+         (rawData['Tap Onset'].shift(-7) < rawData['Max'])),
+        ((rawData['Tap Onset'].shift(-8) >= rawData['Min']) &
+         (rawData['Tap Onset'].shift(-8) < rawData['Max'])),
+        ((rawData['Tap Onset'].shift(-9) >= rawData['Min']) &
+         (rawData['Tap Onset'].shift(-9) < rawData['Max'])),
+        ((rawData['Tap Onset'].shift(-10) >= rawData['Min'])
+         & (rawData['Tap Onset'].shift(-10) < rawData['Max']))
     ]
-    choices = [rawData['Tap Onset'].shift(5), rawData['Tap Onset'].shift(4), rawData['Tap Onset'].shift(3), rawData['Tap Onset'].shift(2), rawData['Tap Onset'].shift(
-        1), rawData['Tap Onset'], rawData['Tap Onset'].shift(-1), rawData['Tap Onset'].shift(-2), rawData['Tap Onset'].shift(-3), rawData['Tap Onset'].shift(-4), rawData['Tap Onset'].shift(-5)]
+    choices = [rawData['Tap Onset'].shift(10), rawData['Tap Onset'].shift(9), rawData['Tap Onset'].shift(8), rawData['Tap Onset'].shift(7), rawData['Tap Onset'].shift(
+        6),rawData['Tap Onset'].shift(5), rawData['Tap Onset'].shift(4), rawData['Tap Onset'].shift(3), rawData['Tap Onset'].shift(2), rawData['Tap Onset'].shift(
+        1), rawData['Tap Onset'], rawData['Tap Onset'].shift(-1), rawData['Tap Onset'].shift(-2), rawData['Tap Onset'].shift(-3), rawData['Tap Onset'].shift(-4), rawData['Tap Onset'].shift(-5), rawData['Tap Onset'].shift(-6), rawData['Tap Onset'].shift(-7), rawData['Tap Onset'].shift(-8), rawData['Tap Onset'].shift(-9), rawData['Tap Onset'].shift(-10)]
     rawData['Sanitized Tap Onset'] = np.select(
         conditions, choices, default=np.timedelta64('NaT'))
 
@@ -711,33 +732,33 @@ def main():
             userID += int(ord(c))
 
         # =========== Practice Mode =============
-        practiceKeys = list(practiceTests.keys())
-        for item in practiceKeys:
-            t0 = item
-            t1 = Thread(target=playBeep, args=(fadeoutTimer,))
-            t1.start()
-            if(t0[2] == 'H'):
-                t2 = Thread(target=haptic, args=practiceTests.get(item))
-            elif(t0[2] == 'A'):
-                t2 = Thread(target=playback, args=[practiceTests.get(item)])
-            t3 = Thread(target=getTap)
-            t1.join()
-            t2.start()
-            t3.start()
-            t2.join()
-            t3.join()
-            dataAnalysis(counter)
-            counter += 1
-        fadeoutTimer = 1000
-        t4 = Thread(target=playBeep, args=(fadeoutTimer,))
-        t5 = Thread(target=playBeep, args=(fadeoutTimer,))
-        t6 = Thread(target=playBeep, args=(fadeoutTimer,))
-        t4.start()
-        t4.join()
-        t5.start()
-        t5.join()
-        t6.start()
-        t6.join()
+        # practiceKeys = list(practiceTests.keys())
+        # for item in practiceKeys:
+        #     t0 = item
+        #     t1 = Thread(target=playBeep, args=(fadeoutTimer,))
+        #     t1.start()
+        #     if(t0[2] == 'H'):
+        #         t2 = Thread(target=haptic, args=practiceTests.get(item))
+        #     elif(t0[2] == 'A'):
+        #         t2 = Thread(target=playback, args=[practiceTests.get(item)])
+        #     t3 = Thread(target=getTap)
+        #     t1.join()
+        #     t2.start()
+        #     t3.start()
+        #     t2.join()
+        #     t3.join()
+        #     dataAnalysis(counter)
+        #     counter += 1
+        # fadeoutTimer = 1000
+        # t4 = Thread(target=playBeep, args=(fadeoutTimer,))
+        # t5 = Thread(target=playBeep, args=(fadeoutTimer,))
+        # t6 = Thread(target=playBeep, args=(fadeoutTimer,))
+        # t4.start()
+        # t4.join()
+        # t5.start()
+        # t5.join()
+        # t6.start()
+        # t6.join()
 
         # ========= ALL TESTS ==========
         # run through test cases (randomly)
@@ -747,7 +768,7 @@ def main():
         shuffle(hapticKeys)
         audioKeys = list(audioTestCases.keys())
         shuffle(audioKeys)
-        allKeys = hapticKeys + audioKeys
+        allKeys = hapticKeys #+ audioKeys
         shuffle(allKeys)
         print(allKeys)
         fadeoutTimer = 3000
@@ -757,7 +778,7 @@ def main():
             t1 = Thread(target=playBeep, args=(fadeoutTimer,))
             t1.start()
             if(t0[0] == 'H'):
-                t2 = Thread(target=haptic, args=hapticTestCases.get(key))
+                t2 = Thread(target=haptic, args=hapticTestCases.get('H1b4'))
             elif(t0[0] == 'A'):
                 t2 = Thread(target=playback, args=[audioTestCases.get(key)])
             t3 = Thread(target=getTap)
@@ -769,9 +790,9 @@ def main():
             dataAnalysis(counter)
 
             counter += 1
-            # if counter == 6:
-            #     #     # print(delta)
-            #     break
+            if counter == 6:
+                #     # print(delta)
+                sys.exit()
 
         webbrowser.open('https://goo.gl/forms/LR5y4uy5fg86QcDW2',
                         new=2, autoraise=True)
