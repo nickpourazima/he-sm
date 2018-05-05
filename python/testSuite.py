@@ -700,7 +700,7 @@ def dataAnalysis(count):
     # plotly_fig['rawData'][0].update({'name':'Sanitized Tap Onset'})
     # plotly_fig['rawData'][1].update({'name':'Tap Onset'})
     # plotly_fig['rawData'][2].update({'name':'True Onset'})
-    plotly_fig['layout'].update(yaxis=dict(title='Time', tickformat=".3f"))
+    plotly_fig['layout'].update(yaxis=dict(title='Time', tickformat=".5f"))
     plotly_fig['layout']['showlegend'] = True
     plotly.offline.plot(plotly_fig, filename=(completeName+'.html'))
 
@@ -721,6 +721,7 @@ def dataAnalysis(count):
         summaryName = (userName+' Summary '+time.asctime())
         summaryPath = os.path.join(currentPath, summaryName)
         summary.to_csv(summaryPath+'.csv')
+        summary.to_excel(summaryPath+'.xlsx')
 
 
 def main():
