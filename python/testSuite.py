@@ -48,7 +48,7 @@ from threading import Thread
 from tabulate import tabulate
 
 # SERIAL VARS
-TAP_SERIAL_PORT = '/dev/tty.usbmodem14141'
+TAP_SERIAL_PORT = '/dev/tty.usbmodem14131'
 TAP_BAUD = 115200
 TIMEOUT = 0.25
 
@@ -668,6 +668,7 @@ def dataAnalysis(count):
     rawData = rawData.dropna(subset=['True Onset', 'Max', 'Min'], how='any')
     rawData = rawData.drop_duplicates(subset=['True Onset'], keep=False)
 
+
     rawData['Sanitized Mean Asynchrony'] = rawData.groupby(
         'Test')['Sanitized Asynchrony'].transform('mean')
     rawData['Sanitized Std Dev Asynchrony'] = rawData.groupby(
@@ -676,6 +677,9 @@ def dataAnalysis(count):
         'Test')['Asynchrony'].transform('mean')
     rawData['Std Dev Asynchrony'] = rawData.groupby(
         'Test')['Asynchrony'].transform('std')
+    rawData['Missed Taps'] = rawData['Sanitized Tap Onset'].isnull().sum(axis=0)
+    rawData['Phase Correction Response'] = rawData['Sanitized Asynchrony'].shift(-1)-rawData['Sanitized Asynchrony']
+
 
     # rawData['Miss Count'] = rawData.isnull().groupby('Test')['Sanitized Tap Onset'].transform('sum')
 
@@ -791,9 +795,8 @@ def main():
             t2.join()
             t3.join()
             dataAnalysis(counter)
-
             counter += 1
-            # if counter == 6:
+            # if counter == 2:
             #     #     # print(delta)
             #     sys.exit()
 
