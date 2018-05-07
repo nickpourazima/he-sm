@@ -48,7 +48,7 @@ from threading import Thread
 from tabulate import tabulate
 
 # SERIAL VARS
-TAP_SERIAL_PORT = '/dev/tty.usbmodem14141'
+TAP_SERIAL_PORT = '/dev/tty.usbmodem14121'
 TAP_BAUD = 115200
 TIMEOUT = 0.25
 
@@ -678,10 +678,10 @@ def dataAnalysis(count):
 
     # rawData['Miss Count'] = rawData.isnull().groupby('Test')['Sanitized Tap Onset'].transform('sum')
 
-    if not (os.path.isdir('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userID)):
-        os.makedirs('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userID)
-    currentPath = '/Users/nickpourazima/GitHub/he-sm/TestOutput/'+str(userID)
-    filename = (userID+' '+t0+' '+time.asctime())
+    if not (os.path.isdir('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)):
+        os.makedirs('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)
+    currentPath = '/Users/nickpourazima/GitHub/he-sm/TestOutput/'+str(userName)
+    filename = (userName+' '+t0+' '+time.asctime())
     completeName = os.path.join(currentPath, filename)
 
     rawData.to_csv(completeName+'.csv')
@@ -717,7 +717,7 @@ def dataAnalysis(count):
         all_files = glob.iglob(os.path.join(currentPath, "*.csv"))
         summary = pd.concat((pd.read_csv(f, skipinitialspace=True)
                              for f in all_files), ignore_index=True)
-        summaryName = (userID+' Summary '+time.asctime())
+        summaryName = (userName+' Summary '+time.asctime())
         summaryPath = os.path.join(currentPath, summaryName)
         summary.to_csv(summaryPath+'.csv')
         summary.to_excel(summaryPath+'.xlsx')

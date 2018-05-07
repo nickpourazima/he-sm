@@ -65,3 +65,7 @@ John = 399
 Madeleine = 932
 Mike = 390
 Rachel = 591
+Corey = 514 
+Madi = 379
+Stone = 521
+Joey = 407
