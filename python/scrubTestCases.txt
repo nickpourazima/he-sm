@@ -59,9 +59,9 @@ Originally:
              
 
 Craig = 486
-Dewey = 
-Garrett = 
-John = 
-Madeleine = 
-Mike = 
-Rachel = 
+Dewey = 510
+Garrett = 729
+John = 399
+Madeleine = 932
+Mike = 390
+Rachel = 591
