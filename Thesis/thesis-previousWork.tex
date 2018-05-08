@@ -1,33 +1,5 @@
 \chapter{Previous Work}
 
-\section{Sensorimotor synchronization}
-What follows is a brief overview of SMS. A primer on available tap test software is followed by a detail of critical terminology \ref{SMSTerms}. Last, foundational framework of the current work is established by exploring relevant research within the field \ref{SMSFindings}.
-
-\subsection{Tap Test Software}
-Due to the reliability, precision \textit{(ms)}, and discrete nature, the finger tap mechanism holds traditional precedence in SMS research. As such the experiments in this project follow suit. Studies predominantly rely on a MIDI based (drum pad) instrument to register tap events and provide some sort of auditory feedback. A few tap based software suites for experimentation and data acquisition are readily available: a Linux based system written by Finney in 2001 named \textit{FTAP} \cite{finney2001ftap}, and a \textit{Matlab} based toolbox by Elliot in 2009 called \textit{MatTAP} \cite{elliott2009mattap}. FTAP relied on a MIDI source and had a reported mean auditory latency of approximately 14.6ms (SD = 2.8) \cite{schultz2016tap}. Furthermore, superfluous and unregistered taps were common.
-Both \textit{FTAP} and \textit{MatTap} were experimented with as viable options for this work but ultimately deemed either outmoded, lacking high baudrate (115200) hardware support for haptic integration over serial, or incompatible with the system architecture in use \textit{(OSX 10.11.6 2.6GHz Intel I7)}.
-
-In a novel high-precision/low-latency approach by Prof. Schultz in 2015 at the University of Montreal \cite{schultz2016tap}, an Arduino force sensitive resistor (FSR) based tap mechanism was constructed. Round-trip latency between tap and auditory feedback was minimized with a mean of 0.6ms (SD = 0.3). The results also demonstrated the reliability of the FSR in recording fewer superfluous taps as well as fewer missed taps.
-It was inevitably decided to construct a custom software suite to fit the test needs of the project as discussed in Section \ref{}.
-
-\subsection{Terminology} \label{SMSTerms}
-The main method of data collection for SMS tap based tests involve collection of the time delta between the tap and event onset, called the \textit{asynchrony}. The mean of the asynchonies is typically negative (\textit{NMA}), indicative of the participants anticipation of the beat rather than reaction. Positive asynchonies within the shortest reaction time window (150 ms) are arguably an anticipation of the preceeding stimuli. The standard deviation of the asynchrony $(SD_{asy})$ is an index of stability; lower values indicative of a better synchronization.  \cite{repp2013sensorimotor}
-
-Other important metrics include the variability and mean of the inter tap interval (\textit{ITI}) and the inter onset interval (\textit{IOI}), or the time between successive beats - measured in milliseconds. Mismatch between the ITI and IOI implies poor synchronization skill from the participant. 
-
-When a participant is instructed to tap on the beat, this is termed 1:1 synchronization. 4:1 synchronization, for example, is a beat subdivided into four with one tap on the beat. Subdivision tests typically yield lower mean $(SD_{asy})$ values. \cite{repp2013sensorimotor}
-
-\subsection{Findings} \label{SMSFindings}
-Professional musicians exhibit a lower ITI variability with percussionists as well as pianists. Surprisingly, both amateurs and non-musicians had no $SD_{asy}$ difference. From a paper presented at the Music Perception and Cognition in 2012:
-\begin{quotation}
-    Stoklasa, Liebermann, and Fischinger reported that musicians playing their own brass or string instrument in synchrony with a metronome showed a negligible NMA (–2 ms), unlike their tapping (–13 ms). \cite{repp2013sensorimotor}
-\end{quotation}
-
-Furthermore, as the duration of the IOI increases, or slower beats per minute, $(SD_{asy})$ increased in a non linear fashion. 
-
-Isochronous vs. nonisochronous ~\cite{polak2016both}
-
-
 \section{Auditory Advantage}
 Decades of research into sensorimotor synchronization presents a clear advantage of the discretely timed auditory stimulus implying that the neural and evolutionary mechanisms underlying beat synchronization are modality-specific.
 ~\cite{gan2015synchronization} The stability of beat synchronization to discrete visual modalities (a flash of light) has been shown to be less stable that its auditory counterpart.

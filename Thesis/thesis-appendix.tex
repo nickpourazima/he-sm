@@ -1,5 +1,69 @@
 % -*- mode:LaTex; mode:visual-line; mode:flyspell; fill-column:75-*-
 
-\chapter{Stuff I forgot} \label{chapAppendix}
+\chapter{Vibrotactiles} \label{chapAppendix}
 
-Robots are really, really great.
+The following is a breakdown of available vibrotactiles conducted to inform design perspective.
+\begin{enumerate}
+    \item Linear electromagetic actuators
+    \begin{itemize}
+        \item solenoid:
+        \begin{itemize}
+            \item can leverage resonance, large output for small input
+            \item force dependent on position within magnetic field
+            \item influenced by device orientation relative to gravity
+            \item heats up during use
+        \end{itemize}
+        \item voice coil:
+        \begin{itemize}
+            \item linear dynamics yields consistent output, relatively easy to model
+            \item \textit{C2 tactor}:
+            \begin{itemize}
+                \item 7.6mm contactor preloaded against the skin
+                \item suspension resonates at 250Hz for maximum perceptibility
+            \end{itemize}
+            \item \textit{Haptuator}:
+            \begin{itemize}
+                \item moving magnet design
+                \item not meant to touch the skin
+                \item optimized to render frequencies above 50Hz
+            \end{itemize}
+        \end{itemize}
+    \end{itemize}
+    \item Rotary Electromagnetic Actuators (ERM - eccentric rotating mass)
+    \begin{itemize}
+        \item simple, reliable, rotate continuously with a constant voltage/current applied
+        \item off-center mass affixed to output shaft so that its rotation exerts large radial forces on the body of the motor
+        \item couples freq and amplitude of the resulting vibration to the motors rotational speed
+        \item small voltage yields weaker vibrations
+        \item intrinsic spin-up time could cause delay at the start of the cue
+        \item internal static friction can prevent motor from rotating when the applied voltage is very small
+    \end{itemize}
+    \item Nonelectromagnetic Actuators - Piezoelectric effect
+    \begin{itemize}
+        \item respond to inputs very quickly and can output arbitrary waveforms
+        \item typically require input on the order of 100V
+        \item high stiffness of skin creates a need for relatively heavy vibrotactile actuator
+        \item most don't have power to move the skin without pushing off a cumbersome mechanical ground
+    \end{itemize}
+    \item EAP (electroactive polymer) actuators
+    \begin{itemize}
+        \item uses elastomers rather than ceramics
+        \item can achieve larger deformations for lower drive voltages
+    \end{itemize}
+    \item SMA (shape memory allow) actuators
+    \begin{itemize}
+        \item remembers original shape
+        \item mechanical properties altered in response to temp changes
+        \item slow response time, large hystoresis, high energy consumption
+    \end{itemize}
+    \item Pneumatic systems
+    \begin{itemize}
+        \item compact, light
+        \item require high-pressure air source
+        \item struggle to output high-frequency signals
+    \end{itemize}
+    \item Forced impact
+    \begin{itemize}
+        \item TacHammer - new technology, specs unknown, hard to acquire
+    \end{itemize}
+\end{enumerate}
