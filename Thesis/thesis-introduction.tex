@@ -18,55 +18,58 @@ Intrinsic awareness to subtle nuances of tempo remains a subject commonly unexpo
 
 Is there missing information from the daily practice of a trained musician to an audible metronome? In a traditional sense, the audible click of Maelzel's metronome minimizes the interstitial space with an instantaneous (or discrete) impulse signal. However, the pendulum motion exhibited also seeks to convey meaningful rhythmic information with the space it occupies in the visual modality, much like the gestural motion of a conductor. Although an excellent tool in establishing a sense of musical time and precision, the danger in use of such a mechanical object lies within the mathematical exactitude according to American composer and music critic Daniel Gregory Mason. Therefore manifesting a lifelessness where instead a living and breathing musical entity should exist with its own ``ebb and flow of rhythmical energy.''\cite{fitts2008new}
 
-\section{Background}
 The practice of Dalcroze Eurythmics has sought to fill this knowledge gap as a curriculum developed by composer and educator Emile Jaques-Dalcroze in the early 1900's to integrate natural musical expression via movement \cite{jaques1930eurhythmics}. Through a series of exercises the instructor ushers his students to coordinate movement to varying levels of rhythmic push and pull. The participants arm could, for example, be conducting to a subdivision played in the melody while simultaneously coordinating walking to the fundamental pulse played in the harmony. A sense of constant forward motion pervades the musicians actions allowing an embodiment of continuity which seeks to translate to all elements of an artists musicality.
 
 From nearly two decades of work as a licensed Dalcroze instructor at Carnegie Mellon University, Professor Stephen Neely has implemented these techniques. His current research in design seeks to further explore the interstitial. In doing so he imparts the question: what is gained when attempting to fill the space between the crusis (click moment of the beat) with a natural analogue wave, one that provides a build up and decay common to natural happenings, much like the gestural motion of a conductor?
 
-\section{Sensorimotor synchronization}
+\section{Background}
+\subsection{Sensorimotor synchronization}
 The realm of research surrounding the psychology of rhythmic perception is grounded within the framework of \textit{sensorimotor synchronization} (\textit{SMS}); defined as the coordination of rhythmic movement to an external rhythm. 
 
-What follows is a brief overview of SMS. Critical terminology is defined \ref{SMSTerms} followed by a primer of available tap test software \ref{ttsw}. Last, a foundational framework of the current work is established by exploring relevant findings which SMS research has illuminated \ref{SMSFindings}.
+What follows is a brief overview of SMS. Critical terminology is defined \ref{SMSTerms} followed by a primer of available tap test software \ref{ttsw}. Last, a foundational framework of the current work is established by exploring relevant expectations illuminated by prior SMS research \ref{SMSFindings} and discussing both biomechanical and perception limitations \ref{rateLimits}.
 
-\subsection{Terminology} \label{SMSTerms}
-The main method of data collection for SMS tap based tests involve collection of the time delta between the tap and event onset, called the \textit{asynchrony}. Within the context of this work it shall be defined as: \begin{equation*}
-    Tap Onset - True Onset
-\end{equation*}
+\subsubsection{Terminology} \label{SMSTerms}
+The main method of data collection for SMS tap based tests involve collection of the time delta between the tap and event onset, called the \textit{asynchrony}. Within the context of this work it shall be defined as:
+\begin{equation*}
+    Tap Onset-True Onset
+\end{equation*} 
 
-The mean of the asynchonies is typically negative (\textit{NMA}), indicative of the participants anticipation of the beat rather than reaction. Positive asynchonies within the shortest reaction time window (150 ms) are arguably an anticipation of the preceeding stimuli. The standard deviation of the asynchrony $(SD_{asy})$ is an index of stability; lower values indicative of a better synchronization.  \cite{repp2013sensorimotor}
+The mean of this asynchrony is typically negative (\textit{NMA}), indicative of the participants anticipation of the beat rather than reaction. Positive asynchonies within the shortest reaction time window (150 ms) are arguably an anticipation of the preceeding stimuli. 
+
+The standard deviation of the asynchrony $(SD_{asy})$ is an index of stability; lower values indicative of a better level of synchronization.  \cite{repp2013sensorimotor}
 
 Other important metrics include the variability and mean of the inter tap interval (\textit{ITI}) and the inter onset interval (\textit{IOI}), or the time between successive beats, measured in milliseconds. Mismatch between the ITI and IOI implies poor synchronization skill from the participant. 
 
-\textit{Phase Correction Response}
+\textit{Phase Correction Response} 
 
 When a participant is instructed to tap on the beat, this is termed 1:1 synchronization. 4:1 synchronization, for example, is a beat subdivided into four with one tap on the beat. Subdivision tests typically yield lower mean $(SD_{asy})$ values \cite{repp2013sensorimotor}. This work will focus on 1:1 synchronization as discussed in \ref{testSetup}.
 
-\subsubsection{Entrainment}
-
-Humans are one of the few species who exhibit the ability to synchronize to a beat. From a neurological perspective, it has been thought to be connected with the capacity for vocal learning. [CITE]
-
-
-\subsection{Tap Test Software} \label{ttsw}
+\subsubsection{Tap Test Software} \label{ttsw}
 Due to the reliability, precision \textit{(ms)}, and discrete nature, the finger tap mechanism holds strongest precedence in SMS research. As such the experiments in this project follow suit. 
 
 Studies predominantly rely on a MIDI based (drum pad) instrument to register tap events and provide some sort of auditory feedback. A few tap based software suites for experimentation and data acquisition are readily available: a Linux based system written by Finney in 2001 named \textit{FTAP} \cite{finney2001ftap}, and a \textit{Matlab} based toolbox by Elliot in 2009 called \textit{MatTAP} \cite{elliott2009mattap}. FTAP relied on a MIDI source and had a reported mean auditory latency of approximately 14.6ms (SD = 2.8) \cite{schultz2016tap}. Furthermore, superfluous and unregistered taps were common.
+
 Both \textit{FTAP} and \textit{MatTap} were experimented with as viable options for this work but ultimately deemed either outmoded, lacking high baudrate (115200) hardware support for haptic integration over serial, or incompatible with the system architecture in use \textit{(OSX 10.11.6 2.6GHz Intel I7)}.
+
 In a novel high-precision/low-latency approach by Prof. Schultz in 2015 at the University of Montreal \cite{schultz2016tap}, an Arduino force sensitive resistor (FSR) based tap mechanism was constructed. Latency between tap and auditory feedback was minimized with a mean of 0.6ms (SD = 0.3). The results also demonstrated the reliability of the FSR in recording fewer superfluous taps as well as fewer missed taps.
-It was inevitably decided to construct a custom software suite to fit the test needs of the project as discussed in Section \ref{development}.
+It was inevitably decided to construct a custom software suite to fit the test needs of the project as discussed in Section \ref{development} which provided a round-trip latency of X as shown in \ref{latencyCalc}.
 
-\subsection{Findings} \label{SMSFindings}
-Professional musicians exhibit a lower ITI variability with percussionists as well as pianists. Surprisingly, both amateurs and non-musicians had no $SD_{asy}$ difference. From a paper presented at the Music Perception and Cognition in 2012:
-\begin{quotation}
-    Stoklasa, Liebermann, and Fischinger reported that musicians playing their own brass or string instrument in synchrony with a metronome showed a negligible NMA (–2 ms), unlike their tapping (–13 ms). \cite{repp2013sensorimotor}
-\end{quotation}
+\subsubsection{Expectations} \label{SMSFindings}
+The variability $(SD_{asy})$ is be generally lower in professional musicians that non-musicians (no musical exposure). In an isochronous test with IOI of 500ms, surprisingly no difference in $(SD_{asy})$ was found between amateurs and non-musicians \ref{repp2013sensorimotor}. From this study it is safe to assume the data analysis of this work will be grouped into professionals vs. (non-musicians and amateurs).
 
-Furthermore, as the duration of the IOI increases, or slower beats per minute, $(SD_{asy})$ increased in a non linear fashion. 
+Percussionists and pianists had the lowest ITI of all musicians, which implies that a high level of rhythmic expertise reduces variability of tapping. Furthermore, as the duration of the IOI increases, or slower beats per minute, $(SD_{asy})$ increased in a non linear fashion. 
+
+The NMA is typically smaller for musicians than non-musicians and increases with IOI increase \cite{repp2013sensorimotor}. As a counter to the proposed hypothesis, Bialunkska et al. argued that the reason for a negative mean asynchrony was due to faster sensory accumulation from the auditory and visual modalities than from tactile feedback received from taps. The expectation was thus a dependence of the sensory accumulation rate to the stimulus intensity. This was later found to be uncorrelated \cite{bialunska2011increasing}.
+
+A positive mean asynchrony is expected at the biomechanical limit of execution as discovered by Krause, Pollok, and Schnitzler in 2010 \cite{krause2010perception}.
+
+When professionals migrated away from the tap test and instead used their native instruments, the results were greatly improved. It was reported by Stoklasa, Liebermann, and Fischinger in a paper presented at the Music Perception and Cognition in 2012 that musicians playing their own brass or string instrument in synchrony with a metronome showed a negligible NMA (–2 ms), unlike their tapping results(–13 ms) \cite{repp2013sensorimotor}.
+
+SMS research historically identifies what is known as an auditory advantage, or the dominance of auditory/motor connection within the task of beat synchronization. The auditory advantage is discussed in detail in Section \ref{AudAdv}. However, recent studies have proven that given meaningful spatiotemporal information (as in the bouncing ball example discussed in \ref{visualMet}) synchronization is almost as good as an auditory metronome.
 
 Isochronous vs. nonisochronous ~\cite{polak2016both}
 
-SMS research historically identifies what is known as an auditory advantage, or the dominance of auditory/motor connection within the task of beat synchronization. The auditory advantage is discussed in detail in \verb!Section 2.1!. However, recent studies have proven given meaningful spatiotemporal information, as in the bouncing ball example discussed in \verb!Section 2.2!, synchronization is almost as good as an auditory metronome.
-
-\subsubsection{Rate Limits}
+\subsubsection{Rate Limits} \label{rateLimits}
 In order to impose valid constraints on the tests carried out in this work, it is important to understand the SMS rate limits. 
 
 According to experiments done by Keele, Pokorny, Corcos, and Ivry, in 1985, the calculation for the fastest absolute response time possible for a tap based test can be divided into either that of perception or motor speed (also known as the biomechanical limit) \cite{keele1985perception}. It was shown that the biomechanical finger tap limit is between the 5-7Hz range (150-200ms) \cite{repp2006rate}.
