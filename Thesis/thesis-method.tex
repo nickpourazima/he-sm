@@ -3,16 +3,14 @@ This chapter outlines each test case, describes the motivation behind the test p
 
 The overall test principle was derived from traditional sensorimotor synchronization tasks in which a user is asked to tap to a corresponding stimulus. The asynchrony was tracked and plotted along with the PCR and any missed taps. Since the haptic domain is of primary focus, the auditory modality functions primarily as a benchmark or baseline foundation. The work presented in \ref{visualMet} covers the idea of the interstitial beat occupying the visual domain and as such will not be re-evaluated here.
 
-\todo{Fill method intro in with more detail}
-
-Each test case is defined and presented in \ref{testPlan}. The overall software development is detailed in \ref{development}. The hardware setup and code re-purposing from TapArduino is discussed in \ref{tap_arduino}.
+Each test case is defined and presented in \ref{testPlan}. The overall software development is detailed in \ref{development}. The hardware setup and code re-purposing from TapArduino is discussed in \ref{tap_arduino} and latency calculated in \ref{latencyCalc}.
 
 \section{Test Plan} \label{testPlan}
-Testing was divided into two major sections, \textbf{Steady} and \textbf{Dynamic}, implying either an \textit{isochronous} beat or a \textit{non-isochronous} pulse respectively. While structurally identical, the dynamic tests however focussed on rubato within a range starting at the predefined BPM and rising or falling within a specified window. The chosen tempi parallels slow walking to running gaits spanning a range of 45-180 beats per minute.
+Testing was divided into two major sections, \textbf{Steady} and \textbf{Dynamic}, implying either an \textit{isochronous} or a \textit{non-isochronous} pulse respectively. While structurally identical, the dynamic tests however focussed on rubato within a range starting at the predefined BPM and rising or falling within a specified window. The chosen tempi parallels slow walking to running gaits spanning a range of 45-180 beats per minute.
 
-Each section had three subsections centered around either an audible metronome tone (\textbf{A1, A3}), musical note (\textbf{A2, A4}), and lastly the haptic modality (\textbf{H1, H2}). Subsections were further broken down into \textbf{a} and \textbf{b} sections, denoting either \textit{discrete} or \textit{interstitial}/\textit{continuous} mode of operation. A breakdown of the test plan is shown in Figure \ref{fig:TestPlan}.
+Each section had three subsections centered around either an audible metronome tone (\textbf{A1, A3}), musical note (\textbf{A2, A4}), and lastly the haptic modality (\textbf{H1, H2}). Subsections were further broken down into \textbf{a} and \textbf{b}, denoting either \textit{discrete} or \textit{interstitial}/\textit{continuous} mode of operation. A breakdown of the test plan is shown in Figure \ref{fig:TestPlan}.
 
-As discussed in Chapter 3, the haptic was designed with two operating modes in mind, discrete and continuous. These modes were programmatically controlled to match the desired test cases, extensively explained in section \ref{development}
+As discussed in Chapter 3, the haptic was designed with two operating modes in mind, discrete and continuous. These modes were programmatically controlled to match the desired test cases, extensively explained in section \ref{development}.
 \begin{table}[]
     \centering
     \resizebox{\textwidth}{!}{%
@@ -89,17 +87,15 @@ The resultant waveform encapsulated the occupation of the interstitial space. A 
 \subsubsection{Stacatto and legato melody}
 As a specific musical listening task, test cases \textbf{A2a}, \textbf{A4a} and \textbf{A2b}, \textbf{A4b} involve synchronization to a simple melodic sequence of notes. The music chosen was the nursery rhyme \textit{Pat-A-Cake}. The initial mockup was drafted in Sibelius and exported to Logic Pro X for bpm adjustment.
 
-\todo{Expand the reasoning for the musical tests}
-
-Each quarter note represents a beat and therefore a tap onset. In order to emphasize a discrete event for test cases \textbf{A2a} and \textbf{A4a}, notes were input as stacatto, shown below: \ref{fig:pat-a-cake_a2a}.
+Each quarter note represents a beat and therefore a tap onset. In order to emphasize a discrete event for test cases \textbf{A2a} and \textbf{A4a}, notes were input as stacatto, shown below in Figure \ref{fig:patacakea2a}.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{Pat-a-Cake_a2a}
-    \label{fig:pat-a-cake_a2a}
+    \label{fig:patacakea2a}
 \end{figure}
 
-The interstitial counterpart of these test cases (\textbf{A2b}, \textbf{A4b}) underwent crescendo and decrescendo after every note onset with forte notes surrounded by mezzopiano to give the impression of amplitude build up and decay, shown below: \ref{fig:pat-a-cake_a2b} 
+The interstitial counterparts (\textbf{A2b}, \textbf{A4b}) similarly underwent crescendo and decrescendo after every note onset with forte accents surrounded by mezzopiano to give the impression of amplitude build up and decay, shown below: \ref{fig:pat-a-cake_a2b} 
 
 \begin{figure}[H]
     \centering
@@ -107,7 +103,7 @@ The interstitial counterpart of these test cases (\textbf{A2b}, \textbf{A4b}) un
     \label{fig:pat-a-cake_a2b}
 \end{figure}
 
-Note below in \ref{fig:music_comparison} the gradual, nearly exponential decay displayed in the interstitial tone as a result of the legato input.
+Note below in Figure \ref{fig:music_comparison} the gradual, nearly exponential decay displayed in the interstitial tone as a result of the legato input.
 
 \begin{figure}[H]
     \centering
@@ -119,7 +115,7 @@ Note below in \ref{fig:music_comparison} the gradual, nearly exponential decay d
 \end{figure}
 
 \subsubsection{Dynamic tempi manipulation - audio}
-Dynamic manipulation of tempo was accomplished in \textit{Logic Pro X} through automation of the tempo parameter over the time period of the desired waveform. Each test case started on one of the pre-defined BPM's (45, 90, 135, 180) but traversed either sinusoidally or triangularly through time as peaks and troughs ranging plus or minus 15 bpm; shown in \ref{fig:dynamic_audio}.
+Dynamic manipulation of tempo was accomplished in \textit{Logic Pro X} through automation of the tempo parameter over the time period of the desired waveform. Each test case started on one of the pre-defined BPM's (45, 90, 135, 180) but traversed either sinusoidally or triangularly through segmented time blocks as peaks and troughs ranging plus or minus 15 bpm; shown in \ref{fig:dynamic_audio}.
 
 \begin{figure}[H]
     \centering
@@ -133,9 +129,10 @@ Dynamic manipulation of tempo was accomplished in \textit{Logic Pro X} through a
 \end{figure}
 
 \section{Test Suite}
-High precision data acquisition and the minimization of delay were the central foci of the test suite design. Due to the extensive amount of publicly available libraries, multithreading capability, and plot integration via matplotlib, \textit{Python} was chosen as the development environment. Complementary to the software platform was the implementation of a tap onset detection mechanism via force sensitive resistor (FSR) and the \textit{Arduino Uno}. 
+High precision data acquisition and the minimization of delay were the central foci of the test suite design. Due to the extensive amount of publicly available libraries, multithreading capability, pandas dataframe structure, and plot integration via matplotlib, \textit{Python} was chosen as the development environment. Complementary to the software platform was the implementation of a tap onset detection mechanism via force sensitive resistor (FSR) and the \textit{Arduino Uno}. 
 
 \subsection{Software Development} \label{development}
+\todo[inline]{fill out section}
             Discuss code breakdown
             
             GUI
@@ -151,14 +148,11 @@ High precision data acquisition and the minimization of delay were the central f
             Plotting
 
 \subsection{Tap Onset Hardware}    \label{tap_arduino}
-\subsubsection{Tap Onset Latency Evaluation}
+\todo[inline]{fill out section}
 
-A sensorimotor synchronization experiment was conducted to discover how auditory feedback to a tap onset could be presented with minimal latency and responses recorded with the most accuracy. It was found that not only was the auditory response latency the least for the Arduino system using a force sensitive resistor (mean = 0.6 ms, sd = 0.3), but it had missed the fewest taps and recorded the least superfluous responses as compared to a percussion pad with the FTAP and Max MSP systems [Tap Arduino, 1].
-
-\subsection{Delay Evaluation} \label{latencyCalc}
-
+\subsection{Latency Evaluation} \label{latencyCalc}
 Overall strategy to minimize delay maximize accuracy/precision
-
+\todo[inline]{fill out section}
 Sources of potential error:
 
     *FTDI/USB -> Pro Trinket (16MHz) --> Laptop
@@ -169,15 +163,14 @@ Sources of potential error:
 
     *FSR analog read/mentioned debounce
 
-    Sol: python threading
+    *python thread time
 
     Evaluation with scope:
 
 \subsection{Setup} \label{testSetup}
+To initialize setup, the user is seated and given a pair of closed-back headphones. The FSR is situated to their preference, either dominant or non-dominant hand, and secured into place. Unlike a keyboard or button the FSR gives no feedback or rebound; psychologically ensuring a confident tap on each onset while providing no tactile response. This approach seeks to avoid intrinsic lag from its independance of mechanical components. The delay limit is defined by the threshold applied in the software to avoid debounce, as discussed in Section \ref{development}
 
-To initialize setup, the user is seated and given a pair of closed-back headphones. The FSR is situated to their preference, either dominant or non-dominant hand, and secured into place. Unlike a keyboard or button the FSR gives no feedback or rebound;psychologically ensuring a confident tap on each onset while providing no tactile response. This approach avoids intrinsic lag as there are no mechanical components involved. The delay limit is defined by the threshold applied in the software to avoid debounce, as discussed in Section \ref{}
-
-The user will input their name, read the instructions, agree to the conditions of the test suite, and commence with the test. The order every user encounters will differ as the tests are scrambled. Upon completion, the users are asked to fill out a survey and the results are displayed.
+The user will input their name, read the instructions, agree to the conditions of the test suite, and commence with the test. After every iteration of the test, a plot of the Tap Onset, True Onset, and Sanitized Onset is presented to the user for the purposes of feedback and affirmation of correct tapping. The order every user encounters will differ as the tests are scrambled. Upon completion, the users are asked to fill out a survey and the results are displayed.
 
 \begin{figure}[H]
     \centering
@@ -187,12 +180,7 @@ The user will input their name, read the instructions, agree to the conditions o
 \end{figure}
 
 \subsubsection{Example Output}
-    
+\todo[inline]{fill out section}
+
 \section{Expectations}
-
-If it can be proven for nonmusicians that NMA does not exhibit a linear increase as the IOI increases with the haptic...than, x
-
-According to prior research, expect musicians NMAs to be small and nearly constant as IOI is increased.\cite{repp2013sensorimotor,4}
-
-
-
+\todo[inline]{fill out section}
