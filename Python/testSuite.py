@@ -7,12 +7,7 @@
 #       Master test suite contol for haptic (Pro Trinket 5V 16MHz) and FSR tap hardware (Arduino Uno).
 #       Synchronizes timing via multi-threaded operations. Outputs test cases for analysis.
 
-# TO-DO
-# CRUCIAL
-# test on yourself
-# get HW more presentable
-
-# LOW PRIORITY
+# TODO
 # comments/clean up code
 
 import openpyxl
@@ -48,7 +43,7 @@ from threading import Thread
 from tabulate import tabulate
 
 # SERIAL VARS
-TAP_SERIAL_PORT = '/dev/tty.usbmodem14121'
+TAP_SERIAL_PORT = '/dev/tty.usbmodem14111'
 TAP_BAUD = 115200
 TIMEOUT = 0.25
 
