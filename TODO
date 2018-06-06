@@ -14,9 +14,9 @@ Thesis Checklist:
     ☐ Plot of haptic vs. audible performance 
       ☐ across group categories
       ☐ across instrument categories
-    ☐ Judy data
-      ☐ convert Judy to User ID
-      ☐ merge into Combo
+    ✔ Judy data @done(18-06-05 21:13)
+      ✔ convert Judy to User ID @done(18-06-05 21:13)
+      ☐ merge Judy/Alex into Combo
     ☐ read up on stats
   Writing:
     ☐ migrate thesis sections to appendix

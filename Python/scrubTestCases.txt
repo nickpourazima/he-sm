@@ -69,3 +69,5 @@ Corey = 514
 Madi = 379
 Stone = 521
 Joey = 407
+Judy = 412
+Alex = 394
