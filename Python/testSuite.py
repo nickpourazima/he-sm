@@ -43,7 +43,7 @@ from threading import Thread
 from tabulate import tabulate
 
 # SERIAL VARS
-TAP_SERIAL_PORT = '/dev/tty.usbmodem14111'
+TAP_SERIAL_PORT = '/dev/tty.usbmodem14121'
 TAP_BAUD = 115200
 TIMEOUT = 0.25
 
@@ -79,15 +79,15 @@ currentPath = ''
 fadeoutTimer = 5000
 
 instructions = (
-    "The following tests measure your ability to synchronize to a varying beat across the modalities of touch and sound and will take approximately 15 minutes to complete."
+    "The following tests measure your ability to synchronize to a varying beat across touch and sound and will take approximately 20 minutes to complete."
     + CRLF+CRLF+CRLF +
-    "Place the wearable haptic sleeve on the limb of your choice and designate either your non-dominant or dominant hand to tap on the pad."
+    "Carefully place the wearable haptic sleeve on the arm of your choice and designate either your non-dominant or dominant hand to tap on the pad."
     + CRLF +
-    "You will hear/feel a series of audio or haptic (touch) based trials."
+    "You will hear OR feel a series of audio and haptic (touch) based trials."
     + CRLF +
     "Each are varying in duration and tempo."
     + CRLF +
-    "At the start of every test is a 3 second long beep."
+    "The start of every test is marked with a 3 second long beep."
     + CRLF +
     "Once the test starts please try your best to firmly and quickly tap on the pad to the presented beat."
     + CRLF +
