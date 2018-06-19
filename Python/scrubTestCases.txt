@@ -76,3 +76,9 @@ David = 552
 Gabe = 367
 Joie = 824
 Tino = 410
+
+Prof	11	Rachel, Dewey, Stone + 5	8		8
+Ama	2	John, Joey, Madi	5	-1 Joey incomplete	4
+Neither	5		5	-1 Judy age	4
+
+Age: 15-35
