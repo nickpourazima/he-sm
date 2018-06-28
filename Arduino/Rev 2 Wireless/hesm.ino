@@ -51,12 +51,16 @@ void setup() {
 }
 
 void loop() {
-    System.sleep(SLEEP_MODE_CPU);
-    go();
+    // System.sleep(SLEEP_MODE_CPU);
+    SINGLE_THREADED_BLOCK(){
+        go();
+    }
 }
 
+
+
 int motorToggle(String command) {
-    if(command == "off"){
+    if(command == "off" or command == "0"){
         start=false;
         return 0;
     }
@@ -70,7 +74,8 @@ int motorToggle(String command) {
     } 
     else{
         avg = 60000/atoi(command);
-        start = true;     
+        start = true;   
+        return avg;
     }
 }
 
@@ -84,7 +89,7 @@ void go(){
                     newState++;
                 }
                 break;
-            case ON: 
+            case ON:
                 digitalWrite(vibPins[0],HIGH);
                 digitalWrite(vibPins[1],HIGH);
                 digitalWrite(vibPins[2],HIGH);
@@ -180,4 +185,3 @@ void go(){
         }
     }
 }
-
