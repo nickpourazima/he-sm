@@ -4,6 +4,24 @@
 
 
 \section{Future Work}
+Though much effort went into providing an important framework for the haptic to operate smoothly from a hardware standpoint, the most important progress with the final prototype was the solidification of the software framework. With the integration of delay independent state-machines performing synchronous tasks, haptic mode selection, and precise bpm control, the vibrotactile haptic could enter the next phases of development. 
+
+The addition of BLE capability to issue commands over a paired interface such as an app on a smartphone, custom PCB to minimize form factor, and independent node abstraction of each vibrotactile could be realized. This would allow wearers capability to place a programmable array anywhere on their body enabling wide surface area dispersion. 
+
+Lastly, experimentation with other types of vibrotactiles; either the Tactor, TacHammer, or LNA's would be more optimized for touch applications with cleaner signals, dynamic range, and optimized for skin resonance (250Hz).
+
+\subsection{Wireless Prototype}
+Over the course of summer of 2018, a wireless prototype was developed which eliminated the FTDI over USB interface and was completely reliant on battery power. A 9 V was connected to a voltage regulator supplying up to 5 V for the motors and 3.3V for the new MCU, sourcing up to 500 mA/hour with enough isolation to have a significantly stronger motor vibration. The MCU was based on the Particle ecosystem, a cloud based IoT framework, and granted BLE and wireless capability. The code was altered to adapt the publish/subscribe methodology where simple numeric BPM values could be passed as API calls to the device given proper OAuth2 authentication. 
+
+% \begin{minted}{html}
+%     curl https://api.particle.io/v1/devices/b1e24ee2863f85c7f74ce1b7/motor \
+%        -d arg="1" \
+%        -d access_token=160eafe55c22874352b6672ac4e67878b8471bec
+
+%     curl https://api.particle.io/v1/devices/b1e24ee2863f85c7f74ce1b7/motor \
+%        -d arg="60" \
+%        -d access_token=160eafe55c22874352b6672ac4e67878b8471bec
+% \end{minted}
 
 \subsection{Beat Tracking}
 

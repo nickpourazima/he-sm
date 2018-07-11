@@ -34,7 +34,7 @@ Vibrotactile temporal resolution research cites a human's ability to distinguish
     \item \emph{Can Vibrotactile cues elicit any other perceptual effects?} Below 3 Hz is considered slow kinesthetic motion. Between 10-70Hz is the sensation of rough motion or fluttering and between 100-300Hz is the sensation of smooth vibration. Subjective quality of a vibrotactile stimulus can be controlled by modifying the envelope of the stimulus amplitude.
 \end{enumerate}
 
-\subsection{Vibrotactiles}
+\subsection{Vibrotactiles} \label{vibroTT}
 The exploration of touch actuation led to the evaluation of available vibrotactiles. The following is a breakdown of available vibrotactiles conducted to inform design perspective.
 \begin{enumerate}
     \item Linear electromagetic actuators
@@ -329,6 +329,3 @@ The state machine in continuous mode functioned similarly but was divided into 4
     \caption{Continous state machine}
     \label{fig:state2}
 \end{figure}
-
-\subsection{Future Implementation}
-Though much effort went into providing an important framework for the haptic to operate smoothly from a hardware standpoint, the most important progress with the final prototype was the solidification of the software framework. With the integration of delay independent state-machines performing synchronous tasks, haptic mode selection, and precise bpm control, the vibrotactile haptic could enter the next phases of development. This includes the addition of BLE capability, as in the single vibrotactile prototype, such that commands can be issued over a paired interface such as an app on a smartphone. Also, future work will focus on a custom PCB such that the form factor is minimized and independent node abstraction of each vibrotactile could be realized. This would allow wearers capability to place a programmable array anywhere on their body enabling wide surface area dispersion. Lastly, experimentation with other types of vibrotactiles; either the Tactor, TacHammer, or LNA's would be more optimized for touch applications with cleaner signals, dynamic range, and optimized for skin resonance (250Hz).

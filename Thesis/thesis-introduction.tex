@@ -34,9 +34,10 @@ What follows is a brief overview of SMS. Critical terminology is defined \ref{SM
 The main method of data collection for SMS tap based tests involve collection of the time delta between the tap and event onset, called the \textit{asynchrony}. Within the context of this work it shall be defined as:
 \begin{equation*}Tap Onset-True Onset\end{equation*} 
 
-The mean of this asynchrony is typically negative (\textit{NMA}), indicative of the participants anticipation of the beat rather than reaction. Positive asynchonies within the shortest reaction time window (150 ms) are arguably an anticipation of the preceeding stimuli. 
+The mean of this asynchrony is typically negative (\textit{NMA}), indicative of the participants anticipation of the beat rather than reaction. Positive asynchronies imply a reactive approach thereby unfavorable within the context of this work. A positive asynchrony shorter than the fastest possible human reaction time window of 150 ms, or 400 bpm, (further discussed in \ref{rateLimits} and \ref{hapticConsiderations}) are arguably an anticipation of the preceeding stimuli. This window of acceptable tap time informed the sanitization algorithm developed and outlined in 
+\todo[inline]{Ref Sanitization here} 
 
-The standard deviation of the asynchrony $(SD_{asy})$ is an index of stability; lower values indicative of a better level of synchronization \cite{repp2013sensorimotor}.
+The standard deviation of the asynchrony, $SD_{asy}$, is an index of stability; lower values indicative of a better level of synchronization \cite{repp2013sensorimotor}. For the purposes of this research, $SD_{asy}$ is predominantly shown superimposed onto bar charts as confidence interval lines.
 
 Other important metrics include the variability and mean of the inter tap interval (\textit{ITI}) and the inter onset interval (\textit{IOI}), or the time between successive beats, measured in milliseconds. Mismatch between the ITI and IOI implies poor synchronization skill from the participant. 
 
@@ -48,26 +49,25 @@ Other important metrics include the variability and mean of the inter tap interv
 When a participant is instructed to tap on the beat, this is termed 1:1 synchronization. 4:1 synchronization, for example, is a beat subdivided into four with one tap on the beat. Subdivision tests typically yield lower mean $(SD_{asy})$ values \cite{repp2013sensorimotor}. This work will focus on 1:1 synchronization as discussed in \ref{testSetup}.
 
 \subsection{Tap Test Software} \label{ttsw}
-Due to the reliability, precision \textit{(ms)}, and discrete nature, the finger tap mechanism holds strongest precedence in SMS research. As such the experiments in this project follow suit. 
+The finger tap mechanism holds strongest precedence in SMS research due to its reliability, precision \textit{(ms)}, and discrete nature. Studies predominantly rely on a MIDI based (drum pad) instrument to register tap events and provide some sort of auditory feedback. A few tap based software suites for experimentation and data acquisition are readily available: a Linux based system written by Finney in 2001 named \textit{FTAP} \cite{finney2001ftap}, and a \textit{Matlab} based toolbox by Elliot in 2009 called \textit{MatTAP} \cite{elliott2009mattap}. FTAP relies on a MIDI source with a reported mean auditory latency of approximately 14.6ms (SD = 2.8) \cite{schultz2016tap}. Superfluous and unregistered taps were common.
 
-Studies predominantly rely on a MIDI based (drum pad) instrument to register tap events and provide some sort of auditory feedback. A few tap based software suites for experimentation and data acquisition are readily available: a Linux based system written by Finney in 2001 named \textit{FTAP} \cite{finney2001ftap}, and a \textit{Matlab} based toolbox by Elliot in 2009 called \textit{MatTAP} \cite{elliott2009mattap}. FTAP relied on a MIDI source and had a reported mean auditory latency of approximately 14.6ms (SD = 2.8) \cite{schultz2016tap}. Furthermore, superfluous and unregistered taps were common.
+Both \textit{FTAP} and \textit{MatTap} were viable options for this work but ultimately deemed either outmoded, lacking multi-threaded and high baudrate (115200) hardware support for haptic integration over serial, or incompatible with the system architecture in use \textit{(OSX 10.11.6 2.6GHz Intel I7)}.
 
-Both \textit{FTAP} and \textit{MatTap} were viable options for this work but ultimately deemed either outmoded, lacking high baudrate (115200) hardware support for haptic integration over serial, or incompatible with the system architecture in use \textit{(OSX 10.11.6 2.6GHz Intel I7)}.
-
-In a novel high-precision, low-latency approach by Prof. Schultz in 2015 at the University of Montreal \cite{schultz2016tap}, an Arduino force sensitive resistor (FSR) based tap mechanism was constructed. Latency between tap and auditory feedback was minimized with a mean of 0.6ms (SD = 0.3). The results also demonstrated the reliability of the FSR in recording fewer superfluous taps as well as fewer missed taps.
-It was inevitably decided to construct a custom software suite to fit the test needs of the project as discussed in Section \ref{development} which provided a round-trip latency of 
+In a novel high-precision, low-latency approach by Prof. Schultz in 2015 at the University of Montreal \cite{schultz2016tap}, an Arduino force sensitive resistor (FSR) based tap mechanism was constructed. Latency between time of tap and auditory feedback was minimized with a mean of 0.6ms (SD = 0.3). The results also demonstrated the reliability of the FSR in recording fewer superfluous taps as well as fewer missed taps.
+It was inevitably decided to construct custom hardware and software to fit the test needs of the project as discussed in Section \ref{development} which provided a round-trip latency of 
 \todo[inline]{Add latency metric here}
 as shown in \ref{latencyCalc}.
 
 \subsection{Expectations} \label{SMSFindings}
-SMS research has given key insight to the expectations which inform the data analysis conducted in Chapter \ref{DataAnalysis}.
+This section focusses on key insights from prior SMS research which inform expectations for the data analysis conducted in Chapter \ref{DataAnalysis}.
 
 \subsubsection{Variability}
-The variability $(SD_{asy})$ is generally lower in professional musicians than non-musicians (no prior musical exposure). In an isochronous test with an IOI of 500ms, surprisingly no difference in $(SD_{asy})$ was found between amateurs and non-musicians \ref{repp2013sensorimotor}. From this study it is safe to assume the data analysis of this work will be grouped into professionals vs. (non-musicians and amateurs).
+The variability $(SD_{asy})$ is generally lower in professional musicians than non-musicians (no prior musical exposure). In an isochronous test with an IOI of 500 ms (120 bpm), surprisingly no difference in $SD_{asy}$ was found between amateurs and non-musicians \ref{repp2013sensorimotor}. From this study it is safe to assume the data analysis of this work will be grouped into professionals vs. (non-musicians and amateurs).
 
-Percussionists and pianists had the lowest ITI of all musicians. This might imply that a high level of rhythmic expertise reduces variability of tapping, but due to the percussive nature of the instrument becomes hard to determine. Furthermore, as the duration of the IOI increases, $(SD_{asy})$ increased in a non linear fashion. 
+Percussionists and pianists had the lowest ITI of all musicians. This might imply that a high level of rhythmic expertise reduces variability of tapping, but due to the percussive nature of the instrument becomes hard to determine. Furthermore, as the duration of the IOI increases, $SD_{asy}$ increased in a non linear fashion as confirmed in
+\todo[inline]{Add data plot ref here}
 
-When professionals migrated away from the tap test and instead used their native instruments, the results were greatly improved. It was reported by Stoklasa, Liebermann, and Fischinger in a paper presented at the Music Perception and Cognition in 2012 that musicians playing their own brass or string instrument in synchrony with a metronome showed a negligible NMA ($–2 ms$), unlike their tapping results ($-13 ms$) \cite{repp2013sensorimotor}.
+When professionals migrated away from the tap test and instead used their native instruments, the results were greatly improved. It was reported by Stoklasa, Liebermann, and Fischinger in a paper presented at the Music Perception and Cognition in 2012 that musicians playing their own brass or string instrument in synchrony with a metronome showed a negligible NMA of –2  ms, unlike their tapping results of -13 ms \cite{repp2013sensorimotor}.
 
 \subsubsection{Negative Mean Asynchrony}
 The NMA is typically smaller for musicians and remains relatively constant throughout a changing IOI. A linear increase in NMA as the IOI increases can be expected from non-musicians \cite{repp2013sensorimotor}. It was found that nonisochronous tapping introduces distortions within the ITI as opposed to steady or isochronous patterns. This had a tendency to affect local asynchronies but the global NMA remained persistant \cite{polak2016both}.
@@ -82,10 +82,22 @@ SMS research historically identifies what is known as an auditory advantage, or 
 \subsection{Rate Limits} \label{rateLimits}
 In order to impose valid constraints on the tests carried out in this work, it is important to understand the SMS rate limits. 
 
-According to experiments done by Keele, Pokorny, Corcos, and Ivry, in 1985, the calculation for the fastest absolute response time possible for a tap based test can be divided into either that of perception or motor speed, also known as the biomechanical limit \cite{keele1985perception}. It was shown that the biomechanical finger tap limit is between the 5 - 7 Hz range, or a period of 150 - 200ms \cite{repp2006rate}.
+According to experiments done by Keele, Pokorny, Corcos, and Ivry, in 1985, the calculation for the fastest absolute response time possible for a tap based test can be divided into either that of perception or motor speed, also known as the biomechanical limit \cite{keele1985perception}:
+\begin{enumerate}
+    \item Biomechanical Limit:
+    \begin{itemize}
+        \item Between the 5 - 7 Hz range, or a period of 150 - 200 ms \cite{repp2006rate}.
+    \end{itemize}
+    \item When discussing a perceptual basis, SMS tests are valid within a particular temporal range:
+    \begin{itemize}
+        \item For audio based tests with 4:1 synchronization:
+        \begin{itemize}
+            \item The upper rate limit was shown to be as high as 8 - 10 Hz, or a period of 100 - 125 ms (approximately 600 bpm). 
+            \item The lower rate limit was modality independent and found to be 0.56 Hz, or a period of 1800 ms (33 bpm) \cite{repp2006rate}. 
+        \end{itemize}
+        \item Visual stimuli was found to be less than 2.5 Hz, or a period of 400 ms (150 bpm). 
+        \item The haptic design section \ref{hapticConsiderations} discusses the rate limits of the touch modality.
+    \end{itemize}
+\end{enumerate}
 
-When discussing a perceptual basis, SMS tests are valid within a particular temporal range. For audio based tests, where 1 in every 4 beats was tapped, an upper rate limit was shown to be as high as 8 - 10 Hz, or a period of 100 - 125 ms. Visual stimuli was found to be less than 2.5 Hz, or 400ms. The lower rate limit was independent of modality and found to be 0.56 Hz, or 1800 ms \cite{repp2006rate}. 
-
-In order to establish a middle ground and determine a fair and effective IOI window across musicians and non-musicians, this work has chosen to focus on tempi ranging from 45-180 bpm, or a period of 333 - 1333 ms.
-
-The haptic design section \ref{hapticConsiderations} discusses the rate limits of the touch modality.
+In order to establish a middle ground and determine a fair and effective IOI window across musicians and non-musicians, this work has chosen to focus on tempi ranging from \textbf{45 - 180 bpm}, or a period of \textbf{333 - 1333 ms}. The selection presents an opportunity to test the higher bounds of relative ability and noise for the haptic metronome past the biomechanical limit range ($>$ 150 bpm).

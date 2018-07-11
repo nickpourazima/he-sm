@@ -1,9 +1,11 @@
 \chapter{Method}
-This chapter outlines each test case, describes the motivation behind the test plan, and delves into both the hardware and software design required to implement the methodology. Furthermore, it defines and calculates a round-trip latency in the system to find an approximation of relative accuracy. The hope is to establish a level of confidence in the precise time dependent information.
+The design and prototype iteration of the haptic metronome is discussed extensively in Appendix \ref{designReq} along with a parts list and schematic of the hardware builds.\footnote{All of the code is open source and readily available via \url{https://github.com/afaintillusion/he-sm}.}
+
+This chapter outlines each test case and describes the motivation behind the test plan. Furthermore, it defines and calculates a round-trip latency in the system to find an approximation of relative accuracy. The hope is to establish a level of confidence in the precise time dependent information.
 
 The overall test principle was derived from traditional sensorimotor synchronization tasks in which a user is asked to tap to a corresponding stimulus. The asynchrony was tracked and plotted along with the PCR and any missed taps. Since the haptic domain is of primary focus, the auditory modality functions primarily as a benchmark or baseline foundation. The work presented in \ref{visualMet} covers the idea of the interstitial beat occupying the visual domain and as such will not be re-evaluated here.
 
-Each test case is defined and presented in \ref{testPlan}. The overall software development is detailed in \ref{development}. The hardware setup and code re-purposing from TapArduino is discussed in \ref{tap_arduino} and latency calculated in \ref{latencyCalc}.
+Each test case is defined and presented in \ref{testPlan}. The overall software development process is detailed in \ref{development}. The hardware setup and code re-purposing from TapArduino is discussed in \ref{tap_arduino} and latency calculated in \ref{latencyCalc}.
 
 \section{Test Plan} \label{testPlan}
 Testing was divided into two major sections, \textbf{Steady} and \textbf{Dynamic}, implying either an \textit{isochronous} or a \textit{non-isochronous} pulse respectively. While structurally identical, the dynamic tests however focussed on rubato within a range starting at the predefined BPM and rising or falling within a specified window. The chosen tempi parallels slow walking to running gaits spanning a range of 45-180 beats per minute.
@@ -180,7 +182,4 @@ The user will input their name, read the instructions, agree to the conditions o
 \end{figure}
 
 \subsubsection{Example Output}
-\todo[inline]{fill out section}
-
-\section{Expectations}
 \todo[inline]{fill out section}
