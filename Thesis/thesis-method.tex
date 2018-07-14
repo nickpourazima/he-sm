@@ -1,67 +1,100 @@
 \chapter{Method}
-The design and prototype iteration of the haptic metronome is discussed extensively in Appendix \ref{designReq} along with a parts list and schematic of the hardware builds.\footnote{All of the code is open source and readily available via \url{https://github.com/afaintillusion/he-sm}.}
+The design and prototype iterations of the haptic metronome are discussed extensively throughout Appendix \ref{designReq} along with a parts list and schematic of the hardware builds.\footnote{All of the code is open source and readily available at \url{https://github.com/afaintillusion/he-sm}}
 
-This chapter outlines each test case and describes the motivation behind the test plan. Furthermore, it defines and calculates a round-trip latency in the system to find an approximation of relative accuracy. The hope is to establish a level of confidence in the precise time dependent information.
+This chapter outlines each test case and describes the motivation behind the test plan. Furthermore, it briefly delves into the test suite design and calculates a round-trip latency of the system in order to find a close approximation of relative accuracy. The hope is to establish a level of confidence in the precise time dependent information.
 
-The overall test principle was derived from traditional sensorimotor synchronization tasks in which a user is asked to tap to a corresponding stimulus. The asynchrony was tracked and plotted along with the PCR and any missed taps. Since the haptic domain is of primary focus, the auditory modality functions primarily as a benchmark or baseline foundation. The work presented in \ref{visualMet} covers the idea of the interstitial beat occupying the visual domain and as such will not be re-evaluated here.
+The overall test principle was derived from traditional sensorimotor synchronization tasks in which a user is asked to tap to a corresponding stimulus. The asynchrony was tracked and plotted along with the \textit{PCR} and any missed taps. Since the haptic domain is of primary focus, the auditory modality functions primarily as a benchmark or baseline foundation. The work presented in \ref{visualMet} covers the idea of the interstitial beat occupying the visual domain and as such will not be re-evaluated here.
 
-Each test case is defined and presented in \ref{testPlan}. The overall software development process is detailed in \ref{development}. The hardware setup and code re-purposing from TapArduino is discussed in \ref{tap_arduino} and latency calculated in \ref{latencyCalc}.
+Each test case is defined and presented in \ref{testPlan}. The overall software development process is detailed in \ref{development}. The test suite is discussed in \ref{tap_arduino} and latency calculated in \ref{latencyCalc}.
 
 \section{Test Plan} \label{testPlan}
-Testing was divided into two major sections, \textbf{Steady} and \textbf{Dynamic}, implying either an \textit{isochronous} or a \textit{non-isochronous} pulse respectively. While structurally identical, the dynamic tests however focussed on rubato within a range starting at the predefined BPM and rising or falling within a specified window. The chosen tempi parallels slow walking to running gaits spanning a range of 45-180 beats per minute.
+Testing was divided into two major sections, \textbf{Steady} and \textbf{Dynamic}, implying either an \textit{isochronous} or a \textit{non-isochronous} pulse respectively. While structurally identical, the dynamic tests however focussed on rubato within a range starting at the predefined BPM and rising or falling within a specified window (maximum span of +/- 15 bpm). The chosen tempi parallels slow walking to running gaits spanning a range of 45-180 beats per minute.
 
-Each section had three subsections centered around either an audible metronome tone (\textbf{A1, A3}), musical note (\textbf{A2, A4}), and lastly the haptic modality (\textbf{H1, H2}). Subsections were further broken down into \textbf{a} and \textbf{b}, denoting either \textit{discrete} or \textit{interstitial}/\textit{continuous} mode of operation. A breakdown of the test plan is shown in Figure \ref{fig:TestPlan}.
+Each section has three subsections centered around either an audible metronome tone (\textbf{A1, A3}), musical note (\textbf{A2, A4}), and lastly the haptic modality (\textbf{H1, H2}). Subsections were further broken down into \textbf{a} and \textbf{b}, denoting either \textit{discrete} or \textit{interstitial} (\textit{continuous}) mode of operation. A breakdown of the test plan is shown in Figure \ref{fig:TestPlan}. The data analysis in Chapter \ref{DataAnalysis} will frequently reference this table as a legend.
 
-As discussed in Chapter 3, the haptic was designed with two operating modes in mind, discrete and continuous. These modes were programmatically controlled to match the desired test cases, extensively explained in section \ref{development}.
-\begin{table}[]
+As discussed in Appendix \ref{designReq}, the haptic was designed with two operating modes in mind, discrete and continuous. These modes were programmatically controlled to match the desired test cases, extensively explained in section \ref{development}.
+\begin{table}[t]
     \centering
     \resizebox{\textwidth}{!}{%
-    \begin{tabular}{cclllcclll}
-    \hline
-    \multicolumn{10}{c}{Steady} \\ \hline
-    \multicolumn{3}{c}{Discrete} & BPM & Runtime (sec) & \multicolumn{3}{c}{Interstitial} & BPM & Runtime (sec) \\
-    \multirow{4}{*}{A1a} & \multirow{4}{*}{click} & i. & 45 & 20 & \multirow{4}{*}{A1b} & \multirow{4}{*}{legato chime (swing click)} & i. & 45 & 30 \\
-     &  & ii. & 90 & 20 &  &  & ii. & 90 & 16 \\
-     &  & iii. & 135 & 20 &  &  & iii. & 135 & 11 \\
-     &  & iv. & 180 & 20 &  &  & iv. & 180 & 8 \\
-    \multirow{4}{*}{A2a} & \multirow{4}{*}{staccato music (melody)} & i. & 45 & 32 & \multirow{4}{*}{A2b} & \multirow{4}{*}{legato music (melody)} & i. & 45 & 32 \\
-     &  & ii. & 90 & 16 &  &  & ii. & 90 & 16 \\
-     &  & iii. & 135 & 11 &  &  & iii. & 135 & 11 \\
-     &  & iv. & 180 & 8 &  &  & iv. & 180 & 8 \\
-    \multirow{4}{*}{H1a} & \multirow{4}{*}{poke / all on (instantaneous)} & i. & 45 & 15 & \multirow{4}{*}{H1b} & \multirow{4}{*}{oscillate down and back up} & i. & 45 & 15 \\
-     &  & ii. & 90 & 15 &  &  & ii. & 90 & 15 \\
-     &  & iii. & 135 & 15 &  &  & iii. & 135 & 15 \\
-     &  & iv. & 180 & 15 &  &  & iv. & 180 & 15 \\ \hline
-    \multicolumn{10}{c}{Dynamic} \\ \hline
-    \multicolumn{3}{c}{Discrete} & BPM & Runtime (sec) & \multicolumn{3}{c}{Interstitial} & BPM & Runtime (sec) \\
-    \multirow{4}{*}{A3a} & \multirow{4}{*}{click} & i. & 45 +/- 15 & 20 & \multirow{4}{*}{A3b} & \multirow{4}{*}{legato chime (swing click)} & i. & 45 +/- 15 & 20 \\
-     &  & ii. & 90 +/- 15 & 10 &  &  & ii. & 90 +/- 15 & 10 \\
-     &  & iii. & 135 +/- 15 & 10 &  &  & iii. & 135 +/- 15 & 10 \\
-     &  & iv. & 180 +/- 15 & 10 &  &  & iv. & 180 +/- 15 & 10 \\
-    \multirow{4}{*}{A4a} & \multirow{4}{*}{staccato music (melody)} & i. & 45 +/- 15 & 30 & \multirow{4}{*}{A4b} & \multirow{4}{*}{legato music (melody)} & i. & 45 +/- 15 & 30 \\
-     &  & ii. & 90 +/- 15 & 15 &  &  & ii. & 90 +/- 15 & 15 \\
-     &  & iii. & 135 +/- 15 & 10 &  &  & iii. & 135 +/- 15 & 10 \\
-     &  & iv. & 180 +/- 15 & 10 &  &  & iv. & 180 +/- 15 & 10 \\
-    \multirow{4}{*}{H2a} & \multirow{4}{*}{poke / all on (instantaneous)} & i. & 45 +/- 10 & 15 & \multirow{4}{*}{H2b} & \multirow{4}{*}{oscillate down and back up} & i. & 45 +/- 10 & 15 \\
-     &  & ii. & 90 +/- 5 & 15 &  &  & ii. & 90 +/- 5 & 15 \\
-     &  & iii. & 135 +/- 3 & 15 &  &  & iii. & 135 +/- 3 & 15 \\
-     &  & iv. & 180 +/- 1 & 15 &  &  & iv. & 180 +/- 1 & 15
-    \end{tabular}%
+        \begin{tabular}{cclllcclll}
+        \hline
+        \multicolumn{10}{c}{\cellcolor[HTML]{000000}{\color[HTML]{FFFFFF} Steady}} \\ \hline
+        \multicolumn{3}{c}{Discrete} & BPM & \multicolumn{1}{l|}{Runtime (sec)} & \multicolumn{3}{c}{Interstitial} & BPM & Runtime (sec) \\ \hline
+        &  & i. & 45 & \multicolumn{1}{l|}{20} &  &  & i. & 45 & 30 \\
+        &  & ii. & 90 & \multicolumn{1}{l|}{20} &  &  & ii. & 90 & 16 \\
+        &  & iii. & 135 & \multicolumn{1}{l|}{20} &  &  & iii. & 135 & 11 \\
+        \multirow{-4}{*}{A1a} & \multirow{-4}{*}{click} & iv. & 180 & \multicolumn{1}{l|}{20} & \multirow{-4}{*}{A1b} & \multirow{-4}{*}{legato chime (swing click)} & iv. & 180 & 8 \\ \hline
+        &  & i. & 45 & \multicolumn{1}{l|}{32} &  &  & i. & 45 & 32 \\
+        &  & ii. & 90 & \multicolumn{1}{l|}{16} &  &  & ii. & 90 & 16 \\
+        &  & iii. & 135 & \multicolumn{1}{l|}{11} &  &  & iii. & 135 & 11 \\
+        \multirow{-4}{*}{A2a} & \multirow{-4}{*}{staccato music (melody)} & iv. & 180 & \multicolumn{1}{l|}{8} & \multirow{-4}{*}{A2b} & \multirow{-4}{*}{legato music (melody)} & iv. & 180 & 8 \\ \hline
+        &  & i. & 45 & \multicolumn{1}{l|}{15} &  &  & i. & 45 & 15 \\
+        &  & ii. & 90 & \multicolumn{1}{l|}{15} &  &  & ii. & 90 & 15 \\
+        &  & iii. & 135 & \multicolumn{1}{l|}{15} &  &  & iii. & 135 & 15 \\
+        \multirow{-4}{*}{H1a} & \multirow{-4}{*}{poke / all on (instantaneous)} & iv. & 180 & \multicolumn{1}{l|}{15} & \multirow{-4}{*}{H1b} & \multirow{-4}{*}{oscillate down and back up} & iv. & 180 & 15 \\ \hline
+        \multicolumn{10}{c}{\cellcolor[HTML]{000000}{\color[HTML]{FFFFFF} Dynamic}} \\ \hline
+        \multicolumn{3}{c}{Discrete} & BPM & \multicolumn{1}{l|}{Runtime (sec)} & \multicolumn{3}{c}{Interstitial} & BPM & Runtime (sec) \\ \hline
+        &  & i. & 45 +/- 15 & \multicolumn{1}{l|}{20} &  &  & i. & 45 +/- 15 & 20 \\
+        &  & ii. & 90 +/- 15 & \multicolumn{1}{l|}{10} &  &  & ii. & 90 +/- 15 & 10 \\
+        &  & iii. & 135 +/- 15 & \multicolumn{1}{l|}{10} &  &  & iii. & 135 +/- 15 & 10 \\
+        \multirow{-4}{*}{A3a} & \multirow{-4}{*}{click} & iv. & 180 +/- 15 & \multicolumn{1}{l|}{10} & \multirow{-4}{*}{A3b} & \multirow{-4}{*}{legato chime (swing click)} & iv. & 180 +/- 15 & 10 \\ \hline
+        &  & i. & 45 +/- 15 & \multicolumn{1}{l|}{30} &  &  & i. & 45 +/- 15 & 30 \\
+        &  & ii. & 90 +/- 15 & \multicolumn{1}{l|}{15} &  &  & ii. & 90 +/- 15 & 15 \\
+        &  & iii. & 135 +/- 15 & \multicolumn{1}{l|}{10} &  &  & iii. & 135 +/- 15 & 10 \\
+        \multirow{-4}{*}{A4a} & \multirow{-4}{*}{staccato music (melody)} & iv. & 180 +/- 15 & \multicolumn{1}{l|}{10} & \multirow{-4}{*}{A4b} & \multirow{-4}{*}{legato music (melody)} & iv. & 180 +/- 15 & 10 \\ \hline
+        &  & i. & 45 +/- 10 & \multicolumn{1}{l|}{15} &  &  & i. & 45 +/- 10 & 15 \\
+        &  & ii. & 90 +/- 5 & \multicolumn{1}{l|}{15} &  &  & ii. & 90 +/- 5 & 15 \\
+        &  & iii. & 135 +/- 3 & \multicolumn{1}{l|}{15} &  &  & iii. & 135 +/- 3 & 15 \\
+        \multirow{-4}{*}{H2a} & \multirow{-4}{*}{poke / all on (instantaneous)} & iv. & 180 +/- 1 & \multicolumn{1}{l|}{15} & \multirow{-4}{*}{H2b} & \multirow{-4}{*}{oscillate down and back up} & iv. & 180 +/- 1 & 15 \\ \hline
+        \end{tabular}%
     }
     \caption{Test Plan}
     \label{fig:TestPlan}
 \end{table}
 
+\subsection{Subjects}
+Out of 18 subjects tested, 16 were parsed to equivalently divide the groups into 8 professionals and 8 amateurs/non-musicians. User ID's were assigned based on a first name encryption. A breakdown of the grouping per instrumentation is shown in Table \ref{fig:SubjectTable}.
+\begin{table}[t]
+    \centering
+    \resizebox{.5\textwidth}{!}{%
+    \begin{tabular}{|l|l|l|}
+    \hline
+    \rowcolor[HTML]{000000} 
+    {\color[HTML]{FFFFFF} Group} & {\color[HTML]{FFFFFF} Instrument} & {\color[HTML]{FFFFFF} User ID} \\ \hline
+     & Bass & 729 \\ \cline{2-3} 
+     & DJ & 390 \\ \cline{2-3} 
+     & Piano & 399 \\ \cline{2-3} 
+    \multirow{-4}{*}{Amateur} & Voice & 379 \\ \hline
+     &  & 486 \\ \cline{3-3} 
+     &  & 514 \\ \cline{3-3} 
+     & \multirow{-3}{*}{None} & 932 \\ \cline{2-3} 
+    \multirow{-4}{*}{Neither} & Piano & 394 \\ \hline
+     &  & 410 \\ \cline{3-3} 
+     &  & 591 \\ \cline{3-3} 
+     & \multirow{-3}{*}{Flute} & 824 \\ \cline{2-3} 
+     &  & 367 \\ \cline{3-3} 
+     &  & 506 \\ \cline{3-3} 
+     &  & 521 \\ \cline{3-3} 
+     & \multirow{-4}{*}{Percussion} & 552 \\ \cline{2-3} 
+    \multirow{-8}{*}{Professional} & Piano & 510 \\ \hline
+    \end{tabular}%
+    }
+    \caption{Subject Grouping}
+    \label{fig:SubjectTable}
+\end{table}
+
 \subsection{Audio File Generation}
 All tracks were rendered using the digital audio workstation (DAW) \textit{Logic Pro X} as \textit{.wav} files at a 44.1kHz sample rate with 16 bit resolution.
+
 \subsubsection{Metronomic click and legato chime}
+\textbf{A1a} and \textbf{A3a} required a standard metronomic pulse. This was accomplished using the default Klopfgeist (metronome) plugin from Logic Pro X. No additional tuning was modified and the tonality was left at 0.83 of unity as shown in Figure \ref{fig:klopfgeist}.
+
 \begin{wrapfigure}{r}{5cm}
     \centering
     \includegraphics[width=0.25\textwidth]{klopfgeist}
-    \caption{Default metronome}
+    \caption{A1a and A3a metronome}
     \label{fig:klopfgeist}
 \end{wrapfigure}
-\textbf{A1a} and \textbf{A3a} required a standard metronomic pulse. This was accomplished using the default Klopfgeist (metronome) plugin from Logic Pro X. No additional tuning was modified and the tonality was left at 0.83 of unity as shown in \ref{fig:klopfgeist}. 
 
 \textbf{A1b} and \textbf{A3b} however required a swing or legato type of chime in order to convey filling the interstitial space. To capture this effect the Klopfgeist tonality was increased to unity and tuned -27 semitones lower which served to both soften diminish the discrete click, provided an elongated or continuous audible sensation. To give the impression of a sound that was ramping up in amplitude and decaying after the peak, a tremolo effect which mimics a sawtooth wave was added to the signal chain as seen in \ref{fig:modClick}. Last, a multi-band EQ was placed at the end of the signal chain with a bandpass filter from 95Hz-750Hz to remove unwanted frequency presence and a 3.5dB high-Q peak at 220Hz to emphasize the tonality.
 
@@ -170,15 +203,22 @@ Sources of potential error:
     Evaluation with scope:
 
 \subsection{Setup} \label{testSetup}
-To initialize setup, the user is seated and given a pair of closed-back headphones. The FSR is situated to their preference, either dominant or non-dominant hand, and secured into place. Unlike a keyboard or button the FSR gives no feedback or rebound; psychologically ensuring a confident tap on each onset while providing no tactile response. This approach seeks to avoid intrinsic lag from its independance of mechanical components. The delay limit is defined by the threshold applied in the software to avoid debounce, as discussed in Section \ref{development}
-
-The user will input their name, read the instructions, agree to the conditions of the test suite, and commence with the test. After every iteration of the test, a plot of the Tap Onset, True Onset, and Sanitized Onset is presented to the user for the purposes of feedback and affirmation of correct tapping. The order every user encounters will differ as the tests are scrambled. Upon completion, the users are asked to fill out a survey and the results are displayed.
+To initialize setup, the subject is seated and given a pair of closed-back headphones. The FSR is situated to their preference, either dominant or non-dominant hand, and secured into place. Unlike a keyboard or button the FSR gives little to no feedback or rebound. This ensures a confident tap on each onset while providing no tactile response. The approach seeks to avoid intrinsic lag due to its independence of mechanical components. The delay limit is defined by the threshold applied in the software to avoid debounce, as discussed in Section \ref{development}
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\columnwidth]{TestSuiteFlowDiagram}
     \caption{Test Suite Flow Chart}
     \label{fig:TestSuiteFlowDiagram}
+\end{figure}
+
+The Python file \textit{testSuite.py} is run and the UI will prompt the subject to input their name, read the instructions, agree to the conditions of the test suite, and commence with the test. The first 8 are practice tests to get used to the haptic sensation as well as the variety of audible test cases. The order of test case execution is scrambled with a static seed pseudo-random generator such that every user encounters the same test order. Every iteration of the test plots the Tap Onset, True Onset, and Sanitized Onset  for the purposes of feedback and affirmation of correct tapping as seen in Figure \ref{fig:TestCaseFeedbackEx}. Upon completion of the 48 test cases, the users are asked to fill out a survey for feedback.
+
+\begin{figure}[]
+    \centering
+    \includegraphics[width=\columnwidth]{TestCaseFeedbackExample}
+    \caption{Test Case Feedback Example}
+    \label{fig:TestCaseFeedbackEx}
 \end{figure}
 
 \subsubsection{Example Output}
