@@ -53,7 +53,7 @@ As discussed in Appendix \ref{designReq}, the haptic was designed with two opera
 \end{table}
 
 \subsection{Subjects}
-Out of 18 subjects tested, 16 were parsed to equivalently divide the groups into 8 professionals and 8 amateurs/non-musicians. User ID's were assigned based on a first name encryption. A breakdown of the grouping per instrumentation is shown in Table \ref{fig:SubjectTable}.
+Out of 18 subjects tested, 16 were parsed to equivalently divide the groups into 8 professionals and 8 amateurs/non-musicians. Usernames were anonymized into User ID's using a cumulative char to int conversion method. A breakdown of the grouping per instrumentation is shown in Table \ref{fig:SubjectTable}.
 \begin{table}[t]
     \centering
     \resizebox{.5\textwidth}{!}{%
@@ -87,16 +87,7 @@ Out of 18 subjects tested, 16 were parsed to equivalently divide the groups into
 All tracks were rendered using the digital audio workstation (DAW) \textit{Logic Pro X} as \textit{.wav} files at a 44.1kHz sample rate with 16 bit resolution.
 
 \subsubsection{Metronomic click and legato chime}
-\textbf{A1a} and \textbf{A3a} required a standard metronomic pulse. This was accomplished using the default Klopfgeist (metronome) plugin from Logic Pro X. No additional tuning was modified and the tonality was left at 0.83 of unity as shown in Figure \ref{fig:klopfgeist}.
-
-\begin{wrapfigure}{r}{5cm}
-    \centering
-    \includegraphics[width=0.25\textwidth]{klopfgeist}
-    \caption{A1a and A3a metronome}
-    \label{fig:klopfgeist}
-\end{wrapfigure}
-
-\textbf{A1b} and \textbf{A3b} however required a swing or legato type of chime in order to convey filling the interstitial space. To capture this effect the Klopfgeist tonality was increased to unity and tuned -27 semitones lower which served to both soften diminish the discrete click, provided an elongated or continuous audible sensation. To give the impression of a sound that was ramping up in amplitude and decaying after the peak, a tremolo effect which mimics a sawtooth wave was added to the signal chain as seen in \ref{fig:modClick}. Last, a multi-band EQ was placed at the end of the signal chain with a bandpass filter from 95Hz-750Hz to remove unwanted frequency presence and a 3.5dB high-Q peak at 220Hz to emphasize the tonality.
+\textbf{A1a} and \textbf{A3a} required a standard metronomic pulse. This was accomplished using the default Klopfgeist (metronome) plugin from Logic Pro X. No additional tuning was modified and the tonality was left at 0.83 of unity.
 
 \begin{figure}[H]
     \centering
@@ -108,6 +99,12 @@ All tracks were rendered using the digital audio workstation (DAW) \textit{Logic
         \subfloat[Equalized tone]{\includegraphics[width=\textwidth,height=0.25\textheight]{Modified_Click_EQ}}
     \label{fig:modClick}
 \end{figure}
+
+\textbf{A1b} and \textbf{A3b} however required a swing or legato type of chime in order to convey filling the interstitial space. To capture this effect the Klopfgeist tonality was increased to unity and tuned -27 semitones lower which served to both soften diminish the discrete click, provided an elongated or continuous audible sensation. 
+
+To give the impression of a sound that was ramping up in amplitude and decaying after the peak, a tremolo effect which mimics a sawtooth wave was added to the signal chain as seen in Figure \ref{fig:modClick}. 
+
+Last, a multi-band EQ was placed at the end of the signal chain with a bandpass filter from 95Hz-750Hz removing any unwanted frequency presence with a 3.5dB high-Q peak at 220Hz to emphasize the tonality.
 
 The resultant waveform encapsulated the occupation of the interstitial space. A comparison of this waveform in contrast to it's discrete counterpart is shown in \ref{fig:click_comparison}. Note the envelope of signal (b) follows a natural build up and decay.
 
@@ -122,7 +119,7 @@ The resultant waveform encapsulated the occupation of the interstitial space. A 
 \subsubsection{Stacatto and legato melody}
 As a specific musical listening task, test cases \textbf{A2a}, \textbf{A4a} and \textbf{A2b}, \textbf{A4b} involve synchronization to a simple melodic sequence of notes. The music chosen was the nursery rhyme \textit{Pat-A-Cake}. The initial mockup was drafted in Sibelius and exported to Logic Pro X for bpm adjustment.
 
-Each quarter note represents a beat and therefore a tap onset. In order to emphasize a discrete event for test cases \textbf{A2a} and \textbf{A4a}, notes were input as stacatto, shown below in Figure \ref{fig:patacakea2a}.
+Each quarter note represents a beat and therefore a 1:1 synchronization tap onset task. In order to emphasize a discrete event for test cases \textbf{A2a} and \textbf{A4a}, notes were input as stacatto, shown below in Figure \ref{fig:patacakea2a}.
 
 \begin{figure}[H]
     \centering
@@ -138,7 +135,7 @@ The interstitial counterparts (\textbf{A2b}, \textbf{A4b}) similarly underwent c
     \label{fig:pat-a-cake_a2b}
 \end{figure}
 
-Note below in Figure \ref{fig:music_comparison} the gradual, nearly exponential decay displayed in the interstitial tone as a result of the legato input.
+Note below in Figure \ref{fig:music_comparison} the gradual, nearly exponential decay displayed in the interstitial tone as a result of the legato input along with the amplitude difference due to the forte accents.
 
 \begin{figure}[H]
     \centering
@@ -169,6 +166,11 @@ High precision data acquisition and the minimization of delay were the central f
 \subsection{Software Development} \label{development}
 \todo[inline]{fill out section}
             Discuss code breakdown
+
+            Talk about how the logging was done:
+                Knitty gritty details on where timestamps were
+                vs.
+                Justification on why time sync effort was not necessary
             
             GUI
             
@@ -202,6 +204,10 @@ Sources of potential error:
 
     Evaluation with scope:
 
+    human input is never perfect, above the noise floor but just enough to get the input
+
+    intrinsic jitter when that many asynchronous processes together
+
 \subsection{Setup} \label{testSetup}
 To initialize setup, the subject is seated and given a pair of closed-back headphones. The FSR is situated to their preference, either dominant or non-dominant hand, and secured into place. Unlike a keyboard or button the FSR gives little to no feedback or rebound. This ensures a confident tap on each onset while providing no tactile response. The approach seeks to avoid intrinsic lag due to its independence of mechanical components. The delay limit is defined by the threshold applied in the software to avoid debounce, as discussed in Section \ref{development}
 
@@ -220,6 +226,3 @@ The Python file \textit{testSuite.py} is run and the UI will prompt the subject 
     \caption{Test Case Feedback Example}
     \label{fig:TestCaseFeedbackEx}
 \end{figure}
-
-\subsubsection{Example Output}
-\todo[inline]{fill out section}
