@@ -2,9 +2,10 @@
  * School: Carnegie Mellon University 
  * Department: Music Technology 
  * Contact: npourazima@gmail.com
- * Date: March 12, 2018
+ * Date: July 14, 2018
+ * Note: This rev is based on the Bluz board running particle I/O and as such has been modified from the original main.ino
  */
- 
+
 //=================  PIN CONFIG =================
 const byte ledPin = D7;
 const uint8_t vibPins[] = {D0,D1,D2,D3};
@@ -51,13 +52,11 @@ void setup() {
 }
 
 void loop() {
-    // System.sleep(SLEEP_MODE_CPU);
+    // System.sleep(SLEEP_MODE_CPU); //battery saver but throws off accuracy of timing intervals
     SINGLE_THREADED_BLOCK(){
         go();
     }
 }
-
-
 
 int motorToggle(String command) {
     if(command == "off" or command == "0"){

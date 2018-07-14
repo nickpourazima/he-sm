@@ -242,7 +242,6 @@ void go(){
           digitalWrite(vibPins[2],HIGH);
           if((millis()-startTime) >= ((average * 3)/9)){
             state++;
-            Serial.println("onset");
           }
           break;
         case RAMPUP_STEP_4:
@@ -250,6 +249,7 @@ void go(){
           digitalWrite(vibPins[3],HIGH);
           if((millis()-startTime) >= ((average * 5)/9)){
             state++;
+            Serial.println("onset");
           }
           break;
         case RAMPDOWN_STEP_5:

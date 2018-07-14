@@ -43,7 +43,7 @@ from threading import Thread
 from tabulate import tabulate
 
 # SERIAL VARS
-TAP_SERIAL_PORT = '/dev/tty.usbmodem14121'
+TAP_SERIAL_PORT = '/dev/tty.usbmodem14131'
 TAP_BAUD = 115200
 TIMEOUT = 0.25
 
@@ -365,6 +365,7 @@ else:
     print("No serial connected...")
     sys.exit()
 
+# initialize new dataframe
 df = {
     'Test':             [],
     'User ID':          [],
@@ -372,7 +373,6 @@ df = {
     'Tap Onset':        [],
     'Asynchrony':       []
 }
-
 
 class mainGUI(tk.Tk):
 
@@ -403,7 +403,6 @@ class mainGUI(tk.Tk):
         frame = self.frames[cont]
         frame.tkraise()
 
-
 class StartPage(tk.Frame):
 
     def __init__(self, parent, controller):
@@ -425,7 +424,6 @@ class StartPage(tk.Frame):
         userName = (self.name.get())
         self.myController.show_frame(InstructionPage)
 
-
 class InstructionPage(tk.Frame):
 
     def __init__(self, parent, controller):
@@ -444,7 +442,6 @@ class InstructionPage(tk.Frame):
         global startFlag
         startFlag = True
         self.myController.show_frame(TestPage)
-
 
 class TestPage(tk.Frame):
     def __init__(self, parent, controller):
@@ -466,7 +463,6 @@ class TestPage(tk.Frame):
         fg = self.label.cget("foreground")
         self.label.configure(background=fg, foreground=bg)
         self.after(500, self.flash)
-
 
 def haptic(steady, mode, tempo, timer, increment=1):
     global closeFile, startRead, df
@@ -513,7 +509,6 @@ def haptic(steady, mode, tempo, timer, increment=1):
             closeFile = True
             break
 
-
 def playback(audio_file):
     global closeFile, df
     mixer.pre_init(44100, -16, 2, 64)
@@ -537,7 +532,6 @@ def playback(audio_file):
         df['Test'].append(t0)
     closeFile = True
 
-
 def playBeep(fadeoutTimer):
     global startRead
     mixer.pre_init(44100, -16, 2, 64)
@@ -550,7 +544,6 @@ def playBeep(fadeoutTimer):
         pass
     time.sleep(1)
     startRead = True
-
 
 def getTap():
     global closeFile, startRead, df
@@ -577,7 +570,6 @@ def getTap():
             closeFile = False
             startRead = False
             break
-
 
 def dataAnalysis(count):
     global df
@@ -645,10 +637,15 @@ def dataAnalysis(count):
          (rawData['Tap Onset'].shift(-9) < rawData['Max'])),
         ((rawData['Tap Onset'].shift(-10) >= rawData['Min'])
          & (rawData['Tap Onset'].shift(-10) < rawData['Max']))
-    ]
-    choices = [rawData['Tap Onset'].shift(10), rawData['Tap Onset'].shift(9), rawData['Tap Onset'].shift(8), rawData['Tap Onset'].shift(7), rawData['Tap Onset'].shift(
-        6),rawData['Tap Onset'].shift(5), rawData['Tap Onset'].shift(4), rawData['Tap Onset'].shift(3), rawData['Tap Onset'].shift(2), rawData['Tap Onset'].shift(
-        1), rawData['Tap Onset'], rawData['Tap Onset'].shift(-1), rawData['Tap Onset'].shift(-2), rawData['Tap Onset'].shift(-3), rawData['Tap Onset'].shift(-4), rawData['Tap Onset'].shift(-5), rawData['Tap Onset'].shift(-6), rawData['Tap Onset'].shift(-7), rawData['Tap Onset'].shift(-8), rawData['Tap Onset'].shift(-9), rawData['Tap Onset'].shift(-10)]
+        ]
+    choices = [
+        rawData['Tap Onset'].shift(10), rawData['Tap Onset'].shift(9), rawData['Tap Onset'].shift(8), rawData['Tap Onset'].shift(7), 
+        rawData['Tap Onset'].shift(6),rawData['Tap Onset'].shift(5), rawData['Tap Onset'].shift(4), rawData['Tap Onset'].shift(3), 
+        rawData['Tap Onset'].shift(2), rawData['Tap Onset'].shift(1), rawData['Tap Onset'], rawData['Tap Onset'].shift(-1), 
+        rawData['Tap Onset'].shift(-2), rawData['Tap Onset'].shift(-3), rawData['Tap Onset'].shift(-4), rawData['Tap Onset'].shift(-5), 
+        rawData['Tap Onset'].shift(-6), rawData['Tap Onset'].shift(-7), rawData['Tap Onset'].shift(-8), rawData['Tap Onset'].shift(-9), 
+        rawData['Tap Onset'].shift(-10)
+        ]
     rawData['Sanitized Tap Onset'] = np.select(
         conditions, choices, default=np.timedelta64('NaT'))
 
@@ -657,7 +654,6 @@ def dataAnalysis(count):
 
     rawData = rawData.dropna(subset=['True Onset', 'Max', 'Min'], how='any')
     rawData = rawData.drop_duplicates(subset=['True Onset'], keep=False)
-
 
     rawData['Sanitized Mean Asynchrony'] = rawData.groupby(
         'Test')['Sanitized Asynchrony'].transform('mean')
@@ -669,7 +665,6 @@ def dataAnalysis(count):
         'Test')['Asynchrony'].transform('std')
     rawData['Missed Taps'] = rawData['Sanitized Tap Onset'].isnull().sum(axis=0)
     rawData['Phase Correction Response'] = rawData['Sanitized Asynchrony'].shift(-1)-rawData['Sanitized Asynchrony']
-
 
     # rawData['Miss Count'] = rawData.isnull().groupby('Test')['Sanitized Tap Onset'].transform('sum')
 
@@ -708,7 +703,8 @@ def dataAnalysis(count):
         'Asynchrony':       []
     }
 
-    if count == 56:
+    # Check for end of test, if so then output summary data file
+    if count == 16:
         all_files = glob.iglob(os.path.join(currentPath, "*.csv"))
         summary = pd.concat((pd.read_csv(f, skipinitialspace=True)
                              for f in all_files), ignore_index=True)
@@ -716,7 +712,6 @@ def dataAnalysis(count):
         summaryPath = os.path.join(currentPath, summaryName)
         summary.to_csv(summaryPath+'.csv')
         summary.to_excel(summaryPath+'.xlsx')
-
 
 def main():
     app = mainGUI()
@@ -729,37 +724,36 @@ def main():
             userID += int(ord(c))
 
         # =========== Practice Mode =============
-        practiceKeys = list(practiceTests.keys())
-        for item in practiceKeys:
-            t0 = item
-            t1 = Thread(target=playBeep, args=(fadeoutTimer,))
-            t1.start()
-            if(t0[2] == 'H'):
-                t2 = Thread(target=haptic, args=practiceTests.get(item))
-            elif(t0[2] == 'A'):
-                t2 = Thread(target=playback, args=[practiceTests.get(item)])
-            t3 = Thread(target=getTap)
-            t1.join()
-            t2.start()
-            t3.start()
-            t2.join()
-            t3.join()
-            dataAnalysis(counter)
-            counter += 1
-        fadeoutTimer = 1000
-        t4 = Thread(target=playBeep, args=(fadeoutTimer,))
-        t5 = Thread(target=playBeep, args=(fadeoutTimer,))
-        t6 = Thread(target=playBeep, args=(fadeoutTimer,))
-        t4.start()
-        t4.join()
-        t5.start()
-        t5.join()
-        t6.start()
-        t6.join()
+        # practiceKeys = list(practiceTests.keys())
+        # for item in practiceKeys:
+        #     t0 = item
+        #     t1 = Thread(target=playBeep, args=(fadeoutTimer,))
+        #     t1.start()
+        #     if(t0[2] == 'H'):
+        #         t2 = Thread(target=haptic, args=practiceTests.get(item))
+        #     elif(t0[2] == 'A'):
+        #         t2 = Thread(target=playback, args=[practiceTests.get(item)])
+        #     t3 = Thread(target=getTap)
+        #     t1.join()
+        #     t2.start()
+        #     t3.start()
+        #     t2.join()
+        #     t3.join()
+        #     dataAnalysis(counter)
+        #     counter += 1
+        # fadeoutTimer = 1000
+        # t4 = Thread(target=playBeep, args=(fadeoutTimer,))
+        # t5 = Thread(target=playBeep, args=(fadeoutTimer,))
+        # t6 = Thread(target=playBeep, args=(fadeoutTimer,))
+        # t4.start()
+        # t4.join()
+        # t5.start()
+        # t5.join()
+        # t6.start()
+        # t6.join()
 
         # ========= ALL TESTS ==========
         # run through test cases (randomly)
-
         random.seed(10)
         hapticKeys = list(hapticTestCases.keys())
         shuffle(hapticKeys)
@@ -770,7 +764,7 @@ def main():
         print(allKeys)
         fadeoutTimer = 3000
 
-        for key in allKeys:
+        for key in hapticKeys:
             t0 = key
             t1 = Thread(target=playBeep, args=(fadeoutTimer,))
             t1.start()
@@ -786,9 +780,6 @@ def main():
             t3.join()
             dataAnalysis(counter)
             counter += 1
-            # if counter == 2:
-            #     #     # print(delta)
-            #     sys.exit()
 
         webbrowser.open('https://goo.gl/forms/LR5y4uy5fg86QcDW2',
                         new=2, autoraise=True)
