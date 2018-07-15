@@ -225,7 +225,6 @@ void go(){
           break;
         case RAMPUP_STEP_1:
           digitalWrite(vibPins[0],HIGH);
-          // digitalWrite(ledPin,HIGH);
           if((millis()-startTime) >= ((average * 1)/9)){
             state++;
           }
@@ -242,6 +241,7 @@ void go(){
           digitalWrite(vibPins[2],HIGH);
           if((millis()-startTime) >= ((average * 3)/9)){
             state++;
+//            Serial.println("onset");
           }
           break;
         case RAMPUP_STEP_4:
@@ -275,7 +275,6 @@ void go(){
           break;
          case END:
             digitalWrite(vibPins[0],LOW);
-//            digitalWrite(ledPin,LOW);
            if((millis()-startTime) >= average){
              state=0; 
            }
