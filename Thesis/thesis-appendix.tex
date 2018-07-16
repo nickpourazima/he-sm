@@ -301,19 +301,48 @@ As seen in Fig \ref{fig:MotorRampUp}, the motors reach full amplitude over appro
 \end{figure}
 
 \subsection{Software}
-The code was written in the Arduino IDE which utilizes C++. 
-
-Outside of the tap tempo hardware push button, the main control flow was through serial communication over FTDI. The device communicated at 115200 baud and a small method was written to read the serial buffer and parse the incoming bytes into integers.
-The first input was a setter to store the current operation mode with 1 being the Discrete (Instantaneous) Mode and 2 Continuous.
-Afterwards, any other number (thresholded from 20 to 220) would be stored as the bpm.
-
-The period was calculated using formula \ref{eq:period}
+The code was written in the Arduino IDE which utilizes C++. Outside of the tap tempo hardware push button, the main control flow was through serial communication over FTDI. The device communicated at 115200 baud and a small method was written to read the serial buffer and parse the incoming bytes into integers. The first input was a setter to store the current operation mode with 1 being the Discrete (Instantaneous) Mode and 2 Continuous. Afterwards, any other number (thresholded from 20 to 220) would be stored as the bpm. The period was calculated using formula \ref{eq:period}
 
 The main control flow was two state machines which were delay independent. Depending on mode selection it would send digitalWrite commands to each motor within the set time period.
-Though the AnalogWrite functionality built into the Arduino IDE could PWM the signal and potentially control the motor just below its turn on state, the transistors would not allow this due to their rapid speed and turn on voltage and the motors would be always vibrating. This was a design decision informed by the previous single vibrotactile prototype implementation.
+Though the analogWrite functionality built into the Arduino IDE could PWM the signal and potentially control the motor just below its turn on state, the transistors would not allow this due to their rapid speed and turn on voltage and the motors would be always vibrating. This was a design decision informed by the previous single vibrotactile prototype implementation.
 
 The first state started a millisecond precision timer. In discrete mode the second state wrote all digitalIO pins HIGH for a quarter of the period as shown in Fig \ref{fig:state1}. A half on/off implementation was considered but determined to be not as efficient in communicating rapid pulses since the ramp down time overlapped with the next on period. During this state a flag was printed over serial to be read in later indicating when the test software could timestamp the onset.
 
+\begin{lstlisting}[language=C]
+    void go(){
+        if(discrete==true){
+            switch (newState){
+              case READY:
+                if(start){
+                  average = avg;
+                  startTime=millis();
+                  newState++;
+                }
+                break;
+              case ON: 
+                digitalWrite(vibPins[0],HIGH);
+                digitalWrite(vibPins[1],HIGH);
+                digitalWrite(vibPins[2],HIGH);
+                digitalWrite(vibPins[3],HIGH);
+                if((millis()-startTime) >= ((average * 1)/4)){
+                  newState++;
+                  Serial.println("onset");
+                }
+                break;
+              case OFF:
+                digitalWrite(vibPins[0],LOW);
+                digitalWrite(vibPins[1],LOW);
+                digitalWrite(vibPins[2],LOW);
+                digitalWrite(vibPins[3],LOW);
+                if(millis()-startTime >= average){
+                  newState=0;
+                }
+                break;
+              default:
+                break;
+            }
+        }
+\end{lstlisting}
 \begin{figure}[H]
     \includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]
     {state1}
