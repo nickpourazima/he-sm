@@ -577,7 +577,7 @@ def dataAnalysis(count):
     rawData = rawData.drop_duplicates(subset=['True Onset'], keep=False)
     rawData['Asynchrony'] = (rawData['Tap Onset'] -
                              rawData['True Onset'])/np.timedelta64(1, 'ms')
-    rawData['IOI'] = (rawData['True Onset'].shift(-1)-rawData['True Onset'])
+    rawData['IOI'] = pd.to_timedelta((rawData['True Onset'].shift(-1)-rawData['True Onset']),unit='ms')/np.timedelta64(1, 'ms')
     rawData['Max'] = (pd.to_timedelta((rawData['IOI'])*.5,
                                       unit='ms')+(rawData['True Onset']))
     rawData['Min'] = (pd.to_timedelta((rawData['IOI'].shift(1))
@@ -665,7 +665,8 @@ def dataAnalysis(count):
         'Test')['Asynchrony'].transform('std')
     rawData['Missed Taps'] = rawData['Sanitized Tap Onset'].isnull().sum(axis=0)
     rawData['Phase Correction Response'] = rawData['Sanitized Asynchrony'].shift(-1)-rawData['Sanitized Asynchrony']
-
+    rawData['Latency'] = (rawData['IOI']*2)/9
+    rawData['Latency Corrected SA'] = rawData['Sanitized Asynchrony']+rawData['Latency']
     # rawData['Miss Count'] = rawData.isnull().groupby('Test')['Sanitized Tap Onset'].transform('sum')
 
     if not (os.path.isdir('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)):
