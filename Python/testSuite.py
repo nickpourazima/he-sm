@@ -770,7 +770,7 @@ def main():
             t1 = Thread(target=playBeep, args=(fadeoutTimer,))
             t1.start()
             if(t0[0] == 'H'):
-                t2 = Thread(target=haptic, args=hapticTestCases.get(key))
+                t2 = Thread(target=haptic, args=hapticTestCases.get('H1b1'))
             elif(t0[0] == 'A'):
                 t2 = Thread(target=playback, args=[audioTestCases.get(key)])
             t3 = Thread(target=getTap)

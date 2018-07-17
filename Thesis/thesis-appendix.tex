@@ -343,18 +343,78 @@ The first state started a millisecond precision timer. In discrete mode the seco
             }
         }
 \end{lstlisting}
-\begin{figure}[H]
-    \includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]
-    {state1}
-    \caption{Discrete/Instantaneous state machine}
-    \label{fig:state1}
-\end{figure}
+% \caption{Discrete/Instantaneous state machine}
 
 The state machine in continuous mode functioned similarly but was divided into 4 ramp-up states and 4 ramp-down states as shown in Fig \ref{fig:state2}. Each state held its vibrotactile high for 1/9 of the overall period or IOI but lingered on the fourth vibrotactile slightly longer \textit{(2/9th's * IOI)} to convey the pinnacle of the beat. This state also sent the onset trigger.
 
-\begin{figure}[H]
-    \includegraphics[width=.5\textwidth,height=.5\textheight,keepaspectratio]
-    {state2}
-    \caption{Continous state machine}
-    \label{fig:state2}
-\end{figure}
+% \caption{Continous state machine}
+\begin{lstlisting}[language=C]
+    if(discrete==false){
+        switch (state) {
+          case START:
+            if(start){
+              average = avg;
+              startTime=millis(); 
+              state++;
+            }
+            break;
+          case RAMPUP_STEP_1:
+            digitalWrite(vibPins[0],HIGH);
+            if((millis()-startTime) >= ((average * 1)/9)){
+              state++;
+            }
+            break;
+          case RAMPUP_STEP_2:
+            digitalWrite(vibPins[0],LOW);
+            digitalWrite(vibPins[1],HIGH);
+            if((millis()-startTime) >= ((average * 2)/9)){
+              state++;
+            }
+            break;
+          case RAMPUP_STEP_3:
+            digitalWrite(vibPins[1],LOW);
+            digitalWrite(vibPins[2],HIGH);
+            if((millis()-startTime) >= ((average * 3)/9)){
+              state++;
+            }
+            break;
+          case RAMPUP_STEP_4:
+            digitalWrite(vibPins[2],LOW);
+            digitalWrite(vibPins[3],HIGH);
+            if((millis()-startTime) >= ((average * 5)/9)){
+              state++;
+              Serial.println("onset");
+            }
+            break;
+          case RAMPDOWN_STEP_5:
+            digitalWrite(vibPins[3],LOW);
+            digitalWrite(vibPins[2],HIGH);
+            if((millis()-startTime) >= ((average * 6)/9)){
+              state++;
+            }
+            break;
+          case RAMPDOWN_STEP_6:
+            digitalWrite(vibPins[2],LOW);
+            digitalWrite(vibPins[1],HIGH);
+            if((millis()-startTime) >= ((average * 7)/9)){
+              state++;
+            }
+            break;
+          case RAMPDOWN_STEP_7:
+            digitalWrite(vibPins[1],LOW);
+             digitalWrite(vibPins[0],HIGH);
+            if((millis()-startTime) >= ((average * 8)/9)){
+              state++;
+            }
+            break;
+           case END:
+              digitalWrite(vibPins[0],LOW);
+             if((millis()-startTime) >= average){
+               state=0; 
+             }
+            break;
+          default:
+            break;
+        }
+      }
+\end{lstlisting}

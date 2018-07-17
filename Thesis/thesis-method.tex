@@ -161,7 +161,7 @@ Dynamic manipulation of tempo was accomplished in \textit{Logic Pro X} through a
 \end{figure}
 
 \section{Test Suite}
-High precision data acquisition and the minimization of delay were the central foci of the test suite design. Due to the extensive amount of publicly available libraries, multithreading capability, pandas dataframe structure, and plot integration via matplotlib, \textit{Python} was chosen as the development environment. Complementary to the software platform was the implementation of a tap onset detection mechanism via force sensitive resistor (FSR) and the \textit{Arduino Uno}. 
+High precision data acquisition and the minimization of delay were the central foci of the test suite design. Due to the extensive amount of publicly available libraries, multithreading capability, pandas dataframe structure, and plot integration via matplotlib, \textit{Python} was chosen as the development environment. Complementary to the software platform was the implementation of a tap onset detection mechanism via force sensitive resistor (FSR) on the \textit{Arduino Uno}. 
 
 \subsection{Software Development} \label{development}
 A high level breakdown of the framework is provided below.
@@ -203,7 +203,7 @@ The Python file \textit{testSuite.py} is run and the UI will prompt the subject 
 \begin{figure}[]
     \centering
     \includegraphics[width=\columnwidth]{TestCaseFeedbackExample}
-    \caption{Test Case Feedback Example}
+    \caption{Test Case Feedback Example: Red circles are the tap onset, blue squares are the true onset}
     \label{fig:TestCaseFeedbackEx}
 \end{figure}
 
@@ -226,18 +226,20 @@ Significant effort was placed in determining the overall latency of the test sys
         \item Constant offset:  
             * Within the haptic codes dual states of operation there exists two sources of error within the state machine. 
                 * The onset trigger in discrete mode starting $1/4$ of a period after 
-        \begin{lstlisting}[language=C]
-            if((millis()-startTime) >= ((average * 1)/4))
-            {
-                newState++;
-                Serial.println("onset");
-            }
-        \end{lstlisting}
     \end{itemize}
-    \item Audio engine playback
+    \item Audio latency
+    \begin{itemize}
+        \item Audio driver and sound card latency estimate
+        \begin{itemize}
+            \item Tested via loopback method\footnote{\url{https://manual.audacityteam.org/man/latency_test.html}} with audio loopback dongle\footnote{\url{https://source.android.com/devices/audio/latency/loopback}}
+        \end{itemize}
+        \item Algorithmic latency (pyGame Audio library)
+        \begin{itemize}
+            \item Sound detector circuit - gate output recorded, discrepancy between time recorded and reported time noted
+        \end{itemize}
+    \end{itemize}
     \item python thread time
         * intrinsic jitter when that many asynchronous processes together
         * File I/O
 \end{itemize}
 The overall summation was applied to each data point in the final analysis.
-
