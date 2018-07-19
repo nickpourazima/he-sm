@@ -366,6 +366,9 @@ audioTestCases2 = {
     'A3a3': audioFile[18],
     'A3a4': audioFile[19],
 }
+
+hapticList1 = ['H1a1','H1a2','H1a3','H1a4','H2a1','H2a2','H2a3','H2a4']
+hapticList2 = ['H1b1','H1b2','H1b3','H1b4','H2b1','H2b2','H2b3','H2b4']
 # check for serial
 if(os.path.exists(HAPTIC_SERIAL_PORT) and os.path.exists(TAP_SERIAL_PORT)):
     hapticSerial = serial.Serial(HAPTIC_SERIAL_PORT, HAPTIC_BAUD)
@@ -581,7 +584,7 @@ def getTap():
             break
 
 def dataAnalysis(count):
-    global df
+    global df,hapticList1,hapticList2
     rawData = pd.DataFrame(dict([(k, pd.Series(v)) for k, v in df.items()]))
     rawData = rawData.drop_duplicates(subset=['True Onset'], keep=False)
     rawData['Asynchrony'] = (rawData['Tap Onset'] -
@@ -674,9 +677,16 @@ def dataAnalysis(count):
         'Test')['Asynchrony'].transform('std')
     rawData['Missed Taps'] = rawData['Sanitized Tap Onset'].isnull().sum(axis=0)
     rawData['Phase Correction Response'] = rawData['Sanitized Asynchrony'].shift(-1)-rawData['Sanitized Asynchrony']
-    rawData['Latency'] = (rawData['IOI']*2)/9
-    rawData['Latency Corrected SA'] = rawData['Sanitized Asynchrony']+rawData['Latency']
-    # rawData['Miss Count'] = rawData.isnull().groupby('Test')['Sanitized Tap Onset'].transform('sum')
+    
+    if(rawData[rawData['Test'].isin([hapticList1])]){
+        rawData['Latency'] = (rawData['IOI']*1)/4
+        rawData['Latency Corrected SA'] = rawData['Sanitized Asynchrony']+rawData['Latency']
+
+    }
+    elif(rawData[rawData['Test'].isin([hapticList2])]){
+        rawData['Latency'] = (rawData['IOI']*2)/9
+        rawData['Latency Corrected SA'] = rawData['Sanitized Asynchrony']+rawData['Latency']
+    }
 
     if not (os.path.isdir('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)):
         os.makedirs('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)
