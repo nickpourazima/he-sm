@@ -677,7 +677,7 @@ def dataAnalysis(count):
         'Test')['Asynchrony'].transform('std')
     rawData['Missed Taps'] = rawData['Sanitized Tap Onset'].isnull().sum(axis=0)
     rawData['Phase Correction Response'] = rawData['Sanitized Asynchrony'].shift(-1)-rawData['Sanitized Asynchrony']
-    
+
     if(rawData[rawData['Test'].isin([hapticList1])]){
         rawData['Latency'] = (rawData['IOI']*1)/4
         rawData['Latency Corrected SA'] = rawData['Sanitized Asynchrony']+rawData['Latency']
@@ -724,7 +724,7 @@ def dataAnalysis(count):
     }
 
     # Check for end of test, if so then output summary data file
-    if count == 8:
+    if count == 16:
         all_files = glob.iglob(os.path.join(currentPath, "*.csv"))
         summary = pd.concat((pd.read_csv(f, skipinitialspace=True)
                              for f in all_files), ignore_index=True)
@@ -777,14 +777,14 @@ def main():
         random.seed(10)
         hapticKeys = list(hapticTestCases.keys())
         shuffle(hapticKeys)
-        audioKeys = list(audioTestCases2.keys())
+        audioKeys = list(audioTestCases.keys())
         shuffle(audioKeys)
         allKeys = hapticKeys + audioKeys
         shuffle(allKeys)
         print(allKeys)
         fadeoutTimer = 3000
 
-        for key in audioKeys:
+        for key in hapticKeys:
             t0 = key
             t1 = Thread(target=playBeep, args=(fadeoutTimer,))
             t1.start()

@@ -11,25 +11,25 @@ The addition of BLE capability to issue commands over a paired interface such as
 Lastly, experimentation with other types of vibrotactiles; either the Tactor, TacHammer, or LNA's would be more optimized for touch applications with cleaner signals, dynamic range, and optimized for skin resonance (250Hz).
 
 \subsection{Wireless Prototype}
-Over the course of summer of 2018, a wireless prototype was developed which eliminated the FTDI over USB interface and was completely reliant on battery power. A 9 V was connected to a voltage regulator supplying up to 5 V for the motors and 3.3V for the new MCU, sourcing up to 500 mA/hour with enough isolation to have a significantly stronger motor vibration. The MCU was based on the Particle ecosystem, a cloud based IoT framework, and granted BLE and wireless capability. The code was altered to adapt the publish/subscribe methodology where simple numeric BPM values could be passed as API calls to the device given proper OAuth2 authentication. 
+Over the course of summer of 2018, a wireless prototype was developed which eliminated the FTDI over USB interface and was completely reliant on battery power. A 9 V was connected to a voltage regulator supplying up to 5 V for the motors and 3.3V for the new MCU, sourcing up to 500 mA/hour with enough isolation to have a significantly stronger motor vibration. The MCU was based on the Particle ecosystem, a cloud based IoT framework, and granted BLE and wireless capability. 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\columnwidth]{latestProto}
+    \caption{Latest wireless prototype with cloud capability}
+\end{figure}
+The code was altered to adapt the publish/subscribe methodology where simple numeric BPM values could be passed as API calls to the device given proper OAuth2 authentication. For example, to start the motor at 60 bpm tempo:
+\begin{lstlisting}[language=html]
+    curl https://api.particle.io/v1/devices/<deviceID>/motor \
+       -d arg="1" \
+       -d access_token=<accessToken>
 
-% \begin{minted}{html}
-%     curl https://api.particle.io/v1/devices/b1e24ee2863f85c7f74ce1b7/motor \
-%        -d arg="1" \
-%        -d access_token=160eafe55c22874352b6672ac4e67878b8471bec
-
-%     curl https://api.particle.io/v1/devices/b1e24ee2863f85c7f74ce1b7/motor \
-%        -d arg="60" \
-%        -d access_token=160eafe55c22874352b6672ac4e67878b8471bec
-% \end{minted}
+    curl https://api.particle.io/v1/devices/<deviceID>/motor \
+       -d arg="60" \
+       -d access_token=<accessToken>
+\end{lstlisting}
 
 \subsection{Beat Tracking}
-
-Max Patch based on \verb!THIS RESEARCH! 
-
-does this
-
-for the purposing of testing this
+As part of the PhD work completed at the Queen Mary University of London, Adam Stark has developed a causal beat tracking algorithm intended for use in live performances\footnote{\url{http://adamstark.co.uk/project/btrack-a-real-time-beat-tracker/}}\ref{stark2009real}.
 
 \subsection{Extra-musical Applications}
 
