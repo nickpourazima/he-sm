@@ -164,26 +164,35 @@ Dynamic manipulation of tempo was accomplished in \textit{Logic Pro X} through a
 High precision data acquisition and the minimization of delay were the central foci of the test suite design. Due to the extensive amount of publicly available libraries, multithreading capability, pandas dataframe structure, and plot integration via matplotlib, \textit{Python} was chosen as the development environment. Complementary to the software platform was the implementation of a tap onset detection mechanism via force sensitive resistor (FSR) on the \textit{Arduino Uno}. 
 
 \subsection{Software Development} \label{development}
-A high level breakdown of the framework is provided below.
-\todo[inline]{fill out section}
-            Discuss code breakdown
+A pseudocode breakdown of the framework is provided below. The methods were written in Python in object oriented fashion. The critical sub-components of the test suite are discussed below. 
 
-            Talk about how the logging was done:
-                Knitty gritty details on where timestamps were
-                vs.
-                Justification on why time sync effort was not necessary
-            
-            GUI
-            
-            Haptic onset detection
-            
-            Tap onset detection
-            
-            Multithreading
-            
-            Audio onset detection
-            
-            Plotting
+\subsubsection{GUI}
+The GUI was written with the Tk framework\footnote{\url{https://en.wikipedia.org/wiki/Tk_(software)}}. It consisted of three frames and a main class which instantiated the others. The \textit{StartPage} stored the \textit{userName} to be later anonymized via a simple char to int summary conversion technique. The next click presented the user with the \textit{InstructionPage}. Once accepting of the terms of the test, the final \textit{TestPage} readies the user for the upcoming practice tests and triggers the main code execution once the \textbf{Start Test} button is pressed.
+\subsubsection{Multithreading}
+Since the test suite read from two serial devices simultaneously, there needed to be a non-blocking methodology that allowed uninterrupted flow control; this was provided from the import of \textit{threading} from the \textit{Thread} library. Once the user started the test, the practice mode began. Here a thread was initiated which created the beep timer. At the end of the audible tone the thread completed and a second thread started passing the arguments of the test cases (either Haptic or Audio) into the method. A third thread was started simultaneously to the second which focussed on getting the tap onsets. These threads worked in parallel during the test case duration and upon completion incremented a counter and passed argument to the data analysis method for logging.
+\subsubsection{Haptic Onset Detection}
+The haptic test cases were broken down into dictionary lists containing arguments to be passed to the \texit{haptic} method. The arguments were dependent on the mode of operation the test case called for, the tempo desired, the time of execution, and whether the tempo was to change dynamically over time.
+
+The mode and tempo are written over serial to the haptic device and a start time is recorded. From here the program enters a while loop for the duration of test execution reading in from serial while awaiting the "onset" message. Once received it appends to a list for later data logging.
+
+If however, the test case calls for the dynamic mode of operation, the execution time is broken into quarters. Each quarter either increments or decrements the tempo based on the argument passed in by the test case. In this fashion, the dynamic haptic test cases closely emulate the sinusoidal tempo automation of the dynamic audio tests.
+\subsubsection{Tap Onset Detection}
+The tap method read from the incoming Arduino Uno serial line and decoded bytes from the buffer. The preamble was the char "B" which signified an incoming packet. The onset was timestamped and stored in a dataframe and this process repeated until either the haptic or audio methods passed through the closeFile global variable signifying the end of execution.
+\subsubsection{Audio Onset Detection}
+The wav files were individually analyzed using the \textit{librosa} package based on Steve Tjoa's MIR (Music Information Retrieval) website.\footnote{\url{https://musicinformationretrieval.com/onset_detection.html}}
+The onsets were detected via librosa's onsetDetect method which computed the spectral novelty function to find the peaks. The computation was then converted from frames to seconds with nearly nanosecond precision (See Figure \label{fig:AudioOnset}). The onsets for each audio test case were then stored in dictionary lists to be called upon later by the test suite in order to add timestamps to the seconds stored in the list.
+\begin{figure}[H]\ref{fig:AudioOnset}
+    \centering
+    \includegraphics[width=\columnwidth]{audioOnset}
+    \caption{Test Case A2a1 Audio Onset Detection Example}
+\end{figure}
+\subsubsection{Audio Rendering}
+
+\subsubsection{Data Logging}
+
+\subsubsection{Sanitization Procedure}\ref{sanitizationProcedure}
+
+\subsubsection{Plotting}
 
 \subsection{Tap Test Hardware} \label{tap_arduino}
 Closely following the design outlined in \ref{schultz2016tap}, a force sensitive resistor was connected across 5 V and the analog input pin A0 of the Arduino Uno. Bridged between A0 and GND was a 10 K resistor acting as a resistive divider. The code was based on the \textit{$fsr_silent_disc.ino$} developed by Schultz but expanded and modified to better suit this project. 
