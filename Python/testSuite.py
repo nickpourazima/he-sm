@@ -356,7 +356,16 @@ audioTestCases = {
     'A4b3': audioFile[30],
     'A4b4': audioFile[31],
 }
-
+audioTestCases2 = {
+    'A1a1': audioFile[0],
+    'A1a2': audioFile[1],
+    'A1a3': audioFile[2],
+    'A1a4': audioFile[3],
+    'A3a1': audioFile[16],
+    'A3a2': audioFile[17],
+    'A3a3': audioFile[18],
+    'A3a4': audioFile[19],
+}
 # check for serial
 if(os.path.exists(HAPTIC_SERIAL_PORT) and os.path.exists(TAP_SERIAL_PORT)):
     hapticSerial = serial.Serial(HAPTIC_SERIAL_PORT, HAPTIC_BAUD)
@@ -705,7 +714,7 @@ def dataAnalysis(count):
     }
 
     # Check for end of test, if so then output summary data file
-    if count == 16:
+    if count == 8:
         all_files = glob.iglob(os.path.join(currentPath, "*.csv"))
         summary = pd.concat((pd.read_csv(f, skipinitialspace=True)
                              for f in all_files), ignore_index=True)
@@ -758,19 +767,19 @@ def main():
         random.seed(10)
         hapticKeys = list(hapticTestCases.keys())
         shuffle(hapticKeys)
-        audioKeys = list(audioTestCases.keys())
+        audioKeys = list(audioTestCases2.keys())
         shuffle(audioKeys)
         allKeys = hapticKeys + audioKeys
         shuffle(allKeys)
         print(allKeys)
         fadeoutTimer = 3000
 
-        for key in hapticKeys:
+        for key in audioKeys:
             t0 = key
             t1 = Thread(target=playBeep, args=(fadeoutTimer,))
             t1.start()
             if(t0[0] == 'H'):
-                t2 = Thread(target=haptic, args=hapticTestCases.get('H1b1'))
+                t2 = Thread(target=haptic, args=hapticTestCases.get(key))
             elif(t0[0] == 'A'):
                 t2 = Thread(target=playback, args=[audioTestCases.get(key)])
             t3 = Thread(target=getTap)
@@ -786,4 +795,4 @@ def main():
                         new=2, autoraise=True)
 
 if __name__ == "__main__":
-    main()
+    main()  

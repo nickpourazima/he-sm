@@ -185,8 +185,16 @@ A high level breakdown of the framework is provided below.
             
             Plotting
 
-\subsection{Tap Onset Hardware}    \label{tap_arduino}
-\todo[inline]{fill out section}
+\subsection{Tap Test Hardware} \label{tap_arduino}
+Closely following the design outlined in \ref{schultz2016tap}, a force sensitive resistor was connected across 5 V and the analog input pin A0 of the Arduino Uno. Bridged between A0 and GND was a 10 K resistor acting as a resistive divider. The code was based on the \textit{$fsr_silent_disc.ino$} developed by Schultz but expanded and modified to better suit this project. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\columnwidth]{FSRHW}
+    \caption{Arduino Tap Test Hardware}
+\end{figure}
+
+Schultz had defined thresholds to determine the minimum FSR tap necessary to classify as a response. If the analog reading exceeded the threshold then the tap was windowed further to prevent debounce and the data packet readied for transmission. The packet consisted of the character "B" followed by onset time, offset time, and max force from the FSR reading, ending with the character "E" to signify the end of the packet. The trade off between responsiveness and threshold required to prevent a double bounce was finely tuned via oscilloscope and will be further explained in Section \ref{FSRregistry}.
 
 \subsection{Setup} \label{testSetup}
 To initialize setup, the subject is seated and given a pair of closed-back headphones. The FSR is situated to their preference, either dominant or non-dominant hand, and secured into place. Unlike a keyboard or button the FSR gives little to no feedback or rebound. This ensures a confident tap on each onset while providing no tactile response. The approach seeks to avoid intrinsic lag due to its independence of mechanical components. The delay limit is defined by the threshold applied in the software to avoid debounce, as discussed in Section \ref{development}
@@ -203,43 +211,67 @@ The Python file \textit{testSuite.py} is run and the UI will prompt the subject 
 \begin{figure}[]
     \centering
     \includegraphics[width=\columnwidth]{TestCaseFeedbackExample}
-    \caption{Test Case Feedback Example: Red circles are the tap onset, blue squares are the true onset}
+    \caption{Test Case Feedback Example: Red circles are the tap onset, blue squares are the true onset. The x-axis is the tap count, the y-axis is elapsed time.}
     \label{fig:TestCaseFeedbackEx}
 \end{figure}
 
 \subsection{Latency Evaluation} \label{latencyCalc}
-Significant effort was placed in determining the overall latency of the test system to instill a level of confidence in the validity and accuracy of the data points acquired. The sources of potential latency were isolated into the components identified below.
+Significant efforts were made to determine the overall latency of the test system and instill a level of confidence in the validity and accuracy of the data points acquired. The sources of potential latency were isolated into the components identified below.
 \begin{itemize}
-    \item FTDI-USB Communication
+    \item FTDI-USB communication from Pro Trinket (16 MHz) to laptop
     \begin{itemize}
         \item According to section 3.1 of the datasheet for FTDI based chipsets\footnote{\url{http://www.ftdichip.com/Support/Documents/AppNotes/AN232B-04_DataLatencyFlow.pdf}} , FTDI USB-Serial communication to PC exhibits by default a round trip delay of 16 ms intrinsic to the packet scheduler. When the latency timer expires and the buffer is not yet full any data in the 62 byte buffer is sent along with a short 2 byte status message (total of 64 bytes).
+        \item This 16 ms spec was confirmed by measuring incoming "onset" messages from the Pro Trinket over FTDI and comparing it to the known period. The jitter measurement was calculated and averaged via a custom script written in \textit{Go} and was found to average 8 ms in either direction, or a span of 16 ms. The swing seemed dependent on the period but always averaged to around 16 ms. See Figure \ref{fig:rtIndividual} for confirmation.
+        \begin{figure}[H] \label{fig:rtIndividual}
+            \centering  
+            \includegraphics[width=\columnwidth]{rtIndividual}
+            \caption{16 ms jitter on average for single device drift between "onset" message across FTDI over a set period of 500 ms}
+        \end{figure}
     \end{itemize}
-    \item USB $->$ Arduino Uno $->$ Laptop
-    \item 50 ms vibrotactile motor ramp up time (see Appendix)
-    \item Pro Trinket Haptic Onset Trigger Message (True Onset) $->$ PC $<-$ Tap Onset
-    \begin{itemize}
-        \item In order to quantify latency within the haptic design tests were repeatedly run within a closed loop environment. This meant that the onset trigger I/O pin at the gate node of the Pro Trinket was connected to the A0 pin on the Arduino Uno, emulating the same effect as a tap of the FSR.
-        \item Force Sensitive Resistor
-            * analog read/mention debounce threshold
-            * transmit time
-                * human input is never perfect, above the noise floor but just enough to get the input
-        \item Constant offset:  
-            * Within the haptic codes dual states of operation there exists two sources of error within the state machine. 
-                * The onset trigger in discrete mode starting $1/4$ of a period after 
-    \end{itemize}
-    \item Audio latency
-    \begin{itemize}
-        \item Audio driver and sound card latency estimate
+    \item The time to actually send "onset" message across serial was a negligible 0.6 ms as shown in Figure \ref{fig:onsetMessage}
+    \begin{figure}[H] \label{fig:onsetMessage}
+        \centering
+        \includegraphics[width=\columnwidth]{onset}
+        \caption{From the top: 1000 ms starter signal from Pro Trinket. Middle: starter TX line, End: stopper TX line on Arduino Uno}
+    \end{figure}
+    \item USB communication from Arduino Uno to laptop
+    \item Serial round trip latency
         \begin{itemize}
-            \item Tested via loopback method\footnote{\url{https://manual.audacityteam.org/man/latency_test.html}} with audio loopback dongle\footnote{\url{https://source.android.com/devices/audio/latency/loopback}}
+            \item The round trip latency of a single packet containing the "onset" trigger was sent across a digital pin on the Trinket over to a digital pin on the Arduino Uno, which triggered it's own serial "onset" trigger message.
+            \item The implications of this isolate the USB protocol scheduler as the main culprit for the latency seen during the test.
         \end{itemize}
-        \item Algorithmic latency (pyGame Audio library)
+    \item Time from FSR tap registry to Arduino TX \label{FSRregistry}
+    \begin{itemize}
+        \item analog read/mention debounce threshold
+        \item transmit time
+        \item human input is never perfect, above the noise floor but just enough to get the input
+    \end{itemize}
+    \item Haptic Device Latency
+    \begin{itemize}
+        \item In order to quantify latency within the haptic device tests were repeatedly run within a closed loop environment. This meant that the onset trigger I/O pin at the gate node of the Pro Trinket was connected to the A0 pin on the Arduino Uno, emulating the same effect as a tap of the FSR. The haptic test cases were run and the overall average asynchrony between true onset and tap onset across all test cases was found to be approximately -5 ms. The average on an individual test case basis would later be subtracted from the user test results to ensure fair results.
+        \item A correction factor was necessary since the gate would open and trigger the tap before the onset at the end of motor 4. This time window changed based on the period and mode of operation.
         \begin{itemize}
-            \item Sound detector circuit - gate output recorded, discrepancy between time recorded and reported time noted
+            \item The onset trigger in discrete mode starting $1/4$ of a period after
+            \item Onset trigger in continuous mode 2/9ths (5/9-3/9) of the period
+        \end{itemize}
+        \item Additionally, research informs a 50 ms vibrotactile motor ramp up time to reach human perceptibility as confirmed in Appendix \ref{fig:MotorRampUp}.
+    \end{itemize}
+    \item Audio Latency
+    \begin{itemize}
+        \item Audio driver and sound card latency estimate of laptop\footnote{Mid 2012 Macbook Pro Retina 16GB RAM 2.6GHz i7}
+        \begin{itemize}
+            \item Tested via loopback method\footnote{\url{https://manual.audacityteam.org/man/latency_test.html}} with audio loopback dongle\footnote{\url{https://source.android.com/devices/audio/latency/loopback}} at 44.1 kHz 24 bit with an I/O buffer size of 64 samples. The resultant roundtrip latency was a negligible 3.4 ms.
+        \end{itemize}
+        \item Test system/Algorithmic latency (pyGame Audio library)
+        \begin{itemize}
+            \item A sound detector circuit was used which consisted of a electret microphone, preamp, envelope follower, and Schmitt trigger. The microphone sensitivity was calibrated to match the headphone input. The laptop output was shifted to a single channel such that it was only outputting from the left to avoid any time delay introduction from the right. \item The gate pin of the sound detector was connected directly to the A0 input on the Arduino Uno. Any impulse exhibited by the headphones triggered the gate to output a digital signal. This triggered the Arduino identically to how the FSR registered a tap. 
+            \item The audio test cases were run 5 times each. The discrepancy between true onset and tap onset represented the audible delay in the signal chain. This was averaged across all tests to equate to approximately 32.64 ms.
         \end{itemize}
     \end{itemize}
     \item python thread time
-        * intrinsic jitter when that many asynchronous processes together
-        * File I/O
+        \begin{itemize}
+            \item intrinsic jitter when that many asynchronous processes together
+            \item File I/O
+        \end{itemize}
 \end{itemize}
 The overall summation was applied to each data point in the final analysis.
