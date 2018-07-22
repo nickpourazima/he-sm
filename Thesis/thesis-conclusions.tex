@@ -28,8 +28,19 @@ The code was altered to adapt the publish/subscribe methodology where simple num
        -d access_token=<accessToken>
 \end{lstlisting}
 
-\subsection{Beat Tracking}
-As part of the PhD work completed at the Queen Mary University of London, Adam Stark has developed a causal beat tracking algorithm intended for use in live performances\footnote{\url{http://adamstark.co.uk/project/btrack-a-real-time-beat-tracker/}}\ref{stark2009real}.
+\subsection{Real-time Beat Tracking}
+This work served as the foundational layer for the real-time beat tracking integration that is to follow. The goal is to have a haptic environmental sensing metronome, one which would intelligently adapt to the dynamics of its surroundings. Some preliminary research has been conducted to get a glimpse of the viability of such a system.
+
+As part of the PhD work completed at the Queen Mary University of London, Adam Stark has developed a causal beat tracking algorithm intended for use in live performances\footnote{\url{http://adamstark.co.uk/project/btrack-a-real-time-beat-tracker/}}\ref{stark2009real}. The real-time beat tracking results were comparable to top of the line non-causal systems. The algorithm was initially implemented in C++ with wrappers for Python but externals were later made available for Max/MSP.
+The Max patch was expanded to send instantaneous BPM signals over serial and thus communicate with the haptic device shown in Figure \ref{BTMaxPatch}
+
+\begin{figure}\label{BTMaxPatch}[H]
+    \centering
+    \includegraphics[width=\columnwidth]{BTMaxPatch}
+    \caption{Beat tracking max patch with additions for sending bpm over serial}
+\end{figure}
+
+This was an important step to determine feasability. Though some phasing occurs do to the jittery nature of the \textit{btrack} patch, some intelligent averaging is necessary to lock to a bpm. Work in the future can expand on this conceptually and also provide some windowing or system level delay to further synchronize the system.
 
 \subsection{Extra-musical Applications}
 
@@ -37,9 +48,9 @@ Parkingson's research
 
 Stroke gait rehabilitation research \cite{holland2014gait}
 
-Through their research they discovered the extension of the application towards those with restricted mobility and morphed the project into the haptic bracelet 4 years later.
+The same researchers who developed the haptic drumkit discovered the extension of the application towards those with restricted mobility and morphed the project into the haptic bracelet 4 years later.
 
-Stroke survivors usually suffer from  for the purpose of gait rehabilitation. The results were promising. 
+Stroke survivors usually suffer from for the purpose of gait rehabilitation. The results were promising. 
 
 Paper discusses the prior research of audio stimulation and how it yields immediate improvement through entrainment but that they are not lasting
 

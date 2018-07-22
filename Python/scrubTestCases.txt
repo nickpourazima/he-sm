@@ -57,25 +57,31 @@ Originally:
              8.91646259, 9.03256236, 9.218322, 9.33442177, 9.65950113, 9.84526077,
              9.96136054, 10.28643991, 10.61151927, 10.82049887],
              
+Neither:
+Craig = 486 - A7 
+Alex = 394 - A6 #done
+Corey = 514 - A5 #done
+Madeleine = 932 - A4 #done
 
-Craig = 486
-Dewey = 510
-Garrett = 729
-John = 399
-Madeleine = 932
-Mike = 390
-Rachel = 591
-Corey = 514 
-Madi = 379
-Stone = 521
-Joey = 407
 Judy = 412
-Alex = 394
-Danny = 506
-David = 552
-Gabe = 367
-Joie = 824
-Tino = 410
+Joey = 407
+
+Amateur:
+John = 399 - A3 #done
+Garrett = 729 - A2 #done
+Mike = 390 - A1 #done
+Madi = 379 - A0 #done
+
+Pro:
+Rachel = 591 - Not needed #done
+Dewey = 510 - N6 #done
+Danny = 506 - N5 #done 
+David = 552 - N4 #done
+Stone = 521 - N3 #done
+Gabe = 367 - N0 #done
+Joie = 824 - N1 #done
+Tino = 410 - N2 #done
+
 
 Prof	11	Rachel, Dewey, Stone + 5	8		8
 Ama	2	John, Joey, Madi	5	-1 Joey incomplete	4

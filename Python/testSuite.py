@@ -43,7 +43,7 @@ from threading import Thread
 from tabulate import tabulate
 
 # SERIAL VARS
-TAP_SERIAL_PORT = '/dev/tty.usbmodem14131'
+TAP_SERIAL_PORT = '/dev/tty.usbmodem14111'
 TAP_BAUD = 115200
 TIMEOUT = 0.25
 
@@ -678,15 +678,12 @@ def dataAnalysis(count):
     rawData['Missed Taps'] = rawData['Sanitized Tap Onset'].isnull().sum(axis=0)
     rawData['Phase Correction Response'] = rawData['Sanitized Asynchrony'].shift(-1)-rawData['Sanitized Asynchrony']
 
-    if(rawData[rawData['Test'].isin([hapticList1])]){
-        rawData['Latency'] = (rawData['IOI']*1)/4
-        rawData['Latency Corrected SA'] = rawData['Sanitized Asynchrony']+rawData['Latency']
-
-    }
-    elif(rawData[rawData['Test'].isin([hapticList2])]){
-        rawData['Latency'] = (rawData['IOI']*2)/9
-        rawData['Latency Corrected SA'] = rawData['Sanitized Asynchrony']+rawData['Latency']
-    }
+    # x = rawData[rawData['Test'].isin(hapticList1)]
+    # rawData['Latency'] = (x['IOI']*1)/4
+    # rawData['Latency Corrected SA'] = rawData['Sanitized Asynchrony']+rawData['Latency']
+    # y = rawData[rawData['Test'].isin(hapticList2)]
+    # rawData['Latency'] = (y['IOI']*2)/9
+    # rawData['Latency Corrected SA'] = rawData['Sanitized Asynchrony']+rawData['Latency']
 
     if not (os.path.isdir('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)):
         os.makedirs('/Users/nickpourazima/GitHub/he-sm/TestOutput/'+userName)

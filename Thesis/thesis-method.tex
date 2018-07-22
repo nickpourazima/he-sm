@@ -236,34 +236,47 @@ Significant efforts were made to determine the overall latency of the test syste
             \includegraphics[width=\columnwidth]{rtIndividual}
             \caption{16 ms jitter on average for single device drift between "onset" message across FTDI over a set period of 500 ms}
         \end{figure}
+    \item Serial round trip latency (TX Jitter)
+        \begin{itemize}
+            \item The round trip latency of a single packet containing the "onset" trigger was sent across a digital pin on the Trinket over to a digital pin on the Arduino Uno, which triggered it's own serial "onset" trigger message.
+            \item The implications of this isolate the USB protocol scheduler as the main culprit for the latency seen during the test.
+        \end{itemize}
     \end{itemize}
-    \item The time to actually send "onset" message across serial was a negligible 0.6 ms as shown in Figure \ref{fig:onsetMessage}
+    \item The time to actually send the "onset" message across serial was a negligible 0.6 ms as shown in Figure \ref{fig:onsetMessage}
     \begin{figure}[H] \label{fig:onsetMessage}
         \centering
         \includegraphics[width=\columnwidth]{onset}
         \caption{From the top: 1000 ms starter signal from Pro Trinket. Middle: starter TX line, End: stopper TX line on Arduino Uno}
     \end{figure}
-    \item USB communication from Arduino Uno to laptop
-    \item Serial round trip latency
-        \begin{itemize}
-            \item The round trip latency of a single packet containing the "onset" trigger was sent across a digital pin on the Trinket over to a digital pin on the Arduino Uno, which triggered it's own serial "onset" trigger message.
-            \item The implications of this isolate the USB protocol scheduler as the main culprit for the latency seen during the test.
-        \end{itemize}
     \item Time from FSR tap registry to Arduino TX \label{FSRregistry}
     \begin{itemize}
-        \item analog read/mention debounce threshold
-        \item transmit time
-        \item human input is never perfect, above the noise floor but just enough to get the input
+        \item Human input is never perfect. The tap onset needed to be triggered above the noise floor just enough to get the input. It took a few optimization runs to determine what constituted a real tap without triggering a second tap unintentionally. The original \textit{Tap Arduino} code would send the TX message only during the FSR ramp down or decay which introduced some latency. This bound was modified to instead be placed at the ramp up which minimized latency from tap to transmit to 294.4 microseconds as shown in Figure \ref{buttonTX}
+        \begin{figure}[H]\label{buttonTX}
+            \centering
+            \includegraphics[width=\columnwidth]{buttonTX}
+            \caption{FSR Button ramp up time before TX: 294.4 microseconds}
+        \end{figure}
     \end{itemize}
     \item Haptic Device Latency
     \begin{itemize}
-        \item In order to quantify latency within the haptic device tests were repeatedly run within a closed loop environment. This meant that the onset trigger I/O pin at the gate node of the Pro Trinket was connected to the A0 pin on the Arduino Uno, emulating the same effect as a tap of the FSR. The haptic test cases were run and the overall average asynchrony between true onset and tap onset across all test cases was found to be approximately -5 ms. The average on an individual test case basis would later be subtracted from the user test results to ensure fair results.
+        \item In order to quantify latency within the haptic device tests were repeatedly run within a closed loop environment. This meant that the onset trigger I/O pin at the gate node of the Pro Trinket was connected to the A0 pin on the Arduino Uno, emulating the same effect as a tap of the FSR.
+        \item The haptic test cases were run and the overall average asynchrony between true onset and tap onset across all test cases was found to be approximately -5 ms. The average on an individual test case basis would later be subtracted from the user test results to ensure fair results.
         \item A correction factor was necessary since the gate would open and trigger the tap before the onset at the end of motor 4. This time window changed based on the period and mode of operation.
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\columnwidth]{diagramGateHaptic}
+            \caption{Diagram of gate versus actual onset}
+        \end{figure}
         \begin{itemize}
-            \item The onset trigger in discrete mode starting $1/4$ of a period after
-            \item Onset trigger in continuous mode 2/9ths (5/9-3/9) of the period
+            \item Onset trigger in continuous mode 2/9ths (5/9-3/9) of the period. For a 1000 ms period the onset transmission does not occur until 2/9 * 1000 = 222.222 ms as confirmed in Figure \ref{hapticAdjustment}.
+            \begin{figure}[H]\label{hapticAdjustment}
+                \centering
+                \includegraphics[width=\columnwidth]{hapticAdjustment}
+                \caption{Haptic correction factor based on gate opening vs. actual onset message}
+            \end{figure}
+            \item The onset trigger in discrete mode starts $1/4$ of a period after.
         \end{itemize}
-        \item Additionally, research informs a 50 ms vibrotactile motor ramp up time to reach human perceptibility as confirmed in Appendix \ref{fig:MotorRampUp}.
+        % \item Additionally, research informs a 50 ms vibrotactile motor ramp up time to reach human perceptibility as confirmed in Appendix \ref{fig:MotorRampUp}.
     \end{itemize}
     \item Audio Latency
     \begin{itemize}
@@ -273,14 +286,16 @@ Significant efforts were made to determine the overall latency of the test syste
         \end{itemize}
         \item Test system/Algorithmic latency (pyGame Audio library)
         \begin{itemize}
-            \item A sound detector circuit was used which consisted of a electret microphone, preamp, envelope follower, and Schmitt trigger. The microphone sensitivity was calibrated to match the headphone input. The laptop output was shifted to a single channel such that it was only outputting from the left to avoid any time delay introduction from the right. \item The gate pin of the sound detector was connected directly to the A0 input on the Arduino Uno. Any impulse exhibited by the headphones triggered the gate to output a digital signal. This triggered the Arduino identically to how the FSR registered a tap. 
+            \item A sound detector circuit was used which consisted of a electret microphone, preamp, envelope follower, and Schmitt trigger. The microphone sensitivity was calibrated to match the headphone input. The laptop output was shifted to a single channel such that it was only outputting from the left to avoid any time delay introduction from the right. 
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=\columnwidth]{AudioLatency}
+                \caption{Audio Latency Setup}
+            \end{figure}
+            \item The gate pin of the sound detector was connected directly to the A0 input on the Arduino Uno. Any impulse exhibited by the headphones triggered the gate to output a digital signal. This triggered the Arduino identically to how the FSR registered a tap. 
             \item The audio test cases were run 5 times each. The discrepancy between true onset and tap onset represented the audible delay in the signal chain. This was averaged across all tests to equate to approximately 32.64 ms.
         \end{itemize}
     \end{itemize}
-    \item python thread time
-        \begin{itemize}
-            \item intrinsic jitter when that many asynchronous processes together
-            \item File I/O
-        \end{itemize}
 \end{itemize}
-The overall summation was applied to each data point in the final analysis.
+\subsubsection{Closed loop adjustments}
+Although it was important to classify the magnitude of delay introduced by two simultaneous serial devices, the closed loop haptic and audible tests were the most crucial to compensate for which meant correction on an averaged per test case basis. Though this was applied to individual test cases, the overall for audible tests equated to an average reduction of 32.64 ms and for the haptic based tests an addition of 5 ms.
