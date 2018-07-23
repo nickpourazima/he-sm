@@ -1,5 +1,5 @@
 \chapter{Data Analysis} \label{DataAnalysis}
-This chapter analyzes the results of the 16 users tested. It begins with a validation of findings from past sensorimotor synchronization research and claims mentioned in the SMS expectations section of Chapter 1 (\ref{SMSfindings}). 
+This chapter analyzes the results of the 16 users tested. It begins with a validation of findings from past sensorimotor synchronization research and claims mentioned in \ref{SMSfindings}; SMS expectations. 
 
 The results were overall promising, with the haptic modality outperforming audible, as expected, across dynamic beats. Specifically...
 
@@ -21,6 +21,27 @@ The instrumental breakdown can be seen in Figure \ref{fig:pieInst}
 
 Thirteen users had some sort of prior experience with an audible metronome and three did not. For most this was their first experience with a haptic device. All users chose their dominant arm to wear the haptic sleeve and chose their dominant hand to tap with.
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{AllSummary}
+    \caption{Summary across all participants}
+    \label{fig:AllSummary}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{GroupSummaries}
+    \caption{Group test summaries}
+    \label{fig:GroupSummaries}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{InstrumentSummaries}
+    \caption{Summaries per instrument}
+    \label{fig:InstrumentSummaries}
+\end{figure}
+
 \section{SMS Research Confirmations}
 Expect as IOI increases, $(SD_{asy})$ increases non linearly
 
@@ -40,33 +61,25 @@ Expect relatively constant NMA for changing IOI (dynamic tests)
 
 
 \section{Results}
-Overall negative mean asynchrony
-- Audible tests
-- Haptic tests
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\columnwidth]{AllSummary}
-    \caption{Overview of all tests across all participants}
-    \label{fig:AllSummary}
+    \includegraphics[width=\textwidth]{LCSA_KDE}
+    \caption{Kernel Density Estimation: Latency Corrected Sanitized Asynchrony for Static vs Dynamic Tests}
+    \label{fig:InstrumentSummaries}
 \end{figure}
 
-Plot normalized stability $(SD_{asy})$ vs IOI
-
-Plot ITI vs IOI
-
-Plot PCR
-\begin{figure}[H]
+\begin{figure}[h]
     \centering
-    \includegraphics[width=\columnwidth]{steady_LCSA_vs_IOI}
-    \caption{Latency Corrected Sanitized Asynchrony vs. Inter-Onset-Interval across static test cases. Haptic in orange, audible in green.}
+    \includegraphics[width=\textwidth]{steady_LCSA_vs_IOI}
+    \caption{Latency Corrected Sanitized Asynchrony vs. Inter-Onset-Interval across static test cases.}
     \label{fig:sLCSAvIOI}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\columnwidth]{dynamic_LCSA_vs_IOI}
-    \caption{Latency Corrected Sanitized Asynchrony vs. Inter-Onset-Interval across dynamic test cases. Haptic in orange, audible in green.}
+    \includegraphics[width=\textwidth]{dynamic_LCSA_vs_IOI}
+    \caption{Latency Corrected Sanitized Asynchrony vs. Inter-Onset-Interval across dynamic test cases.}
     \label{fig:dLCSAvIOI}
 \end{figure}
 
