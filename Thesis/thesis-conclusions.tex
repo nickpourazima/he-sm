@@ -10,7 +10,7 @@ The addition of BLE capability to issue commands over a paired interface such as
 
 Lastly, experimentation with other types of vibrotactiles; either the Tactor, TacHammer, or LNA's would be more optimized for touch applications with cleaner signals, dynamic range, and optimized for skin resonance (250Hz).
 
-\subsection{Wireless Prototype}
+\subsection{Wireless Prototype}\label{wirelessHP}
 Over the course of summer of 2018, a wireless prototype was developed which eliminated the FTDI over USB interface and was completely reliant on battery power. A 9 V was connected to a voltage regulator supplying up to 5 V for the motors and 3.3V for the new MCU, sourcing up to 500 mA/hour with enough isolation to have a significantly stronger motor vibration. The MCU was based on the Particle ecosystem, a cloud based IoT framework, and granted BLE and wireless capability. 
 \begin{figure}[H]
     \centering
