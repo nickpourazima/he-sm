@@ -2,16 +2,16 @@
 
 \chapter{Conclusions} \label{chapConclusions}
 
-
 \section{Future Work}
-Though much effort went into providing an important framework for the haptic to operate smoothly from a hardware standpoint, the most important progress with the final prototype was the solidification of the software framework. With the integration of delay independent state-machines performing synchronous tasks, haptic mode selection, and precise bpm control, the vibrotactile haptic could enter the next phases of development. 
+\subsection{Design Commentary}
+Much effort went into providing an important framework for the haptic to operate smoothly from a hardware standpoint but the most important progress with the final prototype was the solidification of the software framework. With the integration of delay independent state-machines performing synchronous tasks, haptic mode selection, and precise bpm control, the vibrotactile haptic could enter the next phases of development. 
 
-The addition of BLE capability to issue commands over a paired interface such as an app on a smartphone, custom PCB to minimize form factor, and independent node abstraction of each vibrotactile could be realized. This would allow wearers capability to place a programmable array anywhere on their body enabling wide surface area dispersion. 
+The addition of BLE capability to issue commands over a paired interface such as an app on a smartphone, custom PCB to minimize form factor, and independent node abstraction of each vibrotactile could be realized. This would allow wearers capability to place a programmable array anywhere on their body enabling wide surface area dispersion and source separation. 
 
 Lastly, experimentation with other types of vibrotactiles; either the Tactor, TacHammer, or LNA's would be more optimized for touch applications with cleaner signals, dynamic range, and optimized for skin resonance (250Hz).
 
 \subsection{Wireless Prototype}\label{wirelessHP}
-Over the course of summer of 2018, a wireless prototype was developed which eliminated the FTDI over USB interface and was completely reliant on battery power. A 9 V was connected to a voltage regulator supplying up to 5 V for the motors and 3.3V for the new MCU, sourcing up to 500 mA/hour with enough isolation to have a significantly stronger motor vibration. The MCU was based on the Particle ecosystem, a cloud based IoT framework, and granted BLE and wireless capability. 
+Over the course of summer of 2018, a wireless prototype was developed which eliminated the FTDI over USB interface and was completely reliant on battery power. A 9 V was connected to a voltage regulator supplying up to 5 V for the motors and 3.3V for the new MCU, sourcing up to 500 mA/hour with enough isolation to have a significantly stronger motor vibration. The MCU was based on the Particle\footnote{\url{https://www.particle.io/}} ecosystem, a cloud based IoT framework, and granted BLE and wireless capability.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\columnwidth]{latestProto}
@@ -31,19 +31,20 @@ The code was altered to adapt the publish/subscribe methodology where simple num
 \subsection{Real-time Beat Tracking}
 This work served as the foundational layer for the real-time beat tracking integration that is to follow. The goal is to have a haptic environmental sensing metronome, one which would intelligently adapt to the dynamics of its surroundings. Some preliminary research has been conducted to get a glimpse of the viability of such a system.
 
-As part of the PhD work completed at the Queen Mary University of London, Adam Stark has developed a causal beat tracking algorithm intended for use in live performances\footnote{\url{http://adamstark.co.uk/project/btrack-a-real-time-beat-tracker/}}\ref{stark2009real}. The real-time beat tracking results were comparable to top of the line non-causal systems. The algorithm was initially implemented in C++ with wrappers for Python but externals were later made available for Max/MSP.
-The Max patch was expanded to send instantaneous BPM signals over serial and thus communicate with the haptic device shown in Figure \ref{BTMaxPatch}
+As part of the PhD work completed at the Queen Mary University of London, Adam Stark has developed a causal beat tracking algorithm intended for use in live performances\footnote{\url{http://adamstark.co.uk/project/btrack-a-real-time-beat-tracker/}}\cite{stark2009real}. The real-time beat tracking results were comparable to top of the line non-causal systems. The algorithm was initially implemented in C++ with wrappers for Python but externals were later made available for Max/MSP.
+The Max patch was expanded to fit the context of this work. In doing so the patch was retrofitted to send instantaneous BPM signals over serial thus communicating with the haptic device shown in Figure \ref{fig:BTMaxPatch}.
 
-\begin{figure}\label{BTMaxPatch}[H]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\columnwidth]{BTMaxPatch}
     \caption{Beat tracking max patch with additions for sending bpm over serial}
+    \label{fig:BTMaxPatch}
 \end{figure}
 
-This was an important step to determine feasability. Though some phasing occurs do to the jittery nature of the \textit{btrack} patch, some intelligent averaging is necessary to lock to a bpm. Work in the future can expand on this conceptually and also provide some windowing or system level delay to further synchronize the system.
+This was an important step to determine feasibility. Though some phasing occurs do to the jittery nature of the \textit{btrack} patch, some intelligent averaging is necessary to lock to a bpm. Work in the future can expand on this conceptually and also provide some windowing or system wide delay to provide further synchronization.
 
 \subsection{Extra-musical Applications}
-
+\todo[inline]{Conclusion needs work}
 Parkingson's research
 
 Stroke gait rehabilitation research \cite{holland2014gait}

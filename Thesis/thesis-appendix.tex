@@ -9,22 +9,20 @@ This chapter briefly touches on the field of haptics \ref{hintro} and delves int
 The skin is lined with an array of sensory receptors which respond to mechanical pressure and distortions such as skin deformation. The \textit{lamellated} or \textit{pacinian corpuscles} (PC) are responsible for sensitivity to vibration and pressure. These rapidly adapting receptors are responsible for vibrotactile perception in glabrous skin. 
 
 Sensitivity to a tactile stimulus grows with the area in contact with the skin and also improves with the stimulus duration until it reaches a point of saturation. When pressure is continuous an effect called \textit{haptic masking} (also known as the \textit{summation effect}) is possible. The overstimulation of the \textit{pacinian corpuscles} causes the brain to ignore these messages with a mechanical filtering system which renders the stimuli to noise in order to focus on other important happenings. If this was not the case, a person could for example feel the pressure exerted by wearing clothing \cite{choi2013vibrotactile}. This phenomena is important to consider when dealing with haptic placement. As mentioned in \ref{tactileModality}, when the vibrotactiles were placed over a larger area haptic masking was avoided and the results closely matched the auditory modality.
-
 \subsection{Haptic Considerations} \label{hapticConsiderations}
 The following questions arise based on extensive research done by Choi and Kuchenbecker \cite{choi2013vibrotactile} and are crucial concepts underpinning the creation a meaningful haptic:
 \begin{enumerate}
     \item \emph{Can the user feel it?}
 Perceptibility of vibrotactile stimuli is strongly dependent on the frequency of vibration. The minimum threshold is observed to be between 150-300Hz and can cover an area smaller than 0.1 micrometer. The absolute thresholds are dependent on factors such as body site, contact area, stimulus duration, stimulus waveform, contact force, skin temperature, presence of other masking stimuli, and age.
-
     \item \emph{Can the user distinguish between the different vibrotactile cues being displayed?}
 This is quantified by the discrimination or \textit{difference threshold} also called the \textit{Just Noticeable Difference} (JND). It is defined as the smallest amount a stimulus intensity much change to produce a noticeable change in sensory experience. The JND is measured as a \textit{Weber fraction}:
 ${\Delta}$I/I = k or the ratio of difference threshold to the reference level.
 Research into experimental psychology has deemed a 20-30\% difference in amplitude or frequency is necessary for robust discrimination between vibrotactile stimuli in practical applications.
-
     \item \emph{How strong does a certain vibrotactile cue feel to the user?}
 \textit{Steven's power law} describes the relationship between the magnitude of a physical stimulus and its perceived intensity or strength. See Figure \ref{fig:StevensPowerLaw}
 \begin{figure}[H]
     \includegraphics[width=\linewidth,height=\textheight,keepaspectratio]{Steven's_Power_Law}
+    \caption{Steven's Power Law}
     \label{fig:StevensPowerLaw}
 \end{figure}
 When a stimulus intensity \textit{I} is above its absolute threshold, humans perceive its magnitude as \begin{math}\Psi(I)\end{math}(perceptual strength). The exponent (dependent on stimulation freq) determines the growth rate of the perceived magnitude and ranges from 0.35 to 0.86 for vibrotactiles. Perceived intensity is a function of frequency and amplitude of vibration (also affecting perceived pitch).
@@ -139,7 +137,7 @@ Initial introspection towards capturing the squeeze and release sensation led to
 The design was inspired and assembled per \textit{Adafruit} specification \cite{Solenoid}. 
 The base of an N-channel MOSFET was connected through a 1K resistor to a digital I/O pin on the trinket per Figure \ref{SolenoidSchematic}. The collector was connected through the solenoid and diode in parallel to Vcc running at 5V.
 \begin{figure}[H]
-    \includegraphics[width=\linewidth,height=\textheight,keepaspectratio]{Solenoid_Schematic}
+    \includegraphics[width=\columnwidth]{Solenoid_Schematic}
     \caption{Solenoid Schematic}
     \label{SolenoidSchematic}
 \end{figure}
@@ -180,13 +178,13 @@ The goal of this design was to test the ERM sensation on a portable wearable. Th
     To experiment with triggering the vibrotactile wirelesssly, the bluetooth low energy (BLE) module was added and the send and receive (Tx/Rx) pins were connected as referenced in Figure \ref{fig:Proto2}. The battery was connected via the built-in terminal clip and last the entire prototype was fitted into the space of a sports wristband with the vibrotactile on the inside touching the skin.
 
     \begin{figure}[H]
-        \includegraphics[width=\linewidth,height=\textheight,keepaspectratio]{Proto2_bb}
+        \includegraphics[width=\columnwidth]{Proto2_bb}
         \caption{Prototype 2 - Single vibrotactile, wireless connectivity}
         \label{fig:Proto2}
     \end{figure}
 
 \subsubsection{Method}
-    Once the hardware was setup, the haptic library was iterated through for selection of the most influential effect. The optimal sensation chosen was a queue of two chained effects according to the \underline{DRV2605 datasheet}\cite{Adafruit}:
+    Once the hardware was setup, the haptic library was iterated through for selection of the most influential effect. The optimal sensation chosen was a queue of two chained effects according to the \underline{DRV2605 datasheet}\footnote{\url{http://www.ti.com/lit/ds/symlink/drv2605.pdf}}:
     \begin{itemize}
         \item 83 - Transition Ramp Up Long Smooth 2 - 0 to 100\%
         \item 71 - Transition Ramp Down Long Smooth 2 - 100\% to 0
@@ -236,13 +234,13 @@ The main board was reverted back to that used in the solenoid prototype, the 5V 
 \end{table}
 
 \subsubsection{Assembly}
-Since each digital I/O of the Trinket could only source 20mA, four N-channel 2N7000 transistors were chosen to act as switches and current isolators for controlling power to the motors. These are labelled (N) in Figure \ref{FinalProto}
+Since each digital I/O of the Trinket could only source 20mA, four N-channel 2N7000 transistors were chosen to act as switches and current isolators for controlling power to the motors. These are labelled (N) in Figure \ref{fig:FinalProto}
 
 Each motor was connected from the power source (5V Vcc), to the drain of the transistor. When the transistor received a signal past its bias voltage of 0.8V it was switched on. This allowed the drain-source channel to be opened and an onrush of current to flow from Vcc to the motors and through to ground. 
 
 A 1N4001 diode was placed in parallel with the motor from the 5V Vcc node to the drain of the N-channel 2N7000 to protect the transistor by shorting out the onrush of back current emitted from the motor during immediate shutoff. Principally, the motor will act as an inductor; a sudden change in current creates an equivalent voltage to keep that current flowing short term. This could fry the transistor if the diode was not in place to short out this negative voltage spike as shown in \ref{fig:MotorRinging} 
 \begin{figure}[H]
-    \includegraphics[width=\linewidth,height=\textheight,keepaspectratio]
+    \includegraphics[width=\columnwidth]
     {ringing}
     \caption{Motor ringing after abrupt shutoff}
     \label{fig:MotorRinging}
@@ -251,7 +249,7 @@ A 1N4001 diode was placed in parallel with the motor from the 5V Vcc node to the
 The digital pins 5,6,9,10 (denoted with yellow and grey wires in Figure \ref{fig:FinalProto}) output a pulse-width modulated signal to be used as triggers, or control switches, for the transistors. In order to limit the current that the digital output must source and to protect the transistor gate, a 220 Ohm resistor was connected across the digital I/O pin and the gate of the 2N7000 for each pin.
 
 \begin{figure}[H]
-    \includegraphics[width=\linewidth,height=\textheight,keepaspectratio]
+    \includegraphics[width=\columnwidth]
     {FinalProto_bb}
     \caption{Final prototype wiring mockup}
     \label{fig:FinalProto}
@@ -259,7 +257,7 @@ The digital pins 5,6,9,10 (denoted with yellow and grey wires in Figure \ref{fig
 
 The voltage across the rails (Vcc and ground) was viewed on a Rohde \& Schwarz RTO 2004 oscilloscope. The analyzed waveform showed some unfavorable dips primarily when all motors were running due to the high current draw from the ERMs in addition to some ringing (overshoot), seen in Fig \ref{fig:precaps}.
 \begin{figure}[H]
-    \includegraphics[width=\linewidth,height=\textheight,keepaspectratio]
+    \includegraphics[width=\columnwidth]
     {pre-cap}
     \caption{V drop across Vcc and HF ringing: Pre-cap}
     \label{fig:precaps}
@@ -268,45 +266,40 @@ The voltage across the rails (Vcc and ground) was viewed on a Rohde \& Schwarz R
 Capacitors were added to act as buffers from the power source to the motors, in doing so they helped provide immediate current to the motors when the PWM input signal engaged the transistor and the motor would go from an off state to an immediate on state drawing high amounts of current. Large electrolytic capacitors are known for their ability to supply high currents for a few milliseconds, more so than a battery or in the haptic wearables case, USB power. These were added across Vcc and ground nearest to the Trinket as well as across each of the node rails nearest to the motors. The change in output shape can be analyzed in Fig \ref{fig:postcaps}.
 
 \begin{figure}[H]
-    \includegraphics[width=\linewidth,height=\textheight,keepaspectratio]
+    \includegraphics[width=\columnwidth]
     {post-cap}
     \caption{V drop across Vcc: Post-cap}
     \label{fig:postcaps}
 \end{figure}
-
 As an additional manual tap tempo option for the user to experiment with, a push-button was added and connected to the only interrupt capable pin on the Trinket, PIN 3. An RC combination was chosen to act as a low-pass filter to protect against debounce scenarios.
-
 \begin{figure}[H]
-    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]
+    \includegraphics[width=\columnwidth]
     {FinalProto_schem}
     \caption{Final prototype abstracted schematic}
     \label{fig:FinalProtoSchem}
 \end{figure}
-
 \subsubsection{Motor Characterization}
 In order to determine an accurate baseline for motor ramp up, a singular motor was firmly attached to a piezoelectric transducer. The remaining motors were connected to the digital bus of the scope for timing analysis. 
 \begin{figure}[H]
-    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]
+    \includegraphics[width=\columnwidth]
     {motorramp}
     \caption{Motor ramp up time}
     \label{fig:MotorRampUp}
 \end{figure}
-
 As seen in Fig \ref{fig:MotorRampUp}, the motors reach full amplitude over approximately 67 ms before the signal goes low and starts to decay. The AC shape of the waveform is due to the nature of the ERM. The rotating mass translates left and right movement into a voltage oscillating in amplitude. Multiple ramp up times were averaged using this method such that the time before perceptibility was determined to be about a quarter of the ramp up time (approximately $50 ms$), in agreement with \ref{HD}. This is clearly shown in Fig \ref{fig:MotorRampUp2} below.
 \begin{figure}[H]
-    \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]
+    \includegraphics[width=\columnwidth]
     {motorramp2}
     \caption{$50ms$ motor ramp up time to perceptibility}
     \label{fig:MotorRampUp2}
 \end{figure}
-
-\subsection{Software}
+\subsection{Haptic Software}
 The code was written in the Arduino IDE which utilizes C++. Outside of the tap tempo hardware push button, the main control flow was through serial communication over FTDI. The device communicated at 115200 baud and a small method was written to read the serial buffer and parse the incoming bytes into integers. The first input was a setter to store the current operation mode with 1 being the Discrete (Instantaneous) Mode and 2 Continuous. Afterwards, any other number (thresholded from 20 to 220) would be stored as the bpm. The period was calculated using formula \ref{eq:period}
 
 The main control flow was two state machines which were delay independent. Depending on mode selection it would send digitalWrite commands to each motor within the set time period.
 Though the analogWrite functionality built into the Arduino IDE could PWM the signal and potentially control the motor just below its turn on state, the transistors would not allow this due to their rapid speed and turn on voltage and the motors would be always vibrating. This was a design decision informed by the previous single vibrotactile prototype implementation.
 
-The first state started a millisecond precision timer. In discrete mode the second state wrote all digitalIO pins HIGH for a quarter of the period as shown in Fig \ref{fig:state1}. A half on/off implementation was considered but determined to be not as efficient in communicating rapid pulses since the ramp down time overlapped with the next on period. During this state a flag was printed over serial to be read in later indicating when the test software could timestamp the onset.
+The first state started a millisecond precision timer. In discrete mode the second state wrote all digitalIO pins HIGH for a quarter of the period. A half on/off implementation was considered but determined to be not as efficient in communicating rapid pulses since the ramp down time overlapped with the next on period. During this state a flag was printed over serial to be read in later indicating when the test software could timestamp the onset.
 
 \begin{lstlisting}[language=C]
     void go(){
@@ -345,7 +338,7 @@ The first state started a millisecond precision timer. In discrete mode the seco
 \end{lstlisting}
 % \caption{Discrete/Instantaneous state machine}
 
-The state machine in continuous mode functioned similarly but was divided into 4 ramp-up states and 4 ramp-down states as shown in Fig \ref{fig:state2}. Each state held its vibrotactile high for 1/9 of the overall period or IOI but lingered on the fourth vibrotactile slightly longer \textit{(2/9th's * IOI)} to convey the pinnacle of the beat. This state also sent the onset trigger.
+The state machine in continuous mode functioned similarly but was divided into 4 ramp-up states and 4 ramp-down states. Each state held its vibrotactile high for 1/9 of the overall period or IOI but lingered on the fourth vibrotactile slightly longer \textit{(2/9th's * IOI)} to convey the pinnacle of the beat. This state also sent the onset trigger.
 
 % \caption{Continous state machine}
 \begin{lstlisting}[language=C]
@@ -419,9 +412,130 @@ The state machine in continuous mode functioned similarly but was divided into 4
       }
 \end{lstlisting}
 
-To confirm the period of each motor the transistor gates were connected to a USB logic analyzer measured at 60 bpm (1000 ms). The behavior was precisely as expected as shown in Figure \ref{HPC}
-\begin{figure}[H]\label{HPC}
+To confirm the period of each motor the transistor gates were connected to a USB logic analyzer measured at 60 bpm (1000 ms). The behavior was precisely as expected as shown in Figure \ref{fig:HPC}
+\begin{figure}[H]\label{fig:HPC}
     \centering
     \includegraphics[width=\columnwidth]{HapticPeriodConfirmation}
     \caption{Period confirmation from gates for ramp up and down mode}
 \end{figure}
+
+\chapter{Test Suite}
+\section{Software Development} \label{development}
+A pseudocode breakdown of the framework is provided below. The methods were written in object oriented fashion. The critical sub-components of the test suite are discussed below. Please note, it would be most beneficial to follow along with \textit{testSuite.py} from the repository\footnote{\url{https://github.com/afaintillusion/he-sm}}.
+
+\subsection{GUI}
+The GUI was written with the Tk framework\footnote{\url{https://en.wikipedia.org/wiki/Tk_(software)}}. It consisted of three frames and a main class which instantiated the others. The \textit{StartPage} stored the \textit{userName} to be later anonymized via a simple char to int summary conversion technique. Upon clicking, the user was presented with the \textit{InstructionPage}. Once the terms of the test were understood and accepted, the final \textit{TestPage} prepares the user for the upcoming practice tests. The main code execution triggers once the \textbf{Start Test} button is pressed.
+\subsection{Multithreading}
+Since the test suite read from two serial devices simultaneously, there needed to be a non-blocking methodology that allowed uninterrupted flow control; this was provided from the import of \textit{threading} from the Python \textit{Thread} library. Once the user started the test, the practice mode began. Here a thread was initiated which created the beep timer. At the end of the audible tone the thread completed and a second thread started which passed the arguments of the test cases (either Haptic or Audio) into the method. A third thread started simultaneously as the second and focussed on acquiring the tap onsets. These threads worked in parallel during the test case duration and upon completion passed arguments to the data analysis method for logging in a continuously appending Pandas dataframe.
+\subsection{Haptic Onset Detection}
+The haptic test cases were broken down into dictionary lists containing arguments to be passed to the \textit{haptic} method. The arguments were dependent on the test case mode of operation, desired tempo, execution time, and whether the tempo was to change dynamically over time.
+
+The mode and tempo are written over serial to the haptic device and a start time is recorded. From here the program enters a while loop for the duration of test execution reading actively from serial to await an \textit{onset} message. Once received it appends to a list for future data logging.
+
+If however, the test case calls for the dynamic mode of operation, the execution time is broken into quarters. Each quarter either increments or decrements the tempo based on the argument passed in by the test case. In this fashion, the dynamic haptic test cases closely emulate the sinusoidal tempo automation of the dynamic audio tests.
+\subsection{Tap Onset Detection}
+The tap method read from the incoming Arduino Uno serial line and decoded bytes from the buffer. The preamble was the char B which signified an incoming packet followed by the binary data sequence and terminated with an E. The onset was timestamped and stored in a dataframe and this process repeated until either the haptic or audio methods passed through the closeFile global variable signifying the end of execution.
+\subsection{Audio Onset Detection}
+The wav files were individually analyzed using the \textit{librosa} package based on Steve Tjoa's MIR (Music Information Retrieval) website.\footnote{\url{https://musicinformationretrieval.com/onset_detection.html}}
+The onsets were detected via librosa's onsetDetect method which computed the spectral novelty function to find the peaks. The computation was then converted from frames to seconds with nearly nanosecond precision shown in Figure \ref{fig:AudioOnset}. The onsets for each audio test case were then stored in dictionary lists to be called upon later by the test suite in order to add timestamps to the seconds stored in the list.
+\begin{figure}[H]\label{fig:AudioOnset}
+    \centering
+    \includegraphics[width=\columnwidth]{audioOnset}
+    \caption{Test Case A2a1 Audio Onset Detection Example}
+\end{figure}
+\subsection{Audio Rendering}
+A mixer object was imported from \textit{pyGame}\footnote{\url{https://www.pygame.org/}}, a module for loading sound objects and controlling playback. The object was initialized at 16 bit 44.1 kHz over 2 channels with a buffer size of 64. The buffer size was experimented with to balance lowest latency without audio dropout. The playback method loaded the audio file passed through the method argument and set the volume. Once the mixer play method was called a separate \textit{getBusy} object ran in a while loop during audio playback to find out if the buffer was still busy or not. This object appended the audio file playback start time to a temporary list which was added to the audio onset dictionary list aforementioned and written to a dataframe.
+\subsection{Data Logging}
+All of the timestamps and onsets were piped into a Pandas\footnote{\url{https://pandas.pydata.org/}} dataframe. The dataframe works almost like an SQL table, allowing for mutable size, different column types, manipulation of axes, arithmetic operations, and easy plotting. Duplicate entries recorded were dropped for same measure along with the first and last values of each test to ensure fairness. From the tap and true onsets, the asynchrony was calculated and stored in milliseconds. From the difference between the current line and next line true onset, the inter onset interval (IOI) was recorded and output in milliseconds. Missed taps were tallied based on null values for tap onsets where true onsets existed. Last, the phase correction response was gleaned as the delta between current and next asynchrony.
+\subsection{Sanitization Procedure}\label{sanitizationProcedure}
+It was important to have a method in place for synchronizing results if the user ever missed a tap and tried to get back on beat. Without it, there would be an undesired shift in the dataframe and the asynchrony values would be both miscalculated and unrealistically high. The numpy select method was utilized to filter choices based on conditions within an array (or dataframe). A maximum point of acceptance was established by taking half the IOI added to the true onset. Similarly the minimum value was taken as half the prior IOI added to the true onset. Every tap onset within a test cases dataframe was shifted through the max and min thresholds to determine whether a tap onset belonged to a different true onset. The new column created was called the \textit{Sanitized Tap Onset} and from here the \textit{Sanitized Asynchrony} was calculated.
+
+\subsection{Plotting}
+At the end of the data analysis method a plot based on the current dataframe test case was performed using plotly\footnote{\url{https://plot.ly/}}. This was a snapshot of the time versus onsets for each test case and can be seen in Figure \ref{fig:TestCaseFeedbackEx}.
+
+\section{Tap Test Hardware} \label{tap_arduino}
+Closely following the design outlined in \cite{schultz2016tap}, a force sensitive resistor was connected across 5 V and the analog input pin A0 of the Arduino Uno. Bridged between A0 and GND was a 10 K resistor acting as a resistive divider. The code was based on the \textit{$fsrSilentDisc.ino$} sketch developed by Schultz but expanded and modified to better suit this project.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\columnwidth]{FSRHW}
+    \caption{Arduino Tap Test Hardware}
+\end{figure}
+
+Schultz had defined thresholds to determine the minimum FSR tap necessary to classify as a response. If the analog reading exceeded the threshold then the tap was windowed further to prevent debounce and the data packet readied for transmission. The packet consisted of the character "B" followed by onset time, offset time, and max force from the FSR reading, ending with the character "E" to signify the end of the packet. The trade off between responsiveness and threshold required to prevent a double bounce was finely tuned via oscilloscope and will be further explained in Section \ref{FSRregistry}.
+
+\section{Latency Evaluation} \label{latencyCalc}
+Significant efforts were made to determine the overall latency of the test system and instill a level of confidence in the validity and accuracy of the data points acquired. The sources of potential latency were isolated into the components identified below.
+\begin{itemize}
+    \item FTDI-USB communication from Pro Trinket (16 MHz) to laptop
+    \begin{itemize}
+        \item According to section 3.1 of the datasheet for FTDI based chipsets\footnote{\url{http://www.ftdichip.com/Support/Documents/AppNotes/AN232B-04_DataLatencyFlow.pdf}} , FTDI USB-Serial communication to PC exhibits, by default, a round trip delay of 16 ms intrinsic to the packet scheduler. When the latency timer expires and the buffer is not yet full any data in the 62 byte buffer is sent along with a short 2 byte status message (total of 64 bytes).
+        \item This 16 ms spec was confirmed by measuring incoming "onset" messages from the Pro Trinket over FTDI and comparing it to the known period. The jitter measurement was calculated and averaged via a custom script written in \textit{Go} and was found to average 8 ms in either direction, or a span of 16 ms. The swing seemed dependent on the period but always averaged to around 16 ms. See Figure \ref{fig:rtIndividual} for confirmation.
+        \begin{figure}[H] \label{fig:rtIndividual}
+            \centering  
+            \includegraphics[width=\columnwidth]{rtIndividual}
+            \caption{16 ms jitter on average for single device drift between "onset" message across FTDI over a set period of 500 ms}
+        \end{figure}
+    \item Serial round trip latency (TX Jitter)
+        \begin{itemize}
+            \item The round trip latency of a single packet containing the "onset" trigger was sent across a digital pin on the Trinket over to a digital pin on the Arduino Uno, which triggered it's own serial "onset" trigger message.
+            \item The implications of this isolate the USB protocol scheduler as the main culprit for the latency seen during the test.
+        \end{itemize}
+    \end{itemize}
+    \item The time to actually send the "onset" message across serial was a negligible 0.6 ms as shown in Figure \ref{fig:onsetMessage}.
+    \begin{figure}[H] \label{fig:onsetMessage}
+        \centering
+        \includegraphics[width=\columnwidth]{onset}
+        \caption{From the top: 1000 ms starter signal from Pro Trinket. Middle: starter TX line, End: stopper TX line on Arduino Uno}
+    \end{figure}
+    \item Time from FSR tap registry to Arduino TX \label{FSRregistry}
+    \begin{itemize}
+        \item Human input is never perfect. The tap onset needed to be triggered above the noise floor just enough to get the input. It took a few optimization runs to determine what constituted a real tap without triggering a second tap unintentionally. The original \textit{Tap Arduino} code would send the TX message only during the FSR ramp down or decay which introduced some latency. This bound was modified to instead be placed at the ramp up which minimized latency from tap to transmit to 294.4 microseconds as shown in Figure \ref{fig:buttonTX}
+        \begin{figure}[H]\label{fig:buttonTX}
+            \centering
+            \includegraphics[width=\columnwidth]{buttonTX}
+            \caption{FSR Button ramp up time before TX: 294.4 microseconds}
+        \end{figure}
+    \end{itemize}
+    \item Haptic Device Latency
+    \begin{itemize}
+        \item In order to quantify latency within the haptic device tests were repeatedly run within a closed loop environment. This meant that the onset trigger I/O pin at the gate node of the Pro Trinket was connected to the A0 pin on the Arduino Uno, emulating the same effect as a tap of the FSR.
+        \item The haptic test cases were run and the overall average asynchrony between true onset and tap onset across all test cases was found to be approximately -5 ms. The average on an individual test case basis would later be added from the user test results to ensure fair results.
+        \item A correction factor was necessary since the gate would open and trigger the tap before the onset at the end of motor 4. This time window changed based on the period and mode of operation.
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=\columnwidth]{diagramGateHaptic}
+            \caption{Diagram of gate versus actual onset}
+        \end{figure}
+        \begin{itemize}
+            \item Onset trigger in continuous mode 2/9ths (5/9-3/9) of the period. For a 1000 ms period the onset transmission does not occur until 2/9 * 1000 = 222.222 ms as confirmed in Figure \ref{fig:hapticAdjustment}.
+            \begin{figure}[H]\label{fig:hapticAdjustment}
+                \centering
+                \includegraphics[width=\columnwidth]{hapticAdjustment}
+                \caption{Haptic correction factor based on gate opening vs. actual onset message}
+            \end{figure}
+            \item The onset trigger in discrete mode starts $1/4$ of a period after.
+        \end{itemize}
+        % \item Additionally, research informs a 50 ms vibrotactile motor ramp up time to reach human perceptibility as confirmed in Appendix \ref{fig:MotorRampUp}.
+    \end{itemize}
+    \item Audio Latency
+    \begin{itemize}
+        \item Audio driver and sound card latency estimate of laptop\footnote{Mid 2012 Macbook Pro Retina 16GB RAM 2.6GHz i7}
+        \begin{itemize}
+            \item Tested via loopback method\footnote{\url{https://manual.audacityteam.org/man/latency_test.html}} with audio loopback dongle\footnote{\url{https://source.android.com/devices/audio/latency/loopback}} at 44.1 kHz 24 bit with an I/O buffer size of 64 samples. The resultant roundtrip latency was a negligible 3.4 ms.
+        \end{itemize}
+        \item Test system/Algorithmic latency (pyGame Audio library)
+        \begin{itemize}
+            \item A sound detector circuit was used which consisted of a electret microphone, preamp, envelope follower, and Schmitt trigger. The microphone sensitivity was calibrated to match the headphone input. The laptop output was shifted to a single channel such that it was only outputting from the left to avoid any time delay introduction from the right. 
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=\columnwidth]{AudioLatency}
+                \caption{Audio Latency Setup}
+            \end{figure}
+            \item The gate pin of the sound detector was connected directly to the A0 input on the Arduino Uno. Any impulse exhibited by the headphones triggered the gate to output a digital signal. This triggered the Arduino identically to how the FSR registered a tap. 
+            \item The audio test cases were run 5 times each. The discrepancy between true onset and tap onset represented the audible delay in the signal chain. This was averaged across all tests to equate to approximately 32.64 ms.
+        \end{itemize}
+    \end{itemize}
+\end{itemize}
+\subsection{Closed loop adjustments}
+Although it was important to classify the magnitude of delay introduced by two simultaneous serial devices, the closed loop haptic and audible tests were the most crucial to compensate for which meant correction on an averaged per test case basis. The overall for audible tests equated to an average reduction of 32.64 ms and for the haptic based tests an addition of 5 ms.
