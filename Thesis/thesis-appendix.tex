@@ -413,10 +413,11 @@ The state machine in continuous mode functioned similarly but was divided into 4
 \end{lstlisting}
 
 To confirm the period of each motor the transistor gates were connected to a USB logic analyzer measured at 60 bpm (1000 ms). The behavior was precisely as expected as shown in Figure \ref{fig:HPC}
-\begin{figure}[H]\label{fig:HPC}
+\begin{figure}[H]
     \centering
     \includegraphics[width=\columnwidth]{HapticPeriodConfirmation}
     \caption{Period confirmation from gates for ramp up and down mode}
+    \label{fig:HPC}
 \end{figure}
 
 \chapter{Test Suite}
@@ -438,10 +439,11 @@ The tap method read from the incoming Arduino Uno serial line and decoded bytes 
 \subsection{Audio Onset Detection}
 The wav files were individually analyzed using the \textit{librosa} package based on Steve Tjoa's MIR (Music Information Retrieval) website.\footnote{\url{https://musicinformationretrieval.com/onset_detection.html}}
 The onsets were detected via librosa's onsetDetect method which computed the spectral novelty function to find the peaks. The computation was then converted from frames to seconds with nearly nanosecond precision shown in Figure \ref{fig:AudioOnset}. The onsets for each audio test case were then stored in dictionary lists to be called upon later by the test suite in order to add timestamps to the seconds stored in the list.
-\begin{figure}[H]\label{fig:AudioOnset}
+\begin{figure}[H]
     \centering
     \includegraphics[width=\columnwidth]{audioOnset}
     \caption{Test Case A2a1 Audio Onset Detection Example}
+    \label{fig:AudioOnset}
 \end{figure}
 \subsection{Audio Rendering}
 A mixer object was imported from \textit{pyGame}\footnote{\url{https://www.pygame.org/}}, a module for loading sound objects and controlling playback. The object was initialized at 16 bit 44.1 kHz over 2 channels with a buffer size of 64. The buffer size was experimented with to balance lowest latency without audio dropout. The playback method loaded the audio file passed through the method argument and set the volume. Once the mixer play method was called a separate \textit{getBusy} object ran in a while loop during audio playback to find out if the buffer was still busy or not. This object appended the audio file playback start time to a temporary list which was added to the audio onset dictionary list aforementioned and written to a dataframe.
@@ -471,10 +473,11 @@ Significant efforts were made to determine the overall latency of the test syste
     \begin{itemize}
         \item According to section 3.1 of the datasheet for FTDI based chipsets\footnote{\url{http://www.ftdichip.com/Support/Documents/AppNotes/AN232B-04_DataLatencyFlow.pdf}} , FTDI USB-Serial communication to PC exhibits, by default, a round trip delay of 16 ms intrinsic to the packet scheduler. When the latency timer expires and the buffer is not yet full any data in the 62 byte buffer is sent along with a short 2 byte status message (total of 64 bytes).
         \item This 16 ms spec was confirmed by measuring incoming "onset" messages from the Pro Trinket over FTDI and comparing it to the known period. The jitter measurement was calculated and averaged via a custom script written in \textit{Go} and was found to average 8 ms in either direction, or a span of 16 ms. The swing seemed dependent on the period but always averaged to around 16 ms. See Figure \ref{fig:rtIndividual} for confirmation.
-        \begin{figure}[H] \label{fig:rtIndividual}
+        \begin{figure}[H] 
             \centering  
             \includegraphics[width=\columnwidth]{rtIndividual}
             \caption{16 ms jitter on average for single device drift between "onset" message across FTDI over a set period of 500 ms}
+            \label{fig:rtIndividual}
         \end{figure}
     \item Serial round trip latency (TX Jitter)
         \begin{itemize}
@@ -483,18 +486,20 @@ Significant efforts were made to determine the overall latency of the test syste
         \end{itemize}
     \end{itemize}
     \item The time to actually send the "onset" message across serial was a negligible 0.6 ms as shown in Figure \ref{fig:onsetMessage}.
-    \begin{figure}[H] \label{fig:onsetMessage}
+    \begin{figure}[H] 
         \centering
         \includegraphics[width=\columnwidth]{onset}
         \caption{From the top: 1000 ms starter signal from Pro Trinket. Middle: starter TX line, End: stopper TX line on Arduino Uno}
+        \label{fig:onsetMessage}
     \end{figure}
     \item Time from FSR tap registry to Arduino TX \label{FSRregistry}
     \begin{itemize}
         \item Human input is never perfect. The tap onset needed to be triggered above the noise floor just enough to get the input. It took a few optimization runs to determine what constituted a real tap without triggering a second tap unintentionally. The original \textit{Tap Arduino} code would send the TX message only during the FSR ramp down or decay which introduced some latency. This bound was modified to instead be placed at the ramp up which minimized latency from tap to transmit to 294.4 microseconds as shown in Figure \ref{fig:buttonTX}
-        \begin{figure}[H]\label{fig:buttonTX}
+        \begin{figure}[H]
             \centering
             \includegraphics[width=\columnwidth]{buttonTX}
             \caption{FSR Button ramp up time before TX: 294.4 microseconds}
+            \label{fig:buttonTX}
         \end{figure}
     \end{itemize}
     \item Haptic Device Latency
@@ -509,10 +514,11 @@ Significant efforts were made to determine the overall latency of the test syste
         \end{figure}
         \begin{itemize}
             \item Onset trigger in continuous mode 2/9ths (5/9-3/9) of the period. For a 1000 ms period the onset transmission does not occur until 2/9 * 1000 = 222.222 ms as confirmed in Figure \ref{fig:hapticAdjustment}.
-            \begin{figure}[H]\label{fig:hapticAdjustment}
+            \begin{figure}[H]
                 \centering
                 \includegraphics[width=\columnwidth]{hapticAdjustment}
                 \caption{Haptic correction factor based on gate opening vs. actual onset message}
+                \label{fig:hapticAdjustment}
             \end{figure}
             \item The onset trigger in discrete mode starts $1/4$ of a period after.
         \end{itemize}

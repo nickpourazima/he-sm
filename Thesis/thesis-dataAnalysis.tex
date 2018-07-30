@@ -3,21 +3,22 @@ This chapter analyzes the data from the 16 users tested and draws conclusions ba
 
 \section{Overview}
 As previously mentioned, the group was split into 8 professionals\footnote{A special thank you is in order to the professional musicians of the Army Old Guard Fife and Drum Core for volunteering their time.}, 8 non-musicians and amateurs. The level of musical experience varied, as seen in Figure \ref{fig:musicExp}, from less than 1 year to over 10 years. Each user was self-classified as either a Professional, Amateur, or Neither via questionnaire at the end of the test.
-\begin{figure}[H]\label{fig:musicExp}
+\begin{figure}[H]
     \centering
     \includegraphics[width=\columnwidth]{musicExp}
     \caption{Musical Experience}
+    \label{fig:musicExp}
 \end{figure}
 The instrumental breakdown can be seen in Figure \ref{fig:pieInst} below.
-\begin{figure}[H]\label{fig:pieInst}
+\begin{figure}[H]
     \centering
     \includegraphics[width=\columnwidth]{pieInst}
     \caption{Spread of instrumental ability (out of 16)}
+    \label{fig:pieInst}
 \end{figure}
 Thirteen users had some sort of prior experience with an audible metronome and three did not. For most this was their first experience with a haptic device. All users chose their dominant arm to wear the haptic sleeve and chose their dominant hand for tapping.
-
 \subsection{Setup} \label{testSetup}
-To initialize setup, the subject is seated and given a pair of closed-back headphones. The FSR is situated to their preference, either dominant or non-dominant hand, and secured into place. Unlike a keyboard or button the FSR gives little to no feedback or rebound. This ensures a confident tap on each onset while providing no tactile response. The approach seeks to avoid intrinsic lag due to its independence of mechanical components. The delay limit is defined by the threshold applied in the software to avoid debounce, as discussed in Section \ref{development}
+To initialize setup, the subject is seated and given a pair of closed-back headphones. The FSR is situated to their preference and secured into place. Unlike a keyboard or button the FSR gives little to no feedback or rebound. This ensures a confident tap on each onset while providing no tactile response. The approach seeks to avoid intrinsic lag due to its independence of mechanical components. The delay limit is defined by the threshold applied in the software to avoid debounce, as discussed in Section \ref{development}
 
 \begin{figure}[H]
     \centering
@@ -28,7 +29,7 @@ To initialize setup, the subject is seated and given a pair of closed-back headp
 
 The Python file \textit{testSuite.py} is run and the UI will prompt the subject to input their name, read the instructions, agree to the conditions of the test suite, and commence with the test. The first 8 are practice tests to get used to the haptic sensation as well as the variety of audible test cases. The order of test case execution is scrambled with a static seed pseudo-random generator such that every user encounters the same test order. Every iteration of the test plots the Tap Onset, True Onset, and Sanitized Onset  for the purposes of feedback and affirmation of correct tapping as seen in Figure \ref{fig:TestCaseFeedbackEx}. Upon completion of the 48 test cases, the users are asked to fill out a survey for feedback.
 
-\begin{figure}[]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\columnwidth]{TestCaseFeedbackExample}
     \caption{Test Case Feedback Example: Red circles are the tap onset, blue squares are the true onset. The x-axis is the tap count, the y-axis is elapsed time.}
@@ -51,12 +52,6 @@ The black lines represent the standard deviation. The dynamic audible tests, A3a
 
 Most taps were missed during the interstitial legato chime or swing click A1b3, A1b4, A3b3, A3b4 as well as during the ramp up haptic test cases H1b3 and H1b4. These test cases ranged from 120 bpm to 180 implying either an indistinct onset, overstimulation, or low signal to noise ratio.
 
-SMS research expects a trend towards positive mean asynchrony when approaching the biomechanical limit ($<$300 ms or 180 bpm).
-
-\todo[inline]{Did the legato audible have any favorable impact? Compare also to ramp haptic}
-\todo[inline]{How much better was the haptic at dymaic?}
-\todo[inline]{How much better was Audible during static tests?}
-
 \subsubsection{Group Trends}
 SMS findings anticipate a lower $(SD_{asy})$ for professionals compared to non musicians and expect little to no difference between amateurs and non musicians. As seen in Figure \ref{fig:GroupSummaries}, the results agree with prior research. Professionals had a mean LCSA of approximately -45 ms across all audible tests and approximately -75 ms for haptic tests relative to -55 and -90 ms for amateurs and -90 and -80 ms for non-musicians.
 
@@ -67,13 +62,9 @@ The non-professional group did marginally better on the haptic test cases than a
     \caption{Group test summaries}
     \label{fig:GroupSummaries}
 \end{figure}
-
-\todo[inline]{Perhaps go into test case per Group breakdown here?}
 \subsection{Instrumental Breakdown}
 
-Past research into sensorimotor synchronization suggests a heightened rhythmic sensibility within percussionists and pianists who notoriously have held lowest variability values for tap tests. Figure \ref{fig:InstrumentSummaries} would suggest agreement with the exception of Bass. This is however, inconclusive, since the bins are uneven. For instance, whereas there was only a single bassist in the test, there were four percussionists. Without accounting for missed taps, it would appear that flutists held the lowest asynchrony across both modalities.
-
-\todo[inline]{Anything else to add? Flutists interaction with haptic on arm/overstim explain high amount of missed taps? Used to level of freedom on arms?}
+Past research into sensorimotor synchronization suggests a heightened rhythmic sensibility within percussionists and pianists who notoriously have held lowest variability values for tap tests. Figure \ref{fig:InstrumentSummaries} would suggest agreement with the exception of Bass. This is however, inconclusive, since the bins are uneven. For instance, whereas there was only a single bassist in the test, there were four percussionists. Without accounting for missed taps, it would appear that flutists held the lowest asynchrony across both modalities but the flutists were the group with the most missed taps for the haptic device. This could imply a negative interaction involving placement as these musicians are accustomed to a level of freedom on their arms.
 
 \begin{figure}[H]
     \centering
@@ -82,17 +73,31 @@ Past research into sensorimotor synchronization suggests a heightened rhythmic s
     \label{fig:InstrumentSummaries}
 \end{figure}
 
-\section{Haptic Dynamic Tests}
-\todo[inline]{Consider title change}
-In a breakdown of asynchrony for static versus dynamic tests per group as shown in Figure \ref{fig:LCSA_KDE}, the dynamic haptic test cases exhibit a shift towards zero implying an improvement in synchronization during non-isochronous beats. 
-\todo[inline]{Add more talk of audible trend here. Does it move away from 0? Why?}
+\section{Haptic versus Audible Tests}
+As expected, audible tests are the clear winner across all participants for the static test cases. As shown in \ref{fig:StaticComparison}, the mean of the audible tests is $-$56.92 ms with a standard deviation of 69.51 as compared to a mean of $-$92.67 ms with a much larger standard deviation of 109.29 for the haptic tests. With a delta of 35.75 ms between this would suggest that users are slightly more comfortable responding to isochronous beats with the auditory modality.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{StaticComparison}
+    \caption{Latency Corrected Sanitized Asynchrony for Static Tests}
+    \label{fig:StaticComparison}
+\end{figure}
+
+The results are much more promising when comparing the dynamic test cases. As seen in Figure \ref{fig:DynamicComparison}, the haptic test results were a negligible 7.38 ms away from the audible but with a much cleaner standard deviation. This implies a greater synchronization ability with the haptic device and strongly supports the hypothesis of this work.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{DynamicComparison}
+    \caption{Latency Corrected Sanitized Asynchrony for Dynamic Tests}
+    \label{fig:DynamicComparison}
+\end{figure}
+
+In a breakdown of asynchrony for static versus dynamic tests per group as shown in Figure \ref{fig:LCSA_KDE}, the dynamic haptic test cases exhibit a shift towards zero implying an improvement in synchronization during non-isochronous beats.   
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{LCSA_KDE}
     \caption{Kernel Density Estimation: Latency Corrected Sanitized Asynchrony for Static vs Dynamic Tests}
     \label{fig:LCSA_KDE}
-\end{figure}
-This finding heavily supports the overarching hypothesis of this work and can be further exemplified in Figure \ref{fig:sLCSAvIOI} and \ref{fig:dLCSAvIOI} below. As we traverse from left to right on the graph, the IOI increases - representing a decreasing bpm. The trajectory is nearly flat for the static audible test cases in red at the top. 
+\end{figure}This finding heavily supports the overarching hypothesis of this work and can be further exemplified in Figure \ref{fig:sLCSAvIOI} and \ref{fig:dLCSAvIOI} below. As we traverse from left to right on the graph, the IOI increases - representing a decreasing bpm. The trajectory is nearly flat for the static audible test cases in red at the top. 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{steady_LCSA_vs_IOI}
@@ -107,6 +112,25 @@ However, the dynamic audible tests trend towards a positive asynchrony implying 
     \label{fig:dLCSAvIOI}
 \end{figure}
 
+\subsection{Haptic Poke versus Haptic Ramp}
+To compare whether users were more inclined towards a particular mode of operation, either all on all off or ramp up ramp down, of the haptic and to check whether filling the interstitial space with the ramping sensation had any impact, the results in Figure \ref{fig:HPokevRamp} contrast the static and dynamic haptic instantaneous or poke test results to the haptic ramp method. The static haptic poke had an asynchrony of $-$93.17 $+/-$ 105.16. The static haptic ramp had an asynchrony of $-$92.12 $+/-$ 113.53. The delta is negligible and no conclusion can be made for a benefit within the isochronous realm for the haptic ramp. The dynamic haptic poke had an asynchrony of $-$69.93 $+/-$ 90.18. The dynamic haptic ramp had an asynchrony of $-$67.94 $+/-$ 120.43. A slightly better delta for the ramp sensation but a larger deviation implies that most users preferred the instantaneous sensation.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{HPokevRamp}
+    \caption{Latency Corrected Sanitized Asynchrony of haptic poke versus ramp effect across both static and dynamic tests.}
+    \label{fig:HPokevRamp}
+\end{figure}
+
+\subsection{Audible Click versus Audible Music Tone}
+To find out whether the legato audible music tone which saught to fill the interstitial space had any sort of favorable impact a mean comparison was conducted as shown in Figure \ref{fig:SDAudibleComparison}. The static audible click had a mean asynchrony of $-$59.47 with a deviation of 71.08 while the static audible musical tone was $-$53.46 $+/-$ 67.16. These results are so close that no improvement can be claimed.
+
+The dynamic audible click had a mean asynchrony of $-$67.84 $+/-$ 152.39 while the dynamic audible musical tone had a mean asynchrony of $-$55.73 $+/-$ 138.98. From these results it would appear that there was a slight advantage when participants heard a musical tone that filled the interstitial space as opposed to a discrete click. 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{SDAudibleComparison}
+    \caption{Latency Corrected Sanitized Asynchrony of audible click versus music tone across both static and dynamic tests.}
+    \label{fig:SDAudibleComparison}
+\end{figure}
 \subsection{Analysis of variance across test cases}
 
 To confirm the significance of the differences found between haptic and audible tests, an independent t-test with unequal variance was conducted. The null hypothesis was the assumption of no difference between these test case types in the latency corrected sanitized asynchrony value. P-values were obtained for haptic versus audible test case combinations across the static and dynamic groupings. The results are summarized in Figure \ref{fig:pvalue}.
@@ -118,18 +142,15 @@ To confirm the significance of the differences found between haptic and audible 
     \caption{T-Test Results}
     \label{fig:pvalue}
 \end{figure}
-\todo[inline]{Anything more to add here?}
+\pagebreak
 \section{Feedback}
-On a scale of 1 to 10, with 10 being the most difficult, approximately 70\% of those tested found synchronization to the steady audible beat to be a level of 1, or extremely easy. The remaining 30\% found it to be either a 2 or 4 level of difficulty. However, the spread for dynamic audio test cases was much wider ranged, with the majority expressing a high level of difficulty 81.3\% above level 5 seen in Figure \ref{fig:Auddiff}.
-
 \begin{figure}[H]
     \centering
     \includegraphics[width=\columnwidth]{Auddiff}
     \caption{Questionnaire: Difficulty results for dynamic audible tests.}
     \label{fig:Auddiff}
 \end{figure}
-
-The haptic tests had a wider difficulty spread across the steady beat shown at the top of Figure \ref{fig:Hapdiff}. This was to be expected as users had no prior experience with this haptic device let alone any other sort of wearable metronome. If retested or trained over the course of a few weeks to the sensation of touch the responses might have been more favorable or closer in resemblance to the static audible tests. Regardless, the dynamic beat for the haptic modality yielded less difficulty rankings than the dynamic audible (11 ranked a level of 5 or more difficulty vs. 13 for audible dynamic tests), which further supports the hypothesis of this work.
+On a scale of 1 to 10, with 10 being the most difficult, approximately 70\% of those tested found synchronization to the steady audible beat to be a level of 1, or extremely easy. The remaining 30\% found it to be either a 2 or 4 level of difficulty. However, the spread for dynamic audio test cases was much wider ranged, with the majority expressing a high level of difficulty 81.3\% above level 5 seen in Figure \ref{fig:Auddiff}. The haptic tests had a wider difficulty spread across the steady beat shown at the top of Figure \ref{fig:Hapdiff}. This was to be expected as users had no prior experience with this haptic device let alone any other sort of wearable metronome. If retested or trained over the course of a few weeks to the sensation of touch the responses might have been more favorable or closer in resemblance to the static audible tests. Regardless, the dynamic beat for the haptic modality yielded less difficulty rankings than the dynamic audible (11 ranked a level of 5 or more difficulty vs. 13 for audible dynamic tests), which further supports the hypothesis of this work.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\columnwidth]{Hapdiff}
@@ -161,9 +182,3 @@ When asked about placement preference, there was a 31.3\% split between the desi
 
 \section{Conclusions}
 Overall, the results are quantitatively promising in support of the hypothesis that filling in the interstitial space provides benefit for non-isochronous or dynamic beats.
-\todo[inline]{More detail here, boxplot commentary?}
-\begin{figure} \label{fig:BoxPlotSvD}
-    \centering
-    \includegraphics[width=\columnwidth]{BoxPlotSvD}
-    \caption{Box plot overall results: Static above, haptic below}
-\end{figure}

@@ -113,7 +113,7 @@ The resultant waveform encapsulated the occupation of the interstitial space. A 
 \subsubsection{Stacatto and legato melody}
 As a specific musical listening task, test cases \textbf{A2a}, \textbf{A4a} and \textbf{A2b}, \textbf{A4b} involve synchronization to a simple melodic sequence of notes. The music chosen was the nursery rhyme \textit{Pat-A-Cake}. The initial mockup was drafted in Sibelius and exported to Logic Pro X for bpm adjustment.
 
-Each quarter note represents a beat and therefore a 1:1 synchronization tap onset task. In order to emphasize a discrete event for test cases \textbf{A2a} and \textbf{A4a}, notes were input as stacatto, shown below in Figure \ref{fig:patacakea2a}.
+Each quarter note represents a beat and therefore a 1:1 synchronization tap onset task. In order to emphasize a discrete event for test cases \textbf{A2a} and \textbf{A4a}, notes were input as stacatto, shown below:
 
 \begin{figure}[H]
     \centering
@@ -121,12 +121,12 @@ Each quarter note represents a beat and therefore a 1:1 synchronization tap onse
     \label{fig:patacakea2a}
 \end{figure}
 
-The interstitial counterparts (\textbf{A2b}, \textbf{A4b}) similarly underwent crescendo and decrescendo after every note onset with forte accents surrounded by mezzopiano to give the impression of amplitude build up and decay\footnote{Note in Figure \ref{fig:music_comparison} the gradual, nearly exponential decay displayed in the interstitial tone as a result of the legato input along with the amplitude difference due to the forte accents.}, shown below in Figure \ref{fig:pat-a-cake_a2b}.
+The interstitial counterparts (\textbf{A2b}, \textbf{A4b}) similarly underwent crescendo and decrescendo after every note onset with forte accents surrounded by mezzopiano to give the impression of amplitude build up and decay\footnote{Note in Figure \ref{fig:music_comparison} the gradual, nearly exponential decay displayed in the interstitial tone as a result of the legato input along with the amplitude difference due to the forte accents.}, shown below:
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{Pat-a-Cake_A2b}
-    \label{fig:pat-a-cake_a2b}
+    \label{fig:patacakea2b}
 \end{figure}
 
 \begin{figure}[H]
@@ -154,3 +154,5 @@ Dynamic manipulation of tempo was accomplished in \textit{Logic Pro X} through a
 
 \section{Test Suite}
 High precision data acquisition and the minimization of delay were the central foci of the test suite design. Due to the extensive amount of publicly available libraries, multithreading capability, Pandas\footnote{\url{https://pandas.pydata.org/}} dataframe structure, and plot integration via matplotlib, \textit{Python}\footnote{\url{https://www.python.org/}} was chosen as the development environment. Complementary to the software platform was the implementation of a tap onset detection mechanism via force sensitive resistor (FSR) on the \textit{Arduino Uno}\footnote{\url{https://store.arduino.cc/usa/arduino-uno-rev3}}. 
+
+For further detail, including a pseudo-code breakdown, please see \ref{development}.
