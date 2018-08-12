@@ -1,6 +1,18 @@
 # he-sm
 Haptic Enviro-Sensing Metronome Thesis Project by Nick Pourazima in partial fullfillment for the degree of Masters of Science in Music and Technology.
 
+- [he-sm](#he-sm)
+	- [Contents](#contents)
+		- [1. Arduino Code](#1-arduino-code)
+		- [2. Audio Files](#2-audio-files)
+		- [3. Completed Tests](#3-completed-tests)
+		- [4. Debug](#4-debug)
+		- [5. Max](#5-max)
+		- [6. python](#6-python)
+		- [7. Thesis Paper](#7-thesis-paper)
+		- [8. Misc. media](#8-misc-media)
+		- [9. Haptic Operation Instruction Manual](#9-haptic-operation-instruction-manual)
+
 ## Contents
 ### 1. Arduino Code
 - [*fsr_silent_disc.ino*](https://github.com/afaintillusion/he-sm/blob/master/Arduino/fsr_silent_disc/fsr_silent_disc.ino)  is a modification of work by [Ben Schulz](https://www.ncbi.nlm.nih.gov/pubmed/26542971).
@@ -23,3 +35,6 @@ Haptic Enviro-Sensing Metronome Thesis Project by Nick Pourazima in partial full
 ### 7. Thesis Paper
 - **An evaluation of the interstitial beat across the modalities of touch and sound for the characterization of a meaningful haptic metronome**
 	- [np_thesis.pdf](https://github.com/afaintillusion/he-sm/blob/master/Thesis/np_thesis.pdf)
+### 8. Misc. media
+- [Development/design iteration pictures and videos as well as user testing images](https://photos.app.goo.gl/LSvh9r4QoSpXpAqK6)
+### 9. [Haptic Operation Instruction Manual](https://docs.google.com/document/d/1vB0zk6RceEyYD20hWCYP4Afg4Ua1DJR6iZ438ZEw02U/edit?usp=sharing)
